@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 /// @title Employee Assignment and Management Contract
 /// @notice Provides role-based access control with an owner and assigned employees
 /// @dev Abstract contract that can be inherited by other contracts to enforce employee-only actions
-contract AccessControl is UUPSUpgradeable {
+contract AccessControl is UUPSUpgradeable, Initializable {
     
     // ================================
     // State Variables
@@ -52,7 +52,7 @@ contract AccessControl is UUPSUpgradeable {
     
 
      function initialize() public initializer {
-        __UUPSUpgradeable_init();
+        //__UUPSUpgradeable_init();
         owner = msg.sender;
     }
 

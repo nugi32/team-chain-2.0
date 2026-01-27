@@ -3,14 +3,14 @@ pragma solidity ^0.8.20;
 
 import "../Pipe/AccesControlPipes.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "../system/reetancyGuard.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
 /// @title System Wallet
 /// @notice Upgradeable contract for managing system funds with role-based access control
 /// @dev This contract handles receiving and transferring funds with proper access control and reentrancy protection
 /// @author nugi
-contract System_wallet is AccesControl, UUPSUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
+contract System_wallet is AccesControl, UUPSUpgradeable, PausableUpgradeable, SystemReentrancyGuard {
     /// @notice Total equity tracked by the system wallet
     uint256 internal Total_Equity;
     
@@ -41,7 +41,7 @@ contract System_wallet is AccesControl, UUPSUpgradeable, PausableUpgradeable, Re
     /// @param _accessControl The address of the EmployeeAssignment contract that manages roles
     function initialize(address _accessControl) public initializer {
         zero_Address(_accessControl);
-        __UUPSUpgradeable_init();
+        //__UUPSUpgradeable_init();
         __ReentrancyGuard_init();
         accessControl = IAccessControl(_accessControl);
     }

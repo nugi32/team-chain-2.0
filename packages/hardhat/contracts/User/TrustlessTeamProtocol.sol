@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "../Pipe/StateVarPipes.sol";
 import "../Pipe/AccesControlPipes.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "../system/reetancyGuard.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
@@ -26,7 +26,7 @@ contract TrustlessTeamProtocol is
     Initializable,
     AccesControl,
     StateVarPipes,
-    ReentrancyGuardUpgradeable,
+    SystemReentrancyGuard,
     PausableUpgradeable,    
     UUPSUpgradeable
 {
@@ -294,7 +294,7 @@ contract TrustlessTeamProtocol is
         zero_Address(_stateVar);
 
         // Initialize parent contracts
-        __UUPSUpgradeable_init();
+        //__UUPSUpgradeable_init();
         __ReentrancyGuard_init();
         __Pausable_init();
 

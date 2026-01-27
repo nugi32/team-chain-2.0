@@ -19,11 +19,11 @@
     "lint": "eslint",
     "lint-staged": "eslint",
     "test": "REPORT_GAS=true hardhat test --network hardhat",
-    "verify": "hardhat etherscan-verify"
+    "verify": "hardhat etherscan-verify",
+    "deploy:demo": "npx hardhat run scripts/deploy.ts --network hardhat"
   },
   "dependencies": {
     "@inquirer/password": "^4.0.2",
-    "@openzeppelin/contracts": "~5.0.2",
     "@typechain/ethers-v6": "~0.5.1",
     "dotenv": "~16.4.5",
     "envfile": "~7.1.0",
@@ -38,6 +38,7 @@
     "@nomicfoundation/hardhat-network-helpers": "~1.0.11",
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "@nomicfoundation/hardhat-verify": "~2.0.10",
+    "@openzeppelin/contracts": "^5.4.0",
     "@openzeppelin/contracts-upgradeable": "^5.4.0",
     "@openzeppelin/hardhat-upgrades": "^3.9.1",
     "@typechain/ethers-v5": "~11.1.2",
