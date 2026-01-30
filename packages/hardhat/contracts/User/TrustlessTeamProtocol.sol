@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "../Pipe/StateVarPipes.sol";
-import "../Pipe/AccesControlPipes.sol";
+import "../Pipe/mainAccesControlPipes.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../system/reetancyGuard.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
@@ -24,7 +24,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
  */
 contract TrustlessTeamProtocol is
     Initializable,
-    AccesControl,
+    MainAccesControl,
     StateVarPipes,
     SystemReentrancyGuard,
     PausableUpgradeable,    
@@ -155,12 +155,6 @@ contract TrustlessTeamProtocol is
     /// @dev Accumulated protocol fees
     uint256 public feeCollected;
 
-    /// @dev Percentage of reward required as member stake
-    uint256 public memberStakePercentReward;
-
-    /// @dev Protocol fee recipient address
-    address payable public systemWallet;
-
     /// @dev Storage gap for future upgrades
     uint256[40] private ___gap;
 
@@ -192,6 +186,9 @@ contract TrustlessTeamProtocol is
 
     // Payments / system events
     event systemChanged(string info, address indexed newAddress, uint256 indexed value);
+    event Info(string info, uint256 indexed param1, address indexed param2, uint256 param3, uint256 param4, uint8 param5, string param6, uint128 param7);
+
+
 
     // =============================================================
     // ERRORS
@@ -390,7 +387,7 @@ contract TrustlessTeamProtocol is
         Tasks[taskId] = Task({
             taskId: taskId,
             status: TaskStatus.Created,
-            value: __getProjectValueCategory(DeadlineHours, MaximumRevision, msg.value, user),
+            value: __getProjectValue(DeadlineHours, MaximumRevision, msg.value, user),
             creator: user,
             member: address(0),
             title: Title,
@@ -910,12 +907,12 @@ contract TrustlessTeamProtocol is
      * @return _value Calculated project value score
      * @dev Uses weighted formula considering reward, revisions, reputation, and deadline
      */
-    function __getProjectValueNum(
+    function __getProjectValue(
         uint32 DeadlineHours,
         uint8 MaximumRevision,
         uint256 rewardWei,
         address Caller
-    ) internal view returns (uint256) {
+    ) internal view returns (TaskValue) {
         // Convert reward to ether units for calculation
         uint256 rewardEtherUnits = rewardWei / 1 ether;
         
@@ -936,27 +933,7 @@ contract TrustlessTeamProtocol is
         
         // Normalize value
         uint256 _value = (rawValue * 1 ether) / 100;
-        return _value;
-    }
 
-    /**
-     * @notice Categorizes project value into TaskValue enum
-     * @param DeadlineHours Task deadline in hours
-     * @param MaximumRevision Maximum allowed revisions
-     * @param rewardWei Task reward in wei
-     * @param Caller Task creator address
-     * @return TaskValue category based on calculated score
-     * @dev Uses threshold values from state variables to determine category
-     */
-    function __getProjectValueCategory(
-        uint32 DeadlineHours,
-        uint8 MaximumRevision,
-        uint256 rewardWei,
-        address Caller
-    ) internal view returns (TaskValue) {
-        uint256 _value = __getProjectValueNum(DeadlineHours, MaximumRevision, rewardWei, Caller);
-
-        // Categorize based on threshold values
         if (_value <= ___getCategoryLow()) {
             return TaskValue.Low;
         } else if (_value <= ___getCategoryMidleLow()) {
@@ -987,7 +964,7 @@ contract TrustlessTeamProtocol is
         uint256 rewardWei,
         address Caller
     ) public view returns (uint256) {
-        TaskValue category = __getProjectValueCategory(DeadlineHours, MaximumRevision, rewardWei, Caller);
+        TaskValue category = __getProjectValue(DeadlineHours, MaximumRevision, rewardWei, Caller);
 
         // Return stake amount based on category
         if (category == TaskValue.Low) {
@@ -1003,6 +980,26 @@ contract TrustlessTeamProtocol is
         } else {
             return ___getStakeUltraHigh();
         }
+    }
+
+    /**
+     * @notice Calculates required creator stake for a taskF
+     * @param taskId ID of the task
+     * @return Required creator stake amount in wei
+     */
+    function getCreatorStake(uint256 taskId) public view taskExists(taskId) whenNotPaused returns (uint256) {
+        Task storage t = Tasks[taskId];
+        return __getCreatorStake(t.deadlineHours, t.maxRevision, t.reward, t.creator);
+    }
+
+    /**
+     * @notice Calculates required member stake for a task
+     * @param taskId ID of the task
+     * @return Required member stake amount in wei
+     */
+    function getMemberRequiredStake(uint256 taskId) public view taskExists(taskId) returns (uint256) {
+        Task storage t = Tasks[taskId];
+        return (t.reward * memberStakePercentReward) / 100;
     }
 
     /**
@@ -1088,88 +1085,20 @@ contract TrustlessTeamProtocol is
         return joinRequests[taskId].length;
     }
 
-
-    /**
-     * @notice Calculates required creator stake for a taskF
-     * @param taskId ID of the task
-     * @return Required creator stake amount in wei
-     */
-    function getCreatorStake(uint256 taskId) public view taskExists(taskId) whenNotPaused returns (uint256) {
-        Task storage t = Tasks[taskId];
-        return __getCreatorStake(t.deadlineHours, t.maxRevision, t.reward, t.creator);
-    }
-
-    /**
-     * @notice Calculates required member stake for a task
-     * @param taskId ID of the task
-     * @return Required member stake amount in wei
-     */
-    function getMemberRequiredStake(uint256 taskId) public view taskExists(taskId) returns (uint256) {
-        Task storage t = Tasks[taskId];
-        return (t.reward * memberStakePercentReward) / 100;
-    }
-
     // =============================================================
-    // ADMIN FUNCTIONS
+    // OWNER     FUNCTIONS
     // =============================================================
-
-    /**
-     * @notice Sets the member stake percentage relative to task reward
-     * @param NewmemberStakePercentReward New percentage value (0-100)
-     * @dev Only callable by employees, affects stake calculation for new join requests
-     */
-    function setMemberStakePercentageFromStake(uint256 NewmemberStakePercentReward) external onlyEmployes whenNotPaused {
-        if (NewmemberStakePercentReward == 0 || NewmemberStakePercentReward > 100) revert InvalidMemberStakePercentReward();
-        memberStakePercentReward = NewmemberStakePercentReward;
-        emit systemChanged("setMemberStakePercentageFromStake", address(0), NewmemberStakePercentReward);
-    }
 
     /**
      * @notice Withdraws accumulated protocol fees to system wallet
      * @dev Only callable by employees, transfers collected fees to systemWallet
      */
-    function withdrawToSystemWallet() external onlyEmployes nonReentrant whenNotPaused {
+    function withdrawToSystemWallet() external onlyOwner nonReentrant whenNotPaused {
         uint256 amount = feeCollected;
         feeCollected = 0;
         (bool ok, ) = systemWallet.call{value: amount}("");
         require(ok, "withdraw failed");
         emit systemChanged("withdrawToSystemWallet", address(0), amount);
-    }
-
-
-    // ============================================================= Only Owner Functions ============================================================
-
-    /**
-     * @notice Updates system wallet address
-     * @param _NewsystemWallet New system wallet address
-     * @dev Only callable by owner, affects fee withdrawals
-     */
-    function changeSystemwallet(address payable _NewsystemWallet) external onlyOwner whenNotPaused {
-        zero_Address(_NewsystemWallet);
-        systemWallet = _NewsystemWallet;
-        emit systemChanged("changeSystemwallet", _NewsystemWallet, 0);
-    }
-
-    /**
-     * @notice Updates access control contract address
-     * @param _newAccesControl New access control contract address
-     * @dev Only callable by owner, affects permission management
-     */
-    function changeAccessControl(address _newAccesControl) external onlyOwner whenNotPaused {
-        zero_Address(_newAccesControl);
-        accessControl = IAccessControl(_newAccesControl);
-        emit systemChanged("changeAccessControl", _newAccesControl, 0);
-    }
-
-    /**
-     * @notice Updates state variables contract address
-     * @param _newStateVar New state variables contract address
-     * @dev Only callable by owner, affects parameter retrieval
-     */
-    function changeStateVarAddress(address _newStateVar) external onlyOwner whenNotPaused {
-        zero_Address(_newStateVar);
-        stateVar = stateVariable(_newStateVar);
-        emit systemChanged("changeStateVarAddress", _newStateVar, 0);
     }
 
     /**

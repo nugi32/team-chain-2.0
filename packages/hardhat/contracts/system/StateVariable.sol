@@ -24,16 +24,6 @@ contract stateVariable is AccesControl, Pausable {
         uint64 revisionScore;
     }
 
-    /// @notice Predefined stake tiers, stored in wei (ETH * 1 ether).
-    struct StakeAmount {
-        uint256 low;
-        uint256 midLow;
-        uint256 mid;
-        uint256 midHigh;
-        uint256 high;
-        uint256 ultraHigh;
-    }
-
     /// @notice Reputation point values based on user actions.
     struct ReputationPoint {
         uint64 CancelByMe;
@@ -55,7 +45,7 @@ contract stateVariable is AccesControl, Pausable {
     }
 
     /// @notice Predefined stake categories for classification.
-    struct StakeCategory {
+    struct ProjectValueCategory {
         uint256 low;
         uint256 midleLow;
         uint256 midle;
@@ -64,36 +54,39 @@ contract stateVariable is AccesControl, Pausable {
         uint256 ultraHigh;
     }
 
+    struct stakeUtil {
+        uint128 memberStakePercentageFromReward;
+        uint128 creatorStakePercentageFromProjectValue;
+    }
+
+    struct addressUtil {
+        address accessControlADDR;
+        address payable systemWalletADDR;
+        address stateVarADDR;
+    }
+
 
     // =============================================================
     // State Variables
     // =============================================================
 
     ComponentWeightPercentage public componentWeightPercentages;
-    StakeAmount public stakeAmounts;
     ReputationPoint public reputationPoints;
     StateVar public StateVars;
-    StakeCategory public StakeCategorys;
+    ProjectValueCategory public ProjectCategorys;
+    stakeUtil public stakeUtils;
+    addressUtil public addressUtils;
 
 
     // =============================================================
     // Events
     // =============================================================
-
+//
     event componentWeightPercentagesChanged(
         uint64 rewardScore,
         uint64 reputationScore,
         uint64 deadlineScore,
         uint64 revisionScore
-    );
-
-    event stakeAmountsChanged(
-        uint256 low,
-        uint256 midLow,
-        uint256 mid,
-        uint256 midHigh,
-        uint256 high,
-        uint256 ultraHigh
     );
 
     event reputationPointsChanged(
@@ -154,14 +147,6 @@ contract stateVariable is AccesControl, Pausable {
         uint64 _deadlineScore,
         uint64 _revisionScore,
 
-        // Stake Amounts
-        uint256 lowStake,
-        uint256 midLowStake,
-        uint256 midStake,
-        uint256 midHighStake,
-        uint256 highStake,
-        uint256 ultraHighStake,
-
         // Reputation Points
         uint64 CancelByMeRP,
         uint64 revisionRP,
@@ -199,15 +184,6 @@ contract stateVariable is AccesControl, Pausable {
             revisionScore: _revisionScore
         });
 
-        stakeAmounts = StakeAmount({
-            low: lowStake * 1 ether,
-            midLow: midLowStake * 1 ether,
-            mid: midStake * 1 ether,
-            midHigh: midHighStake * 1 ether,
-            high: highStake * 1 ether,
-            ultraHigh: ultraHighStake * 1 ether
-        });
-
         reputationPoints = ReputationPoint({
             CancelByMe: CancelByMeRP,
             revision: revisionRP,
@@ -226,7 +202,7 @@ contract stateVariable is AccesControl, Pausable {
             maxRevision: _maxRevision
         });
 
-        StakeCategorys = StakeCategory({
+        ProjectCategorys = ProjectValueCategory({
             low: lowCat * 1 ether,
             midleLow: midLowCat * 1 ether,
             midle: midCat * 1 ether,
@@ -241,6 +217,35 @@ contract stateVariable is AccesControl, Pausable {
     }
 
 //-------------------------------------------------------------------------- Exported Functions --------------------------------------------------------------------------
+
+// =============================================================
+// 1.Stake Utils
+// =============================================================
+
+function __getMemberStakeFromRewardPercentage() external view returns (uint128) {
+    return stakeUtils.memberStakePercentageFromReward;
+}
+
+function __getCreatorStakeFromProjectValuePercentage() external view returns (uint128) {
+    return stakeUtils.creatorStakePercentageFromProjectValue;
+}
+
+// =============================================================
+// 1.Address Utils
+// =============================================================
+
+function __getAccessControlADDR () external view returns(address) {
+    return addressUtils.accessControlADDR;
+}
+
+function __getSystemWalletADDR () external view returns(address) {
+    return addressUtils.systemWalletADDR;
+}
+
+function __getStateVarADDR () external view returns(address) {
+    return addressUtils.stateVarADDR;
+}
+
 // =============================================================
 // 1. ComponentWeightPercentage Getters
 // =============================================================
@@ -260,36 +265,6 @@ function __getDeadlineScore() external view returns (uint64) {
 function __getRevisionScore() external view returns (uint64) {
     return componentWeightPercentages.revisionScore;
 }
-
-
-// =============================================================
-// 2. StakeAmount Getters
-// =============================================================
-
-function __getStakeLow() external view returns (uint256) {
-    return stakeAmounts.low;
-}
-
-function __getStakeMidLow() external view returns (uint256) {
-    return stakeAmounts.midLow;
-}
-
-function __getStakeMid() external view returns (uint256) {
-    return stakeAmounts.mid;
-}
-
-function __getStakeMidHigh() external view returns (uint256) {
-    return stakeAmounts.midHigh;
-}
-
-function __getStakeHigh() external view returns (uint256) {
-    return stakeAmounts.high;
-}
-
-function __getStakeUltraHigh() external view returns (uint256) {
-    return stakeAmounts.ultraHigh;
-}
-
 
 // =============================================================
 // 3. ReputationPoint Getters
@@ -353,27 +328,27 @@ function __getMaxRevision() external view returns (uint64) {
 // =============================================================
 
 function __getCategoryLow() external view returns (uint256) {
-    return StakeCategorys.low;
+    return ProjectCategorys.low;
 }
 
 function __getCategoryMidleLow() external view returns (uint256) {
-    return StakeCategorys.midleLow;
+    return ProjectCategorys.midleLow;
 }
 
 function __getCategoryMidle() external view returns (uint256) {
-    return StakeCategorys.midle;
+    return ProjectCategorys.midle;
 }
 
 function __getCategoryMidleHigh() external view returns (uint256) {
-    return StakeCategorys.midleHigh;
+    return ProjectCategorys.midleHigh;
 }
 
 function __getCategoryHigh() external view returns (uint256) {
-    return StakeCategorys.high;
+    return ProjectCategorys.high;
 }
 
 function __getCategoryUltraHigh() external view returns (uint256) {
-    return StakeCategorys.ultraHigh;
+    return ProjectCategorys.ultraHigh;
 }
 
     // =============================================================
@@ -412,51 +387,6 @@ function __getCategoryUltraHigh() external view returns (uint256) {
             revisionScore
         );
     }
-
-    /**
-     * @notice Updates predefined stake tiers.
-     * @param low Value for low stake tier (ETH without decimals).
-     * @param midLow Value for midLow tier.
-     * @param mid Value for mid tier.
-     * @param midHigh Value for midHigh tier.
-     * @param high Value for high tier.
-     * @param ultraHigh Value for ultraHigh tier.
-     * @dev All inputs are converted to wei using * 1 ether.
-     */
-    function setStakeAmounts(
-        uint256 low,
-        uint256 midLow,
-        uint256 mid,
-        uint256 midHigh,
-        uint256 high,
-        uint256 ultraHigh
-    ) external onlyEmployes {
-
-         StateVar storage sv =  StateVars;
-
-        if (low >= midLow || midLow >= mid || mid >= midHigh || midHigh >= high || high >= ultraHigh) revert InvalidMaxStakeAmount();
-
-        if (ultraHigh > sv.maxStake) revert InvalidMaxStakeAmount();
-
-        stakeAmounts = StakeAmount({
-            low: low,
-            midLow: midLow,
-            mid: mid,
-            midHigh: midHigh,
-            high: high,
-            ultraHigh: ultraHigh
-        });
-
-        emit stakeAmountsChanged(
-            low * 1 ether,
-            midLow * 1 ether,
-            mid * 1 ether,
-            midHigh * 1 ether,
-            high * 1 ether,
-            ultraHigh * 1 ether
-        );
-    }
-
     /**
      * @notice Updates all reputation point values.
      * @dev Only employees can call this function.
@@ -541,15 +471,6 @@ function __getCategoryUltraHigh() external view returns (uint256) {
         if (low >= midLow || midLow >= mid || mid >= midHigh || midHigh >= high || high >= ultraHigh) revert InvalidMaxStakeAmount();
 
         if (ultraHigh > sv.maxStake) revert InvalidMaxStakeAmount();
-
-        StakeCategorys = StakeCategory({
-            low: low,
-            midleLow: midLow,
-            midle: mid,
-            midleHigh: midHigh,
-            high: high,
-            ultraHigh: ultraHigh
-        });
 
         emit stakeCategorysChanged(
             low,
