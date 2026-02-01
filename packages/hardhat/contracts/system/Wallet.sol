@@ -1,111 +1,218 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+/* =======================
+        IMPORTS
+======================= */
 import "../Pipe/AccesControlPipes.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../system/reetancyGuard.sol";
+import "../system/utils/reetancyGuard.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../system/utils/addressUtils.sol";
+import "./interfaces/IStateVariable.sol";
+
+/* =======================
+        CONTRACT
+======================= */
 
 /// @title System Wallet
-/// @notice Upgradeable contract for managing system funds with role-based access control
-/// @dev This contract handles receiving and transferring funds with proper access control and reentrancy protection
+/// @notice Upgradeable system wallet supporting ETH & multiple ERC20 tokens
 /// @author nugi
-contract System_wallet is AccesControl, UUPSUpgradeable, PausableUpgradeable, SystemReentrancyGuard {
-    /// @notice Total equity tracked by the system wallet
-    uint256 internal Total_Equity;
-    
-    /// @notice Storage gap for future upgrades (50 slots reserved)
-    uint256[50] private ___gap; 
+contract System_wallet is
+    MainAccesControlPipes,
+    UUPSUpgradeable,
+    PausableUpgradeable,
+    SystemReentrancyGuard,
+    addressUtils
+{
+    /* =======================
+            STORAGE
+    ======================= */
 
-    /// @notice Emitted when funds are transferred out of the wallet
-    /// @param to The address receiving the funds
-    /// @param amount The amount of funds transferred (in wei)
+    uint256 internal Total_Equity;
+    IStateVariable public stateVariable;
+
+    /// @dev Storage gap for upgrade safety
+    uint256[50] private ___gap;
+
+    /* =======================
+            EVENTS
+    ======================= */
+
     event contract_transfered_fund(address indexed to, uint256 indexed amount);
-    
-    /// @notice Emitted when funds are received into the wallet
-    /// @param from The address sending the funds
-    /// @param amount The amount of funds received (in wei)
-    event contract_received_fund(address indexed  from, uint256 indexed amount);
+    event contract_received_fund(address indexed from, uint256 indexed amount);
+
+    event contract_transferred_token(
+        address indexed token,
+        address indexed to,
+        uint256 amount
+    );
 
     event AccessControlChanged(address newAccessControl);
-
-        event ContractPaused(address indexed caller);
+    event ContractPaused(address indexed caller);
     event ContractUnpaused(address indexed caller);
 
-    /// @notice Custom error for insufficient funds in the wallet
+    /* =======================
+            ERRORS
+    ======================= */
+
     error InsufficientFunds();
     error ZeroAddress();
 
-    /// @notice Initializes the contract with the employee assignment address
-    /// @dev This function replaces the constructor for upgradeable contracts
-    /// @param _accessControl The address of the EmployeeAssignment contract that manages roles
+    /* =======================
+        INITIALIZER
+    ======================= */
+
     function initialize(address _accessControl) public initializer {
-        zero_Address(_accessControl);
-        //__UUPSUpgradeable_init();
+        if(_accessControl == address(0)) revert ZeroAddress();
         __ReentrancyGuard_init();
         accessControl = IAccessControl(_accessControl);
     }
 
-    /// @notice Transfers funds from the wallet to a specified address
-    /// @dev Only the owner can call this function. Protected by reentrancy guard.
-    /// @param _to The address to send funds to (must not be zero address)
-    /// @param _amount The amount of funds to transfer (in wei)
-    /// @custom:security Checks: Zero address validation, insufficient balance check, transfer success validation
-    function transfer (address payable _to, uint256 _amount) external onlyOwner nonReentrant callerZeroAddr {
-        // Validate that recipient is not zero address
+    /* =======================
+        ETH TRANSFER
+    ======================= */
+
+    function transfer(
+        address payable _to,
+        uint256 _amount
+    )
+        external
+        onlyOwner(stateVariable.__getAccessControlAddress())
+        nonReentrant
+        callerZeroAddr
+        whenNotPaused
+    {
         if (_to == address(0)) revert ZeroAddress();
-        
-        // Check if wallet has sufficient balance
-        if (address(this).balance < _amount){
-            revert InsufficientFunds();
-        } else {
-            // Perform the transfer using low-level call
-            (bool success, ) = _to.call{value: _amount}("");
-            require(success, "transfer failed");
-        }
-        
-        // Emit event to log the transfer
+        if (address(this).balance < _amount) revert InsufficientFunds();
+
+        (bool success, ) = _to.call{value: _amount}("");
+        require(success, "ETH transfer failed");
+
         emit contract_transfered_fund(_to, _amount);
     }
 
-    function changeAccessControl(address _newAccesControl) external onlyOwner {
-        zero_Address(_newAccesControl);
+    /* =======================
+        ERC20 TRANSFER
+    ======================= */
+
+    function transferToken(
+        address token,
+        address to,
+        uint256 amount
+    )
+        external
+        onlyOwner(stateVariable.__getAccessControlAddress())
+        nonReentrant
+        callerZeroAddr
+        whenNotPaused
+    {
+        if (token == address(0) || to == address(0)) revert ZeroAddress();
+
+        IERC20 erc20 = IERC20(token);
+        if (erc20.balanceOf(address(this)) < amount)
+            revert InsufficientFunds();
+
+        bool success = erc20.transfer(to, amount);
+        require(success, "ERC20 transfer failed");
+
+        emit contract_transferred_token(token, to, amount);
+    }
+
+    /* =======================
+        BATCH ERC20 TRANSFER
+    ======================= */
+
+    function batchTransferToken(
+        address[] calldata tokens,
+        address[] calldata tos,
+        uint256[] calldata amounts
+    )
+        external
+        onlyOwner(stateVariable.__getAccessControlAddress())
+        nonReentrant
+        whenNotPaused
+    {
+        uint256 length = tokens.length;
+        require(
+            length == tos.length && length == amounts.length,
+            "Length mismatch"
+        );
+
+        for (uint256 i = 0; i < length; i++) {
+            if (tokens[i] == address(0) || tos[i] == address(0))
+                revert ZeroAddress();
+
+            IERC20 erc20 = IERC20(tokens[i]);
+            if (erc20.balanceOf(address(this)) < amounts[i])
+                revert InsufficientFunds();
+
+            bool success = erc20.transfer(tos[i], amounts[i]);
+            require(success, "ERC20 transfer failed");
+
+            emit contract_transferred_token(
+                tokens[i],
+                tos[i],
+                amounts[i]
+            );
+        }
+    }
+
+    /* =======================
+        VIEW FUNCTIONS
+    ======================= */
+
+    function tokenBalance(address token) external view returns (uint256) {
+        return IERC20(token).balanceOf(address(this));
+    }
+
+    /* =======================
+        ACCESS CONTROL
+    ======================= */
+
+    function changeAccessControl(address _newAccesControl)
+        external
+        onlyOwner(stateVariable.__getAccessControlAddress())
+    {
+        if(_newAccesControl == address(0)) revert ZeroAddress();
         accessControl = IAccessControl(_newAccesControl);
         emit AccessControlChanged(_newAccesControl);
     }
 
-        /**
-     * @notice Pauses contract functionality
-     * @dev Only callable by employees, prevents most state-changing functions
-     */
-    function pause() external onlyOwner {
+    /* =======================
+        PAUSE CONTROL
+    ======================= */
+
+    function pause() external onlyOwner(stateVariable.__getAccessControlAddress()) {
         _pause();
         emit ContractPaused(msg.sender);
     }
 
-    /**
-     * @notice Unpauses contract functionality
-     * @dev Only callable by employees, restores normal operation
-     */
-    function unpause() external onlyOwner {
+    function unpause() external onlyOwner(stateVariable.__getAccessControlAddress()) {
         _unpause();
         emit ContractUnpaused(msg.sender);
     }
 
+    /* =======================
+        RECEIVE / FALLBACK
+    ======================= */
 
-    /// @notice Fallback function called when contract receives ether without data
-    /// @dev Handles plain ether transfers or calls with empty data
-    /// @custom:note Emits contract_received_fund event with sender and value
-    fallback() external payable {
-        emit contract_received_fund(msg.sender, msg.value);
-    }
-    
-    /// @notice Receive function called when contract receives plain ether
-    /// @dev This is the recommended function for receiving ether in modern Solidity
-    /// @custom:note Emits contract_received_fund event with sender and value
     receive() external payable {
         emit contract_received_fund(msg.sender, msg.value);
     }
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
-    
+
+    fallback() external payable {
+        emit contract_received_fund(msg.sender, msg.value);
+    }
+
+    /* =======================
+        UUPS AUTH
+    ======================= */
+
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        override
+        onlyOwner(stateVariable.__getAccessControlAddress())
+    {}
 }
