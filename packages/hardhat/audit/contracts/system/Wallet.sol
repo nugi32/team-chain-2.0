@@ -5,8 +5,8 @@ pragma solidity ^0.8.20;
         IMPORTS
 ======================= */
 import "../Pipe/AccesControlPipes.sol";
-import "./utils/ReentrancyGuard.sol";
-import "./utils/addressUtils.sol";
+import "../system/utils/ReentrancyGuard.sol";
+import "../system/utils/addressUtils.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
@@ -22,29 +22,26 @@ import "./interfaces/IStateVariable.sol";
 /// @title System Wallet
 /// @notice Upgradeable system wallet supporting ETH & multiple ERC20 tokens
 /// @author nugi
-contract System_wallet is
+contract systemWallet is
     MainAccesControlPipes,
     UUPSUpgradeable,
     PausableUpgradeable,
     SystemReentrancyGuard,
     systemAddressUtils
 {
-    using SafeERC20 for IERC20;
 
+    using SafeERC20 for IERC20;
     /* =======================
             STORAGE
-    ======================= */
+    ======================= */ 
+
+    uint256 internal contractBalance;
     IStateVariable public stateVariable;
     address public stateVar;
     address public addressInitializerContract;
 
     /// @dev Storage gap for upgrade safety
     uint256[50] private ___gap;
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
 //
     /* =======================
             EVENTS
@@ -76,92 +73,73 @@ contract System_wallet is
 
     function initialize() public initializer {
         __ReentrancyGuard_init();
-        __Pausable_init();
     }
 
-    function __walletAddressInitializer(address _stateVariable, address _accessControl) external ctcCall(addressInitializerContract) onlyOnce {
-        if (_stateVariable == address(0) || _accessControl == address(0)) revert ZeroAddress();
+function __walletAddressInitializer(
+    address _stateVariable,
+    address _accessControl
+) external ctcCall(addressInitializerContract) onlyOnce {
 
-        // Set state variable reference first to avoid calling uninitialized state
-        stateVar = _stateVariable;
-        stateVariable = IStateVariable(_stateVariable);
-
-        // Set access control
-        accessControl = IAccessControl(_accessControl);
+    if (_stateVariable == address(0) || _accessControl == address(0)) {
+        revert ZeroAddress();
     }
+
+    stateVar = _stateVariable;
+    stateVariable = IStateVariable(_stateVariable);
+    accessControl = IAccessControl(_accessControl);
+}
+
 
     /* =======================
         ETH TRANSFER
     ======================= */
 //
-    function transfer(
-        address payable _to,
-        uint256 _amount
-    )
-        external
-        onlyOwner(stateVariable.__getAccessControlAddress())
-        nonReentrant
-        callerZeroAddr
-        whenNotPaused
-    {
-        if (_to == address(0)) revert ZeroAddress();
-        if (address(this).balance < _amount) revert InsufficientFunds();
+function transfer(
+    address payable _to,
+    uint256 _amount
+) external onlyOwner(stateVariable.__getAccessControlAddress()) nonReentrant whenNotPaused {
+    if (_to == address(0)) revert ZeroAddress();
+    if (address(this).balance < _amount) revert InsufficientFunds();
 
-        (bool success, ) = _to.call{value: _amount}("");
-        require(success, "ETH transfer failed");
+    // Update state SEBELUM call (Checks-Effects-Interactions pattern)
+    contractBalance -= _amount;
 
-        emit contract_transfered_fund(_to, _amount);
-    }
+    (bool success, ) = _to.call{value: _amount}("");
+    require(success, "ETH transfer failed");
+
+    emit contract_transfered_fund(_to, _amount);
+}
 
     /* =======================
         ERC20 TRANSFER
     ======================= */
-
-    function transferToken(
+function transferToken(
         address token,
         address to,
         uint256 amount
-    )
-        external
-        onlyOwner(stateVariable.__getAccessControlAddress())
-        nonReentrant
-        callerZeroAddr
-        whenNotPaused
-    {
+    ) external onlyOwner(stateVariable.__getAccessControlAddress()) nonReentrant whenNotPaused {
         if (token == address(0) || to == address(0)) revert ZeroAddress();
 
         IERC20 erc20 = IERC20(token);
-        if (erc20.balanceOf(address(this)) < amount)
-            revert InsufficientFunds();
+        if (erc20.balanceOf(address(this)) < amount) revert InsufficientFunds();
 
-        erc20.safeTransfer(to, amount);
+        contractBalance -= amount;
+
+        erc20.safeTransfer(to, amount);  // ✓ Aman untuk semua token
 
         emit contract_transferred_token(token, to, amount);
     }
-
-    /* =======================
-        BATCH ERC20 TRANSFER
-    ======================= */
 
     function batchTransferToken(
         address[] calldata tokens,
         address[] calldata tos,
         uint256[] calldata amounts
-    )
-        external
-        onlyOwner(stateVariable.__getAccessControlAddress())
-        nonReentrant
-        callerZeroAddr
-        whenNotPaused
-    {
+    ) external onlyOwner(stateVariable.__getAccessControlAddress()) nonReentrant whenNotPaused {
         uint256 length = tokens.length;
         require(
             length == tos.length && length == amounts.length,
             "Length mismatch"
         );
-
-        // Prevent excessively large batch operations which may run out of gas
-        require(length > 0 && length <= 100, "Invalid batch size");
 
         for (uint256 i = 0; i < length; i++) {
             if (tokens[i] == address(0) || tos[i] == address(0))
@@ -171,16 +149,13 @@ contract System_wallet is
             if (erc20.balanceOf(address(this)) < amounts[i])
                 revert InsufficientFunds();
 
-            erc20.safeTransfer(tos[i], amounts[i]);
+            contractBalance -= amounts[i];
 
-            emit contract_transferred_token(
-                tokens[i],
-                tos[i],
-                amounts[i]
-            );
+            erc20.safeTransfer(tos[i], amounts[i]);  // ✓ Aman
+
+            emit contract_transferred_token(tokens[i], tos[i], amounts[i]);
         }
     }
-
     /* =======================
         VIEW FUNCTIONS
     ======================= */
@@ -188,11 +163,7 @@ contract System_wallet is
     function tokenBalance(address token) external view returns (uint256) {
         return IERC20(token).balanceOf(address(this));
     }
-
-    function ethBalance() external view returns (uint256) {
-        return address(this).balance;
-    }
-
+//
     /* =======================
         ACCESS CONTROL
     ======================= */
@@ -234,10 +205,12 @@ contract System_wallet is
     ======================= */
 
     receive() external payable {
+        contractBalance += msg.value;
         emit contract_received_fund(msg.sender, msg.value);
     }
 
     fallback() external payable {
+        contractBalance += msg.value;
         emit contract_received_fund(msg.sender, msg.value);
     }
 
@@ -245,12 +218,9 @@ contract System_wallet is
         UUPS AUTH
     ======================= */
 
-    function _authorizeUpgrade(address)
+    function _authorizeUpgrade(address newImplementation)
         internal
-        view
         override
-    {
-        if (address(accessControl) == address(0)) revert ZeroAddress();
-        if (msg.sender != accessControl.owner()) revert("Not owner");
-    }
+        onlyOwner(stateVariable.__getAccessControlAddress())
+    {}
 }
