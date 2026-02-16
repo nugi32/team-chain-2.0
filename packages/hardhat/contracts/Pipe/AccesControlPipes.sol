@@ -7,8 +7,6 @@ import "../system/interfaces/IAccessControl.sol";
 /// @notice Abstract contract providing access modifiers using a shared EmployeeAssignment contract.
 /// @dev Uses OpenZeppelin Initializable for upgradeable pattern.
 abstract contract MainAccesControlPipes {
-    /// @notice Reference to the central EmployeeAssignment contract.
-    IAccessControl public accessControl;
 
     // ===========================
     // Access Modifiers

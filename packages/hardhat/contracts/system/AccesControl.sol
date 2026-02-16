@@ -44,15 +44,10 @@ contract AccessControl is UUPSUpgradeable, Initializable {
     // Custom Errors
     // ================================
 
-    error NotOwner();
-    error ZeroAddress();
-    error AlredyHaveRole();
-    error DoesNotHaveRole();
-    error OwnerCannotBeEmployee();
+    error AccessControlErr(string errName);
     
 
      function initialize() public initializer {
-        //__UUPSUpgradeable_init();
         owner = msg.sender;
     }
 
@@ -62,7 +57,7 @@ contract AccessControl is UUPSUpgradeable, Initializable {
     
     /// @notice Ensures that only the contract owner can call the function
     modifier onlyOwner() {
-        if(msg.sender != owner) revert NotOwner();
+        if(msg.sender != owner) revert AccessControlErr("NotOwner");
         _;
     }
 
@@ -76,7 +71,7 @@ contract AccessControl is UUPSUpgradeable, Initializable {
      * @param x Address to validate
      */
     function zero_Address(address x) internal pure {
-        if (x == address(0)) revert ZeroAddress();
+        if (x == address(0)) revert AccessControlErr("ZeroAddress");
     }
     
     // ================================
@@ -96,8 +91,8 @@ contract AccessControl is UUPSUpgradeable, Initializable {
         zero_Address(newEmployee);
         
         // Validate that employee doesn't already have this role
-        if (employees[newEmployee]) revert AlredyHaveRole();
-        if (newEmployee == owner) revert OwnerCannotBeEmployee();
+        if (employees[newEmployee]) revert AccessControlErr("AlreadyHaveRole");
+        if (newEmployee == owner) revert AccessControlErr("OwnerCannotBeEmployee");
         
         // Assign the role to the employee
         employees[newEmployee]= true;
@@ -115,7 +110,7 @@ contract AccessControl is UUPSUpgradeable, Initializable {
     function removeEmployee(address employee) external onlyOwner {
         
         // Validate that employee currently has this role
-        if (!employees[employee]) revert DoesNotHaveRole();
+        if (!employees[employee]) revert AccessControlErr("DoesNotHaveRole");
         
         // Remove the role from the employee
         employees[employee] = false;
@@ -138,16 +133,17 @@ contract AccessControl is UUPSUpgradeable, Initializable {
      * @dev Only the current owner can call this function. Validates the new owner address.
      * @param newOwner Address of the new owner
      */
-function changeOwner(address newOwner) external onlyOwner {
-    zero_Address(newOwner);
-    
-    // ✓ Cegah owner menjadi employee
-    if (employees[newOwner]) revert OwnerCannotBeEmployee();
-    
-    address oldOwner = owner;
-    owner = newOwner;
+    function changeOwner(address newOwner) external onlyOwner {
+        zero_Address(newOwner);
+        
+        // ✓ Cegah owner menjadi employee
+        if (employees[newOwner]) revert AccessControlErr("OwnerCannotBeEmployee");
+        
+        address oldOwner = owner;
+        owner = newOwner;
 
-    emit OwnerChanged(oldOwner, newOwner);
-}
+        emit OwnerChanged(oldOwner, newOwner);
+    }
+    
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }

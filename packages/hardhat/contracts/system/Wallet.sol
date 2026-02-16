@@ -13,7 +13,8 @@ import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "./interfaces/IStateVariable.sol";
+import "./interfaces/IAddressRegistry.sol";
+import "./interfaces/IDataContract.sol";
 
 /* =======================
         CONTRACT
@@ -34,34 +35,17 @@ contract System_wallet is
     /* =======================
             STORAGE
     ======================= */
-    IStateVariable public stateVariable;
-    address public stateVar;
-    address public addressInitializerContract;
+    IAddressRegistry public addressRegistry;
 
     /// @dev Storage gap for upgrade safety
     uint256[50] private ___gap;
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
 //
     /* =======================
             EVENTS
     ======================= */
 
-    event contract_transfered_fund(address indexed to, uint256 indexed amount);
-    event contract_received_fund(address indexed from, uint256 indexed amount);
-
-    event contract_transferred_token(
-        address indexed token,
-        address indexed to,
-        uint256 amount
-    );
-
-    event AccessControlChanged(address newAccessControl);
-    event ContractPaused(address indexed caller);
-    event ContractUnpaused(address indexed caller);
+    event walletContractEvent(string eventName, address indexed param1, uint256 indexed param2);
 
     /* =======================
             ERRORS
@@ -74,20 +58,12 @@ contract System_wallet is
         INITIALIZER
     ======================= */
 
-    function initialize() public initializer {
+    function initialize(address _addressRegistry) external initializer {
+        if (_addressRegistry == address(0)) revert ZeroAddress();
+        addressRegistry = IAddressRegistry(_addressRegistry);
         __ReentrancyGuard_init();
         __Pausable_init();
-    }
-
-    function __walletAddressInitializer(address _stateVariable, address _accessControl) external ctcCall(addressInitializerContract) onlyOnce {
-        if (_stateVariable == address(0) || _accessControl == address(0)) revert ZeroAddress();
-
-        // Set state variable reference first to avoid calling uninitialized state
-        stateVar = _stateVariable;
-        stateVariable = IStateVariable(_stateVariable);
-
-        // Set access control
-        accessControl = IAccessControl(_accessControl);
+        emit walletContractEvent("contract initialized", _addressRegistry, 0);
     }
 
     /* =======================
@@ -99,7 +75,7 @@ contract System_wallet is
         uint256 _amount
     )
         external
-        onlyOwner(stateVariable.__getAccessControlAddress())
+        onlyOwner(addressRegistry.__accessControlContract())
         nonReentrant
         callerZeroAddr
         whenNotPaused
@@ -110,7 +86,7 @@ contract System_wallet is
         (bool success, ) = _to.call{value: _amount}("");
         require(success, "ETH transfer failed");
 
-        emit contract_transfered_fund(_to, _amount);
+        emit walletContractEvent("contract_transfered_fund", _to, _amount);
     }
 
     /* =======================
@@ -123,7 +99,7 @@ contract System_wallet is
         uint256 amount
     )
         external
-        onlyOwner(stateVariable.__getAccessControlAddress())
+        onlyOwner(addressRegistry.__accessControlContract())
         nonReentrant
         callerZeroAddr
         whenNotPaused
@@ -136,7 +112,7 @@ contract System_wallet is
 
         erc20.safeTransfer(to, amount);
 
-        emit contract_transferred_token(token, to, amount);
+        emit walletContractEvent("contract_transferred_token", token, amount);
     }
 
     /* =======================
@@ -149,7 +125,7 @@ contract System_wallet is
         uint256[] calldata amounts
     )
         external
-        onlyOwner(stateVariable.__getAccessControlAddress())
+        onlyOwner(addressRegistry.__accessControlContract())
         nonReentrant
         callerZeroAddr
         whenNotPaused
@@ -173,11 +149,7 @@ contract System_wallet is
 
             erc20.safeTransfer(tos[i], amounts[i]);
 
-            emit contract_transferred_token(
-                tokens[i],
-                tos[i],
-                amounts[i]
-            );
+            emit walletContractEvent("contract_transferred_token", tokens[i], amounts[i]);
         }
     }
 
@@ -197,36 +169,24 @@ contract System_wallet is
         ACCESS CONTROL
     ======================= */
 
-    function __changeWalletAccessControl(address _newAccesControl)
-        external
-        ctcCall(stateVar)
-    {
-        if(_newAccesControl == address(0)) revert ZeroAddress();
-        accessControl = IAccessControl(_newAccesControl);
-        emit AccessControlChanged(_newAccesControl);
-    }
-
-    function changeStateVariable(address _newStateVariable)
-        external
-        onlyOwner(stateVariable.__getAccessControlAddress())
-    {
-        if(_newStateVariable == address(0)) revert ZeroAddress();
-        stateVariable = IStateVariable(_newStateVariable);
-        emit AccessControlChanged(_newStateVariable);
+    function __changeAddressRegistry(address _newAddressRegistry) external onlyOwner(addressRegistry.__accessControlContract()) {
+        if (_newAddressRegistry == address(0)) revert ZeroAddress();
+        addressRegistry = IAddressRegistry(_newAddressRegistry);
+        emit walletContractEvent("address_registry_changed", _newAddressRegistry, 0);
     }
 
     /* =======================
         PAUSE CONTROL
     ======================= */
 
-    function pause() external onlyOwner(stateVariable.__getAccessControlAddress()) {
+    function pause() external onlyOwner(addressRegistry.__accessControlContract()) {
         _pause();
-        emit ContractPaused(msg.sender);
+        emit walletContractEvent("contract_paused", msg.sender, 0);
     }
 
-    function unpause() external onlyOwner(stateVariable.__getAccessControlAddress()) {
+    function unpause() external onlyOwner(addressRegistry.__accessControlContract()) {
         _unpause();
-        emit ContractUnpaused(msg.sender);
+        emit walletContractEvent("contract_unpaused", msg.sender, 0);
     }
 
     /* =======================
@@ -234,11 +194,11 @@ contract System_wallet is
     ======================= */
 
     receive() external payable {
-        emit contract_received_fund(msg.sender, msg.value);
+        emit walletContractEvent("contract_received_fund", msg.sender, msg.value);
     }
 
     fallback() external payable {
-        emit contract_received_fund(msg.sender, msg.value);
+        emit walletContractEvent("contract_received_fund", msg.sender, msg.value);
     }
 
     /* =======================
@@ -249,8 +209,6 @@ contract System_wallet is
         internal
         view
         override
-    {
-        if (address(accessControl) == address(0)) revert ZeroAddress();
-        if (msg.sender != accessControl.owner()) revert("Not owner");
-    }
+        onlyOwner(addressRegistry.__accessControlContract())
+    {}
 }
