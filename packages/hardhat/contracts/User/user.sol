@@ -384,4 +384,8 @@ contract UsersContract is
         Users[_user].reputation -= dataContract.__getDeadlineHitMember();
         Users[_creator].reputation -= dataContract.__getDeadlineHitCreator();
     }
+
+    function __penaltyIsBiggerThanReputation(address _user) external {
+        Users[_user].reputation = 0;
+    }
 }

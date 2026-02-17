@@ -33,4 +33,5 @@ interface IUsers {
     function __revisionRep(address _user, address _creator) external;
     function __taskAcceptRep(address _user, address _creator) external;
     function __deadlineHitRep(address _user, address _creator) external;
+    function __penaltyIsBiggerThanReputation(address _user) external;
 }

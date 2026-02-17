@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "../Pipe/StateVarPipes.sol";
-import "../Pipe/mainAccesControlPipes.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "../system/reetancyGuard.sol";
-import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import "../system/utils/addressUtils.sol";
+import "../system/utils/ReentrancyGuard.sol";
+import "../Pipe/AccesControlPipes.sol";
+import "../system/interfaces/IDataContract.sol";
+import "../system/interfaces/IAddressRegistry.sol";
+import "../system/interfaces/CTCcall/IUsers.sol";
+
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 /**
  * @title TrustlessTeamProtocol v2 (Patched, documented)
@@ -23,12 +27,12 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
  *  - Fee (protocol share) stored in `feeCollected` and withdrawn manually by employees.
  */
 contract TrustlessTeamProtocol is
-    Initializable,
-    MainAccesControl,
-    StateVarPipes,
-    SystemReentrancyGuard,
-    PausableUpgradeable,    
-    UUPSUpgradeable
+    systemAddressUtils, 
+    Initializable, 
+    UUPSUpgradeable, 
+    PausableUpgradeable,
+    MainAccesControlPipes, 
+    SystemReentrancyGuard
 {
     // =============================================================
     // ENUMS
@@ -43,16 +47,6 @@ contract TrustlessTeamProtocol is
         InProgres, 
         Completed, 
         Cancelled 
-    }
-    
-    /// @notice Task value categories based on project valuation algorithm
-    enum TaskValue {
-        Low, 
-        MidleLow,  
-        Midle, 
-        MidleHigh, 
-        High, 
-        UltraHigh
     }
 
     /// @notice Join/submission state per user relative to a task
@@ -80,7 +74,7 @@ contract TrustlessTeamProtocol is
     struct Task {
         uint256 taskId;              /// @dev Unique task identifier
         TaskStatus status;           /// @dev Current task status
-        TaskValue value;             /// @dev Calculated task value category
+        uint256 value;             /// @dev Calculated task value category
         address creator;             /// @dev Task creator address
         address member;              /// @dev Assigned member address
         string title;                /// @dev Task title
@@ -124,9 +118,6 @@ contract TrustlessTeamProtocol is
     /// @dev Task ID to submission mapping
     mapping(uint256 => TaskSubmit) public TaskSubmits;
 
-    /// @dev User address to withdrawable balance mapping
-    mapping(address => uint256) public withdrawable;
-
     /// @dev Task ID to Task mapping
     mapping(uint256 => Task) public Tasks;
 
@@ -139,89 +130,25 @@ contract TrustlessTeamProtocol is
     /// @dev Accumulated protocol fees
     uint256 public feeCollected;
 
+    IAddressRegistry public addressRegistry;
+
     /// @dev Storage gap for future upgrades
     uint256[40] private ___gap;
 
-    // =============================================================
+//   // =============================================================
     // EVENTS
     // =============================================================
 
-    // User events
-    event UserRegistered(address indexed user, string name, uint128 age);
-    event UserUnregistered(address indexed user, string name, uint128 age);
-
-    // Task lifecycle events
-    event TaskCreated(string title, uint256 indexed taskId, address indexed creator, uint256 reward, uint256 creatorStake);
-    event RegistrationOpened(uint256 indexed taskId);
-    event RegistrationClosed(uint256 indexed taskId);
-    event JoinRequested(uint256 indexed taskId, address indexed applicant, uint256 stakeAmount);
-    event JoinApproved(uint256 indexed taskId, address indexed applicant);
-    event JoinRejected(uint256 indexed taskId, address indexed applicant);
-    event TaskCancelledByMe(uint256 indexed taskId, address indexed initiator);
-    event TaskSubmitted(uint256 indexed taskId, address indexed member, string githubURL);
-    event TaskReSubmitted(uint256 indexed taskId, address indexed member);
-    event TaskApproved(uint256 indexed taskId);
-    event RevisionRequested(uint256 indexed taskId, uint8 revisionCount, uint256 newDeadline);
-    event DeadlineTriggered(uint256 indexed taskId);
-    event JoinrequestCancelled(uint256 indexed taskId, address indexed user);
-    event TaskActive(uint256 indexed taskId);
-    event TaskDeleted(uint256 taskId);
-    event Withdrawal(address indexed user, uint256 amount);
-
     // Payments / system events
-    event systemChanged(string info, address indexed newAddress, uint256 indexed value);
-    event Info(string info, uint256 indexed param1, address indexed param2, uint256 param3, uint256 param4, uint8 param5, string param6, uint128 param7);
-
+    event systemChangedEvent(string info, address indexed newAddress, uint256 indexed value);
+    event userEvent(string info, uint256 indexed param1, address indexed param2, uint256 param3, uint256 param4, uint8 param5, string param6, uint128 param7);
 
 
     // =============================================================
     // ERRORS
     // =============================================================
-
-    // Task errors
-    error TaskDoesNotExist();
-    error NotTaskCreator();
-    error NotTaskMember();
-    error AlreadyRequestedJoin();
-    error TaskNotOpen();
-    error NotCounterparty();
-    error InsufficientStake();
-    error StakeHitLimit();
-    error CancelOnlyWhenMemberAssigned();
-    error TaskNotSubmittedYet();
-    
-    // Validation errors
-    error InvalidTitle();
-    error InvalidDeadline();
-    error TooManyRevisions();
-    error InvalidRewardAmount();
-    error InvalidStakeAmount();
-    error InvalidReason();
-    
-    // Math/overflow errors
-    error RewardOverflow();
-    error ValueMismatch();
-    error StakeOverflow();
-    error StakeMismatch();
-    
-    // Submission errors
-    error NoSubmision();
-    error submissionAlreadyPending();
-    error alredyInPending();
-    
-    // Payment errors
-    error AlredyClaimed();
-    
-    // Deadline errors
-    error DeadlineNotExceeded();
-    
-    // System errors
-    error InvalidMemberStakePercentReward();
-
-    
-    // User registration errors
-    error AlredyRegistered();
-    error NotRegistered();
+    error systemError(string errName);
+    error userError(string errName);
 
     // =============================================================
     // MODIFIERS
@@ -229,50 +156,38 @@ contract TrustlessTeamProtocol is
 
     /// @dev Verifies task exists
     modifier taskExists(uint256 _taskId) {
-        if (!Tasks[_taskId].exists) revert TaskDoesNotExist();
+        if (!Tasks[_taskId].exists) revert systemError("TaskDoesNotExist");
         _;
     }
 
     /// @dev Restricts access to task creator only
     modifier onlyTaskCreator(uint256 _taskId) {
-        if (Tasks[_taskId].creator != msg.sender) revert NotTaskCreator();
+        if (Tasks[_taskId].creator != msg.sender) revert systemError("NotTaskCreator");
         _;
     }
 
     /// @dev Restricts access to task member only
     modifier onlyTaskMember(uint256 _taskId) {
-        if (Tasks[_taskId].member != msg.sender) revert NotTaskMember();
+        if (Tasks[_taskId].member != msg.sender) revert systemError("NotTaskMember");
         _;
     }
 
     /// @dev Requires user to be registered
     modifier onlyRegistered() {
-        if (!Users[msg.sender].isRegistered) revert NotRegistered();
+        if (!IUsers(addressRegistry.__usersContract()).__isRegistered(msg.sender)) revert systemError("NotRegistered");
         _;
     }
-
+//
     // =============================================================
     // INITIALIZER
     // =============================================================
 
-    /**
-     * @notice Initializes the contract with required addresses and parameters
-     * @param _accessControl Address of the access control contract
-     * @param _systemWallet Address for protocol fee withdrawals
-     * @param _stateVar Address of the state variables contract
-     * @param _initialmemberStakePercentReward Initial percentage for member stake calculation
-     * @dev Initializes parent contracts and sets up protocol configuration
-     */
+
     function initialize(
-        address _accessControl,
-        address payable _systemWallet,
-        address _stateVar,
-        uint256 _initialmemberStakePercentReward
+        address _registryAddress
     ) public initializer {
         // Validate input addresses
-        zero_Address(_systemWallet);
-        zero_Address(_accessControl);
-        zero_Address(_stateVar);
+        if (_registryAddress == address(0)) revert systemError("ZeroAddress");
 
         // Initialize parent contracts
         //__UUPSUpgradeable_init();
@@ -280,14 +195,10 @@ contract TrustlessTeamProtocol is
         __Pausable_init();
 
         // Set up access control and state variables
-        accessControl = IAccessControl(_accessControl);
-        stateVar = stateVariable(_stateVar);
+        addressRegistry = IAddressRegistry(_registryAddress);
 
-        // Initialize system configuration
-        systemWallet = _systemWallet;
         taskCounter = 0;
         feeCollected = 0;
-        memberStakePercentReward = _initialmemberStakePercentReward;
     }
 
     // =============================================================
@@ -308,7 +219,9 @@ contract TrustlessTeamProtocol is
         uint32 DeadlineHours,
         uint8 MaximumRevision,
         address user
-    ) external payable whenNotPaused onlyRegistered nonReentrant onlyUser callerZeroAddr {
+    ) external payable whenNotPaused onlyRegistered nonReentrant  onlyUser(addressRegistry.__accessControlContract()) {
+        if (user == address(0)) revert systemError("ZeroAddress");
+        
         // Increment and get new task ID
         taskCounter++;
         uint256 taskId = taskCounter;
@@ -317,7 +230,7 @@ contract TrustlessTeamProtocol is
         Tasks[taskId] = Task({
             taskId: taskId,
             status: TaskStatus.Created,
-            value: __getProjectValue(DeadlineHours, MaximumRevision, msg.value, user),
+            value: ___getProjectValue(DeadlineHours, MaximumRevision, msg.value, user),
             creator: user,
             member: address(0),
             title: Title,
@@ -336,23 +249,25 @@ contract TrustlessTeamProtocol is
         });
 
         // Update creator statistics
-        Users[user].totalTasksCreated++;
+        IUsers(addressRegistry.__usersContract()).__taskCreateCounter(user);
 
-        emit TaskCreated(Title, taskId, user, msg.value, 0);
+        emit userEvent("TaskCreated", taskId, user, msg.value, 0, 0, Title, 0);
     }
 
      function deleteTask(uint256 taskId, address user) external nonReentrant onlyRegistered {
+        if (!Tasks[taskId].exists) revert systemError("TaskDoesNotExist");
+        
         Task storage t = Tasks[taskId];
 
         t.status = TaskStatus.Cancelled;
         t.isCreatorStakeLocked = false;
         t.exists = false;
 
-        withdrawable[user] += t.reward;
+        IUsers(addressRegistry.__usersContract()).__addUserBalance(user, t.reward);
         if (t.creatorStake > 0) {
-            withdrawable[user] += t.creatorStake;
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(user, t.creatorStake);
         }
-        emit TaskDeleted(taskId);
+        emit userEvent("TaskDeleted", taskId, user, 0, 0, 0, "", 0);
     }
 
     /**
@@ -364,11 +279,11 @@ contract TrustlessTeamProtocol is
         Task storage t = Tasks[taskId];
         
         // Validate task state and stake amount
-        if (t.status != TaskStatus.Created) revert TaskNotOpen();
-        if (msg.value != __getCreatorStake(t.deadlineHours, t.maxRevision, t.reward, t.creator)) revert StakeMismatch();
+        if (t.status != TaskStatus.Created) revert systemError("TaskNotOpen");
+        if (msg.value != ___getCreatorStake(t.deadlineHours, t.maxRevision, t.reward, t.creator)) revert systemError("StakeMismatch");
 
         // Calculate and deduct protocol fee
-        uint256 totalFee = (msg.value * ___getFeePercentage()) / 100;
+        uint256 totalFee = (msg.value * IDataContract(addressRegistry.__dataContract()).__getFeePercentage()) / 100;
         t.creatorStake = msg.value - totalFee;
         
         // Update task state
@@ -376,7 +291,7 @@ contract TrustlessTeamProtocol is
         t.isCreatorStakeLocked = true;
         feeCollected += totalFee;
         
-        emit TaskActive(taskId);
+        emit userEvent("TaskActive", taskId, t.creator, 0, 0, 0, "", 0);
     }
 
     // =============================================================
@@ -390,9 +305,9 @@ contract TrustlessTeamProtocol is
      */
     function openRegistration(uint256 taskId) external taskExists(taskId) onlyTaskCreator(taskId) whenNotPaused {
         Task storage t = Tasks[taskId];
-        if (t.status != TaskStatus.Active) revert TaskNotOpen();
+        if (t.status != TaskStatus.Active) revert systemError("TaskNotOpen");
         t.status = TaskStatus.OpenRegistration;
-        emit RegistrationOpened(taskId);
+        emit userEvent("RegistrationOpened", taskId, t.creator, 0, 0, 0, "", 0);
     }
 
     /**
@@ -402,9 +317,9 @@ contract TrustlessTeamProtocol is
      */
     function closeRegistration(uint256 taskId) external taskExists(taskId) onlyTaskCreator(taskId) whenNotPaused {
         Task storage t = Tasks[taskId];
-        if (t.status != TaskStatus.OpenRegistration) revert TaskNotOpen();
+        if (t.status != TaskStatus.OpenRegistration) revert systemError("TaskNotOpen");
         t.status = TaskStatus.Active;
-        emit RegistrationClosed(taskId);
+        emit userEvent("RegistrationClosed", taskId, t.creator, 0, 0, 0, "", 0);
     }
 
     /**
@@ -412,23 +327,25 @@ contract TrustlessTeamProtocol is
      * @param taskId ID of the task to join
      * @dev Requires exact member stake amount in msg.value, creates pending join request
      */
-    function requestJoinTask(uint256 taskId, address user) external payable taskExists(taskId) whenNotPaused onlyRegistered onlyUser callerZeroAddr {
+    function requestJoinTask(uint256 taskId, address user) external payable taskExists(taskId) whenNotPaused onlyRegistered  onlyUser(addressRegistry.__accessControlContract()) {
+        if (user == address(0)) revert systemError("ZeroAddress");
+        
         Task storage t = Tasks[taskId];
         JoinRequest[] storage reqs = joinRequests[taskId];
 
         // Check for duplicate pending requests
         for (uint256 i = 0; i < reqs.length; ++i) {
-            if (reqs[i].applicant == user && reqs[i].isPending) revert AlreadyRequestedJoin();
+            if (reqs[i].applicant == user && reqs[i].isPending) revert systemError("AlreadyRequestedJoin");
         }
 
         // Validate task state and permissions
-        if (t.status != TaskStatus.OpenRegistration) revert TaskNotOpen();
-        if (user == t.creator) revert TaskNotOpen();
+        if (t.status != TaskStatus.OpenRegistration) revert systemError("TaskNotOpen");
+        if (user == t.creator) revert systemError("TaskNotOpen");
 
         // Validate stake amount
         uint256 memberStake = getMemberRequiredStake(taskId);
-        if (___getMaxStake() < memberStake) revert StakeHitLimit();
-        if (msg.value != memberStake) revert InsufficientStake();
+        if ( IDataContract(addressRegistry.__dataContract()).__getMaxStake() < memberStake) revert systemError("StakeHitLimit");
+        if (msg.value != memberStake) revert systemError("InsufficientStake");
 
         // Create new join request
         joinRequests[taskId].push(JoinRequest({
@@ -439,7 +356,7 @@ contract TrustlessTeamProtocol is
             hasWithdrawn: false
         }));
 
-        emit JoinRequested(taskId, user, msg.value);
+        emit userEvent("JoinRequested", taskId, user, msg.value, 0, 0, "", 0);
     }
 
     /**
@@ -458,12 +375,12 @@ contract TrustlessTeamProtocol is
                 reqs[i].hasWithdrawn = true;
                 uint256 stake = reqs[i].stakeAmount;
                 reqs[i].stakeAmount = 0;
-                withdrawable[user] += stake;
-                emit JoinrequestCancelled(taskId, user);
+                IUsers(addressRegistry.__usersContract()).__addUserBalance(user, stake);
+                emit userEvent("JoinrequestCancelled", taskId, user, stake, 0, 0, "", 0);
                 return;
             }
         }
-        revert("no pending request");
+        revert systemError("NoPendingRequest");
     }
 
     /**
@@ -492,13 +409,13 @@ contract TrustlessTeamProtocol is
                 break;
             }
         }
-        require(found, "request not found");
+        if (!found) revert systemError("NoPendingRequest");
 
         // Set task deadline and update status
         t.deadlineAt = block.timestamp + (uint256(t.deadlineHours) * 1 hours);
         t.status = TaskStatus.InProgres;
 
-        emit JoinApproved(taskId, t.member);
+        emit userEvent("JoinApproved", taskId, t.member, 0, 0, 0, "", 0);
     }
 
     /**
@@ -519,13 +436,14 @@ contract TrustlessTeamProtocol is
                 uint256 stake = requests[i].stakeAmount;
                 requests[i].stakeAmount = 0;
                 requests[i].hasWithdrawn = true;
-                withdrawable[_applicant] += stake;
+                IUsers(addressRegistry.__usersContract()).__addUserBalance(_applicant, stake);
                 found = true;
                 break;
             }
         }
-        require(found, "request not found");
-        emit JoinRejected(taskId, _applicant);
+        if (!found) revert systemError("NoPendingRequest");
+        
+        emit userEvent("JoinRejected", taskId, _applicant, 0, 0, 0, "", 0);
     }
 
     // =============================================================
@@ -537,34 +455,36 @@ contract TrustlessTeamProtocol is
      * @param taskId ID of the task to cancel
      * @dev Applies penalties based on who initiates cancellation and updates reputation
      */
-    function cancelByMe(uint256 taskId, address user) external taskExists(taskId) nonReentrant onlyUser whenNotPaused {
+    function cancelByMe(uint256 taskId, address user) external taskExists(taskId) nonReentrant  onlyUser(addressRegistry.__accessControlContract()) whenNotPaused {
+        if (user == address(0)) revert systemError("ZeroAddress");
+        
         Task storage t = Tasks[taskId];
 
         // Validate permissions and state
-        if (user != t.creator && user != t.member) revert NotCounterparty();
-        if (t.status != TaskStatus.InProgres) revert TaskNotOpen();
+        if (user != t.creator && user != t.member) revert systemError("NotCounterparty");
+        if (t.status != TaskStatus.InProgres) revert systemError("TaskNotOpen");
 
         if (user == t.member) {
             // Member cancellation: member loses portion of stake to creator
-            uint256 penaltyToCreator = (t.memberStake * ___getNegPenalty()) / 100;
-            uint256 memberReturn = (t.memberStake * __CounterPenalty()) / 100;
+            uint256 penaltyToCreator = (t.memberStake * IDataContract(addressRegistry.__dataContract()).__getNegPenalty()) / 100;
+            uint256 memberReturn = (t.memberStake * __getCounterPenalty() / 100);
 
             // Distribute funds
-            withdrawable[t.creator] += t.creatorStake + t.reward + penaltyToCreator;
-            withdrawable[t.member] += memberReturn;
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(t.creator, t.creatorStake + t.reward + penaltyToCreator);
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(t.member, memberReturn);
 
             // Unlock stakes
             t.isMemberStakeLocked = false;
             t.isCreatorStakeLocked = false;
         } else {
             // Creator cancellation: creator loses portion of stake to member
-            if (t.member == address(0)) revert CancelOnlyWhenMemberAssigned();
+            if (t.member == address(0)) revert systemError("CancelOnlyWhenMemberAssigned");
 
-            uint256 penaltyToMember = (t.creatorStake * ___getNegPenalty()) / 100;
-            uint256 creatorReturn = (t.creatorStake * __CounterPenalty()) / 100 + t.reward;
+            uint256 penaltyToMember = (t.creatorStake * IDataContract(addressRegistry.__dataContract()).__getNegPenalty()) / 100;
+            uint256 creatorReturn = (t.creatorStake * __getCounterPenalty() / 100) + t.reward;
 
-            withdrawable[t.member] += t.memberStake + penaltyToMember;
-            withdrawable[t.creator] += creatorReturn;
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(t.member, t.memberStake + penaltyToMember);
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(t.creator, creatorReturn);
 
             t.isMemberStakeLocked = false;
             t.isCreatorStakeLocked = false;
@@ -574,18 +494,19 @@ contract TrustlessTeamProtocol is
         t.status = TaskStatus.Cancelled;
 
         // Apply reputation penalty
-        if (Users[user].isRegistered) {
-            if (Users[user].reputation < ___getCancelByMe()) {
-                Users[user].reputation = 0;
+        if (IUsers(addressRegistry.__usersContract()).__isRegistered(t.member)) {
+            uint256 userReputation = IUsers(addressRegistry.__usersContract()).__getUserReputation(t.member);
+            if (userReputation < IDataContract(addressRegistry.__dataContract()).__getCancelByMe()) {
+                IUsers(addressRegistry.__usersContract()).__penaltyIsBiggerThanReputation(t.member);
             } else {
-                Users[user].reputation -= ___getCancelByMe();
+                IUsers(addressRegistry.__usersContract()).__cancelByMeRep(t.member);
             }
         }
 
         // Update failure counter
-        Users[user].totalTasksFailed++;
+        IUsers(addressRegistry.__usersContract()).__taskFailCounter(t.member, t.creator);
 
-        emit TaskCancelledByMe(taskId, user);
+        emit userEvent("TaskCancelledByMe", taskId, user, 0, 0, 0, "", 0);
     }
 
     // =============================================================
@@ -604,16 +525,18 @@ contract TrustlessTeamProtocol is
         taskExists(taskId)
         onlyTaskMember(taskId)
         whenNotPaused
-        onlyUser
+        onlyUser(addressRegistry.__accessControlContract())
     {
+        if (user == address(0)) revert systemError("ZeroAddress");
+        
         Task storage t = Tasks[taskId];
         
         // Validate task state and input
-        if (t.status != TaskStatus.InProgres) revert TaskNotOpen();
-        if (t.member != user) revert NotTaskMember();
+        if (t.status != TaskStatus.InProgres) revert systemError("TaskNotOpen");
+        if (t.member != user) revert systemError("NotTaskMember");
 
         TaskSubmit storage s = TaskSubmits[taskId];
-        if (s.sender != address(0) && s.status == SubmitStatus.Pending) revert submissionAlreadyPending();
+        if (s.sender != address(0) && s.status == SubmitStatus.Pending) revert systemError("SubmissionAlreadyPending");
 
         // Create submission record
         TaskSubmits[taskId] = TaskSubmit({
@@ -625,7 +548,7 @@ contract TrustlessTeamProtocol is
             newDeadline: t.deadlineAt
         });
 
-        emit TaskSubmitted(taskId, user, PullRequestURL);
+        emit userEvent("TaskSubmitted", taskId, user, 0, 0, 0, PullRequestURL, 0);
     }
 
     /**
@@ -640,20 +563,22 @@ contract TrustlessTeamProtocol is
         taskExists(taskId)
         onlyTaskMember(taskId)
         whenNotPaused
-        onlyUser
+        onlyUser(addressRegistry.__accessControlContract())
     {
+        if (user == address(0)) revert systemError("ZeroAddress");
+        
         Task storage t = Tasks[taskId];
         TaskSubmit storage s = TaskSubmits[taskId];
 
         // Validate submission state
-        if (s.sender == address(0)) revert NoSubmision();
-        if (t.member != user) revert NotTaskMember();
-        if (s.status != SubmitStatus.RevisionNeeded) revert TaskNotOpen();
+        if (s.sender == address(0)) revert systemError("NoSubmision");
+        if (t.member != user) revert systemError("NotTaskMember");
+        if (s.status != SubmitStatus.RevisionNeeded) revert systemError("TaskNotOpen");
 
         // Auto-approve if revision limit exceeded
         if (s.revisionTime > t.maxRevision) {
             if (s.status == SubmitStatus.Pending) {
-                revert alredyInPending();
+                revert systemError("AlreadyInPending");
             } else {
                 __approveTask(taskId);
                 return;
@@ -661,12 +586,11 @@ contract TrustlessTeamProtocol is
         }
 
         // Validate input and update submission
-
         s.note = Note;
         s.status = SubmitStatus.Pending;
         s.githubURL = GithubFixedURL;
 
-        emit TaskReSubmitted(taskId, user);
+        emit userEvent("TaskReSubmitted", taskId, user, 0, 0, 0, GithubFixedURL, 0);
     }
 
     /**
@@ -684,7 +608,8 @@ contract TrustlessTeamProtocol is
         TaskSubmit storage s = TaskSubmits[taskId];
 
         // Validate state and input
-        if (s.status != SubmitStatus.Pending) revert TaskNotOpen();
+        if (!t.exists) revert systemError("TaskDoesNotExist");
+        if (s.status != SubmitStatus.Pending) revert systemError("TaskNotOpen");
 
         // Calculate new deadline
         uint256 additionalSeconds = (additionalDeadlineHours * 1 hours);
@@ -698,7 +623,7 @@ contract TrustlessTeamProtocol is
         // Auto-approve if revision limit exceeded
         if (s.revisionTime > t.maxRevision) {
             if (s.status == SubmitStatus.Pending) {
-                revert alredyInPending();
+                revert systemError("AlreadyInPending");
             } else {
                 __approveTask(taskId);
                 return;
@@ -706,22 +631,22 @@ contract TrustlessTeamProtocol is
         }
 
         // Apply reputation penalties for revision
-        if (Users[t.member].isRegistered) {
-            if (Users[t.member].reputation < ___getRevisionPenalty()) {
-                Users[t.member].reputation = 0;
-            } else {
-                Users[t.member].reputation -= ___getRevisionPenalty();
+        if (IUsers(addressRegistry.__usersContract()).__isRegistered(t.member) && IUsers(addressRegistry.__usersContract()).__isRegistered(t.creator)) {
+            uint256 userReputation = IUsers(addressRegistry.__usersContract()).__getUserReputation(t.member);
+            uint256 creatorReputation = IUsers(addressRegistry.__usersContract()).__getUserReputation(t.creator);
+
+            if (creatorReputation < IDataContract(addressRegistry.__dataContract()).__getRevisionPenalty()) {
+                IUsers(addressRegistry.__usersContract()).__penaltyIsBiggerThanReputation(t.creator);
             }
-        }
-        if (Users[t.creator].isRegistered) {
-            if (Users[t.creator].reputation < ___getRevisionPenalty()) {
-                Users[t.creator].reputation = 0;
-            } else {
-                Users[t.creator].reputation -= ___getRevisionPenalty();
+
+            if (userReputation < IDataContract(addressRegistry.__dataContract()).__getRevisionPenalty()) {
+                IUsers(addressRegistry.__usersContract()).__penaltyIsBiggerThanReputation(t.member);
             }
+                IUsers(addressRegistry.__usersContract()).__revisionRep(t.member, t.creator);
+            
         }
 
-        emit RevisionRequested(taskId, s.revisionTime, t.deadlineAt);
+        emit userEvent("RevisionRequested", taskId, address(0), s.revisionTime, t.deadlineAt, 0, Note, 0);
     }
 
     /**
@@ -753,104 +678,82 @@ contract TrustlessTeamProtocol is
         TaskSubmit storage s = TaskSubmits[taskId];
 
         // Validate deadline conditions
-        if (s.status == SubmitStatus.Pending) revert alredyInPending();
-        if (t.status != TaskStatus.InProgres) revert TaskNotOpen();
-        if (t.deadlineAt == 0) revert InvalidDeadline();
-        if (block.timestamp < t.deadlineAt) revert DeadlineNotExceeded();
+        if (s.status == SubmitStatus.Pending) revert systemError("AlreadyInPending");
+        if (t.status != TaskStatus.InProgres) revert systemError("TaskNotOpen");
+        if (t.deadlineAt == 0) revert systemError("InvalidDeadline");
+        if (block.timestamp < t.deadlineAt) revert systemError("DeadlineNotExceeded");
 
         // Distribute stakes with penalties
         if (t.member != address(0) && t.memberStake > 0) {
-            uint256 toMember = (t.memberStake * ___getNegPenalty()) / 100;
-            uint256 toCreator = (t.memberStake * __CounterPenalty()) / 100;
+            uint256 toMember = (t.memberStake * IDataContract(addressRegistry.__dataContract()).__getNegPenalty()) / 100;
+            uint256 toCreator = (t.memberStake * __getCounterPenalty() / 100);
 
-            withdrawable[t.member] += toMember;
-            withdrawable[t.creator] += toCreator + t.creatorStake + t.reward;
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(t.member, toMember);
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(t.creator, toCreator + t.creatorStake + t.reward);
 
             // Unlock stakes
             t.isMemberStakeLocked = false;
             t.isCreatorStakeLocked = false;
         } else {
             // No member assigned, return funds to creator
-            withdrawable[t.creator] += t.creatorStake + t.reward;
+            IUsers(addressRegistry.__usersContract()).__addUserBalance(t.creator, t.creatorStake + t.reward);
             t.isMemberStakeLocked = false;
             t.isCreatorStakeLocked = false;
         }
 
         // Apply reputation penalties
-        if (Users[t.member].isRegistered) {
-            if (Users[t.member].reputation < ___getDeadlineHitMember()) {
-                Users[t.member].reputation = 0;
-            } else {
-                Users[t.member].reputation -= ___getDeadlineHitMember();
-            }
-        }
+        if (IUsers(addressRegistry.__usersContract()).__isRegistered(t.member) && IUsers(addressRegistry.__usersContract()).__isRegistered(t.creator)) {
+            uint256 memberReputation = IUsers(addressRegistry.__usersContract()).__getUserReputation(t.member);
+            uint256 creatorReputation = uint256(IUsers(addressRegistry.__usersContract()).__getUserReputation(t.creator));
 
-        if (Users[t.creator].isRegistered) {
-            if (Users[t.creator].reputation < ___getDeadlineHitCreator()) {
-                Users[t.creator].reputation = 0;
-            } else {
-                Users[t.creator].reputation -= ___getDeadlineHitCreator();
+            if  (creatorReputation < IDataContract(addressRegistry.__dataContract()).__getDeadlineHitCreator()) {
+                IUsers(addressRegistry.__usersContract()).__penaltyIsBiggerThanReputation(t.creator);
             }
+            if (memberReputation < IDataContract(addressRegistry.__dataContract()).__getDeadlineHitMember()) {
+                IUsers(addressRegistry.__usersContract()).__penaltyIsBiggerThanReputation(t.member);
+            }
+
+            IUsers(addressRegistry.__usersContract()).__deadlineHitRep(t.member, t.creator);
         }
 
         // Update task state and counters
         t.status = TaskStatus.Cancelled;
-        Users[t.creator].totalTasksFailed++;
-        if (t.member != address(0)) {
-            Users[t.member].totalTasksFailed++;
-        }
+        IUsers(addressRegistry.__usersContract()).__taskFailCounter(t.creator, t.member);
 
-        emit DeadlineTriggered(taskId);
+        emit userEvent("DeadlineTriggered", taskId, address(0), 0, 0, 0, "", 0);
     }
 
-    // =============================================================
-    // PAYMENT WITHDRAWALS
-    // =============================================================
 
-    /**
-     * @notice Withdraws available balance to caller
-     * @dev Implements pull payment pattern, transfers available ETH to caller
-     */
-    function withdraw(address user) external nonReentrant onlyUser whenNotPaused {
-        uint256 amount = withdrawable[user];
-        
-        // Reset balance before transfer to prevent reentrancy
-        withdrawable[user] = 0;
-        
-        // Transfer funds
-        (bool ok, ) = payable(user).call{value: amount}("");
-        require(ok, "withdraw failed");
-        
-        emit Withdrawal(user, amount);
-    }
+
+
+
+
+
+
+
+
+
 
     // =============================================================
     // INTERNAL HELPERS
     // =============================================================
 
-    /**
-     * @notice Calculates project value score based on task parameters
-     * @param DeadlineHours Task deadline in hours
-     * @param MaximumRevision Maximum allowed revisions
-     * @param rewardWei Task reward in wei
-     * @param Caller Task creator address
-     * @return _value Calculated project value score
-     * @dev Uses weighted formula considering reward, revisions, reputation, and deadline
-     */
-    function __getProjectValue(
+
+    function ___getProjectValue(
         uint32 DeadlineHours,
         uint8 MaximumRevision,
         uint256 rewardWei,
         address Caller
-    ) internal view returns (TaskValue) {
+    ) internal view returns (uint256) {
+        
         // Convert reward to ether units for calculation
         uint256 rewardEtherUnits = rewardWei / 1 ether;
         
         // Calculate positive factors (reward and revisions)
-        uint256 pos = (___getRewardScore() * rewardEtherUnits) + ((___getRevisionScore() * MaximumRevision));
+        uint256 pos = (IDataContract(addressRegistry.__dataContract()).__getRewardScore() * rewardEtherUnits) + ((IDataContract(addressRegistry.__dataContract()).__getRevisionScore() * MaximumRevision));
         
         // Calculate negative factors (reputation and deadline)
-        uint256 neg = (___getReputationScore() * __seeReputation(Caller)) + (___getDeadlineScore() * DeadlineHours);
+        uint256 neg = (IDataContract(addressRegistry.__dataContract()).__getReputationScore() * IUsers(addressRegistry.__usersContract()).__getUserReputation(Caller)) + (IDataContract(addressRegistry.__dataContract()).__getDeadlineScore() * DeadlineHours);
         
         uint256 rawValue;
 
@@ -863,63 +766,20 @@ contract TrustlessTeamProtocol is
         
         // Normalize value
         uint256 _value = (rawValue * 1 ether) / 100;
-
-        if (_value <= ___getCategoryLow()) {
-            return TaskValue.Low;
-        } else if (_value <= ___getCategoryMidleLow()) {
-            return TaskValue.MidleLow;
-        } else if (_value <= ___getCategoryMidle()) {
-            return TaskValue.Midle;
-        } else if (_value <= ___getCategoryMidleHigh()) {
-            return TaskValue.MidleHigh;
-        } else if (_value <= ___getCategoryHigh()) {
-            return TaskValue.High;
-        } else {
-            return TaskValue.UltraHigh;
-        }
+        return _value;
     }
 
-    /**
-     * @notice Calculates required creator stake based on task value category
-     * @param DeadlineHours Task deadline in hours
-     * @param MaximumRevision Maximum allowed revisions
-     * @param rewardWei Task reward in wei
-     * @param Caller Task creator address
-     * @return Required creator stake amount in wei
-     * @dev Stake amount varies based on project value categorization
-     */
-    function __getCreatorStake(
+    function ___getCreatorStake(
         uint32 DeadlineHours,
         uint8 MaximumRevision,
         uint256 rewardWei,
         address Caller
     ) public view returns (uint256) {
-        TaskValue category = __getProjectValue(DeadlineHours, MaximumRevision, rewardWei, Caller);
+        uint256 category = ___getProjectValue(DeadlineHours, MaximumRevision, rewardWei, Caller);
 
-        // Return stake amount based on category
-        if (category == TaskValue.Low) {
-            return ___getStakeLow();
-        } else if (category == TaskValue.MidleLow) {
-            return ___getStakeMidLow();
-        } else if (category == TaskValue.Midle) {
-            return ___getStakeMid();
-        } else if (category == TaskValue.MidleHigh) {
-            return ___getStakeMidHigh();
-        } else if (category == TaskValue.High) {
-            return ___getStakeHigh();
-        } else {
-            return ___getStakeUltraHigh();
-        }
-    }
-
-    /**
-     * @notice Calculates required creator stake for a taskF
-     * @param taskId ID of the task
-     * @return Required creator stake amount in wei
-     */
-    function getCreatorStake(uint256 taskId) public view taskExists(taskId) whenNotPaused returns (uint256) {
-        Task storage t = Tasks[taskId];
-        return __getCreatorStake(t.deadlineHours, t.maxRevision, t.reward, t.creator);
+        uint256 creatorStake = (category * IDataContract(addressRegistry.__dataContract()).__getCreatorStakeFromProjectValuePercentage()) / 100;
+        
+        return creatorStake;
     }
 
     /**
@@ -929,21 +789,7 @@ contract TrustlessTeamProtocol is
      */
     function getMemberRequiredStake(uint256 taskId) public view taskExists(taskId) returns (uint256) {
         Task storage t = Tasks[taskId];
-        return (t.reward * memberStakePercentReward) / 100;
-    }
-
-    /**
-     * @notice Retrieves reputation score for an address
-     * @param who Address to check reputation for
-     * @return reputation score (0 if user not registered)
-     * @dev Fallback for compatibility with different user data structures
-     */
-    function __seeReputation(address who) internal view returns (uint128) {
-        if (Users[who].isRegistered) {
-            return Users[who].reputation;
-        } else {
-            return 0;
-        }
+        return (t.reward * IDataContract(addressRegistry.__dataContract()).__getMemberStakeFromRewardPercentage()) / 100;
     }
 
     /**
@@ -956,18 +802,18 @@ contract TrustlessTeamProtocol is
         TaskSubmit storage s = TaskSubmits[taskId];
 
         // Validate task and submission state
-        if (t.status != TaskStatus.InProgres) revert TaskNotOpen();
-        if (s.status != SubmitStatus.Pending) revert TaskNotSubmittedYet();
-        if (t.isRewardClaimed == true) revert AlredyClaimed();
-        if (s.sender == address(0)) revert NoSubmision();
+        if (t.status != TaskStatus.InProgres) revert systemError("TaskNotOpen");
+        if (s.status != SubmitStatus.Pending) revert systemError("TaskNotSubmittedYet");
+        if (t.isRewardClaimed == true) revert systemError("AlredyClaimed");
+        if (s.sender == address(0)) revert systemError("NoSubmision");
 
         // Calculate payout amounts
         uint256 memberGet = t.reward + t.memberStake;
         uint256 creatorGet = t.creatorStake;
 
         // Credit withdrawable balances
-        withdrawable[t.member] += memberGet;
-        withdrawable[t.creator] += creatorGet;
+        IUsers(addressRegistry.__usersContract()).__addUserBalance(t.member, memberGet);
+        IUsers(addressRegistry.__usersContract()).__addUserBalance(t.creator, creatorGet);
 
         // Update task state
         t.isMemberStakeLocked = false;
@@ -976,12 +822,13 @@ contract TrustlessTeamProtocol is
         t.status = TaskStatus.Completed;
 
         // Update reputation
-        if (Users[t.member].isRegistered) Users[t.member].reputation += ___getTaskAcceptMember();
-        if (Users[t.creator].isRegistered) Users[t.creator].reputation += ___getTaskAcceptCreator();
+        if (IUsers(addressRegistry.__usersContract()).__isRegistered(t.member) && IUsers(addressRegistry.__usersContract()).__isRegistered(t.creator)) {
+            IUsers(addressRegistry.__usersContract()).__taskAcceptRep(t.member, t.creator);
+        }
+
 
         // Update completion counters
-        Users[t.creator].totalTasksCompleted++;
-        Users[t.member].totalTasksCompleted++;
+        IUsers(addressRegistry.__usersContract()).__taskCompleteCounter(t.member, t.creator);
 
         // Clear submission data
         s.githubURL = "";
@@ -991,7 +838,7 @@ contract TrustlessTeamProtocol is
         s.revisionTime = 0;
         s.newDeadline = 0;
 
-        emit TaskApproved(taskId);
+        emit userEvent("TaskApproved", taskId, address(0), 0, 0, 0, "", 0);
     }
 
     /**
@@ -999,8 +846,8 @@ contract TrustlessTeamProtocol is
      * @return Counter penalty percentage (100 - negative penalty)
      * @dev Used to calculate the portion returned to the non-penalized party
      */
-    function __CounterPenalty() internal view returns (uint64) {
-        return uint32(100) - ___getNegPenalty();
+    function __getCounterPenalty() internal view returns (uint64) {
+        return uint32(100) - IDataContract(addressRegistry.__dataContract()).__getNegPenalty();
     }
 
     // =============================================================
@@ -1023,30 +870,33 @@ contract TrustlessTeamProtocol is
      * @notice Withdraws accumulated protocol fees to system wallet
      * @dev Only callable by employees, transfers collected fees to systemWallet
      */
-    function withdrawToSystemWallet() external onlyOwner nonReentrant whenNotPaused {
+    function withdrawToSystemWallet() external onlyOwner(addressRegistry.__accessControlContract())  nonReentrant whenNotPaused {
         uint256 amount = feeCollected;
         feeCollected = 0;
-        (bool ok, ) = systemWallet.call{value: amount}("");
-        require(ok, "withdraw failed");
-        emit systemChanged("withdrawToSystemWallet", address(0), amount);
+        (bool ok, ) = addressRegistry.__walletContract().call{value: amount}("");
+        if (!ok) revert systemError("WithdrawFailed");
+        
+        emit systemChangedEvent("withdrawToSystemWallet", address(0), amount);
     }
 
     /**
      * @notice Pauses contract functionality
      * @dev Only callable by employees, prevents most state-changing functions
      */
-    function pause(address caller) external onlyOwner {
+    function pause(address caller) external onlyOwner(addressRegistry.__accessControlContract())  {
+        if (caller == address(0)) revert systemError("ZeroAddress");
         _pause();
-        emit systemChanged("contract paused",caller, 0);
+        emit systemChangedEvent("contract paused", caller, 0);
     }
 
     /**
      * @notice Unpauses contract functionality
      * @dev Only callable by employees, restores normal operation
      */
-    function unpause(address caller) external onlyOwner {
+    function unpause(address caller) external onlyOwner(addressRegistry.__accessControlContract())  {
+        if (caller == address(0)) revert systemError("ZeroAddress");
         _unpause();
-        emit systemChanged("contract Unpaused", caller, 0);
+        emit systemChangedEvent("contract Unpaused", caller, 0);
     }
 
     // =============================================================
@@ -1057,14 +907,14 @@ contract TrustlessTeamProtocol is
      * @notice Receive function - rejects all direct ETH transfers
      */
     receive() external payable {
-        revert();
+        revert systemError("DirectEtherTransferNotAllowed");
     }
 
     /**
      * @notice Fallback function - rejects all unrecognized calls
      */
     fallback() external payable {
-        revert();
+        revert systemError("FunctionNotFound");
     }
 
     // =============================================================
@@ -1076,5 +926,7 @@ contract TrustlessTeamProtocol is
      * @param newImplementation Address of the new implementation contract
      * @dev Only callable by owner, implements UUPS upgrade pattern
      */
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner whenNotPaused {}
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner(addressRegistry.__accessControlContract())  whenNotPaused {
+        if (newImplementation == address(0)) revert systemError("ZeroAddress");
+    }
 }
