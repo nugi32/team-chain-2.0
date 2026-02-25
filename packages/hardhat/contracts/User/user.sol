@@ -52,14 +52,14 @@ contract UsersContract is
     );
 
     // Errors
-    error userErros(string errName);
+    error userError(string errName);
 
     /**
      * @notice Initializes the UsersContract
      * @param _addressRegistry Address of the AddressRegistry contract
      */
     function initialize(address _addressRegistry) external initializer {
-        if (_addressRegistry == address(0)) revert userErros("ZeroAddress");
+        if (_addressRegistry == address(0)) revert userError("ZeroAddress");
         
         addressRegistry = IAddressRegistry(_addressRegistry);
         
@@ -86,10 +86,10 @@ contract UsersContract is
         User storage u = Users[_user];
 
         // Validate registration
-        if (u.isRegistered) revert userErros("AlreadyRegistered");
+        if (u.isRegistered) revert userError("AlreadyRegistered");
         
         bytes32 gitHash = keccak256(abi.encodePacked(_githubURL));
-        if (usedGitURL[gitHash]) revert userErros("GitProfileAlreadyUsed");
+        if (usedGitURL[gitHash]) revert userError("GitProfileAlreadyUsed");
 
         // Initialize user profile
         u.reputation = 0;
@@ -119,7 +119,7 @@ contract UsersContract is
         callerZeroAddr
         returns (string memory)
     {
-        if (!__isRegistered(_user)) revert userErros("UserNotRegistered");
+        if (!__isRegistered(_user)) revert userError("UserNotRegistered");
         
         User memory u = Users[_user];
         u.isActive = false;
@@ -141,7 +141,7 @@ contract UsersContract is
     ) external nonReentrant callerZeroAddr onlyUser(addressRegistry.__accessControlContract()) {
         User storage u = Users[_user];
         
-        if (u.balance < _amount) revert userErros("InsufficientFunds");
+        if (u.balance < _amount) revert userError("InsufficientFunds");
         
         u.balance -= _amount;
         payable(_user).transfer(_amount);
@@ -157,7 +157,7 @@ contract UsersContract is
         User storage u = Users[_user];
         uint256 amount = u.balance;
         
-        if (amount == 0) revert userErros("InsufficientFunds");
+        if (amount == 0) revert userError("InsufficientFunds");
         
         u.balance = 0;
         payable(_user).transfer(amount);
@@ -171,7 +171,7 @@ contract UsersContract is
         external 
         onlyOwner(addressRegistry.__accessControlContract()) 
     {
-        if (_newAddressRegistry == address(0)) revert userErros("ZeroAddress");
+        if (_newAddressRegistry == address(0)) revert userError("ZeroAddress");
         
         addressRegistry = IAddressRegistry(_newAddressRegistry);
         
@@ -339,6 +339,16 @@ contract UsersContract is
      */
     function __addUserBalance(address _user, uint256 _amount) external {
         Users[_user].balance += _amount;
+    }
+
+    /**
+     * @notice Removes funds from user's balance
+     * @param _user Address of the user
+     * @param _amount Amount to remove
+     */
+    function __takeUserBalance(address _user, uint256 _amount) external {
+        if (Users[_user].balance < _amount) revert userError("InsufficientBalance");
+        Users[_user].balance -= _amount;
     }
 
     /**

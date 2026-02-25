@@ -29,6 +29,7 @@ interface IUsers {
     function __taskCompleteCounter(address _user, address _creator) external;
     function __taskFailCounter(address _user, address _creator) external;
     function __addUserBalance(address _user, uint256 _amount) external;
+    function __takeUserBalance(address _user, uint256 _amount) external;
     function __cancelByMeRep(address _user) external;
     function __revisionRep(address _user, address _creator) external;
     function __taskAcceptRep(address _user, address _creator) external;
