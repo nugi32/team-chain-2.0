@@ -14,11 +14,8 @@ interface IUsers {
     function __getTotalTasksCompleted(address _user) external view returns (uint256);
     function __getTotalTasksFailed(address _user) external view returns (uint256);
     function __getUserReputation(address _user) external view returns (uint256);
-    function __getUserAge(address _user) external view returns (uint256);
     function __getUserBalance(address _user) external view returns (uint256);
     function __isRegistered(address _user) external view returns (bool);
-    function __getIsActive(address _user) external view returns (bool);
-    function __getUserName(address _user) external view returns (string memory);
     function __getUserGitProfile(address _user) external view returns (string memory);
 
     /* =======================

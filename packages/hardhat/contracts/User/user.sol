@@ -31,25 +31,18 @@ contract UsersContract is
         uint256 totalTasksCompleted;  // Total tasks successfully completed
         uint256 totalTasksFailed;     // Total tasks failed or cancelled
         uint256 reputation;           // Reputation score (affects project valuation)
-        uint256 age;                  // User age (must be 18-100)
         uint256 balance;              // User's fund balance in the protocol
         bool isRegistered;            // Registration status
-        bool isActive;                // Account active status
-        string name;                  // User display name
+        bool exists;                  // Existence flag for user profile
         string GitProfile;            // User's GitHub profile URL
     }
-
+//
     // Mappings
     mapping(address => User) public Users;
     mapping(bytes32 => bool) public usedGitURL;
 
     // Events
-    event userEvent(
-        string eventName, 
-        address indexed userAddress, 
-        string userName, 
-        uint256 eventValue
-    );
+    event userEvent(string eventName, address indexed userAddress);
 
     // Errors
     error userError(string errName);
@@ -66,26 +59,26 @@ contract UsersContract is
         __ReentrancyGuard_init();
         __Pausable_init();
         
-        emit userEvent("contract_initialized", _addressRegistry, "", 0);
+        emit userEvent("contract_initialized", _addressRegistry);
     }
-
+//
     /**
      * @notice Registers a new user in the protocol
-     * @param _name User's display name
-     * @param _age User's age (must be between 18-100)
      * @param _githubURL User's GitHub profile URL
      * @param _user Address of the user to register
      * @dev Creates a new user profile with initial reputation and counters
      */
     function Register(
-        string calldata _name, 
-        uint256 _age, 
         string calldata _githubURL, 
         address _user
     ) external onlyUser(addressRegistry.__accessControlContract()) callerZeroAddr {
+
         User storage u = Users[_user];
 
-        // Validate registration
+        if(Users[_user].exists && Users[_user].isRegistered == false) {
+            u.isRegistered = true;
+            emit userEvent("UserRestoredData", _user);
+        } else {
         if (u.isRegistered) revert userError("AlreadyRegistered");
         
         bytes32 gitHash = keccak256(abi.encodePacked(_githubURL));
@@ -97,14 +90,13 @@ contract UsersContract is
         u.totalTasksFailed = 0;
         u.balance = 0;
         u.isRegistered = true;
-        u.isActive = true;
-        u.name = _name;
-        u.age = _age;
         u.GitProfile = _githubURL;
+        u.exists = true;
         
         usedGitURL[gitHash] = true;
 
-        emit userEvent("UserRegistered", _user, _name, _age);
+        emit userEvent("UserRegistered", _user);
+        }
     }
 
     /**
@@ -121,11 +113,9 @@ contract UsersContract is
     {
         if (!__isRegistered(_user)) revert userError("UserNotRegistered");
         
-        User memory u = Users[_user];
-        u.isActive = false;
+        Users[_user].isRegistered = false;
         
-        emit userEvent("UserUnregistered", _user, u.name, u.age);
-        delete Users[_user];
+        emit userEvent("UserUnregistered", _user);
         
         return "Unregister Successfully";
     }
@@ -175,7 +165,7 @@ contract UsersContract is
         
         addressRegistry = IAddressRegistry(_newAddressRegistry);
         
-        emit userEvent("address_registry_changed", _newAddressRegistry, "", 0);
+        emit userEvent("address_registry_changed", _newAddressRegistry);
     }
 
     /**
@@ -183,7 +173,7 @@ contract UsersContract is
      */
     function pause() external onlyOwner(addressRegistry.__accessControlContract()) {
         _pause();
-        emit userEvent("contract_paused", msg.sender, "", 0);
+        emit userEvent("contract_paused", msg.sender);
     }
 
     /**
@@ -191,7 +181,7 @@ contract UsersContract is
      */
     function unpause() external onlyOwner(addressRegistry.__accessControlContract()) {
         _unpause();
-        emit userEvent("contract_unpaused", msg.sender, "", 0);
+        emit userEvent("contract_unpaused", msg.sender);
     }
 
     /* =======================
@@ -247,15 +237,6 @@ contract UsersContract is
     }
 
     /**
-     * @notice Gets user's age
-     * @param _user Address of the user
-     * @return uint256 User age
-     */
-    function __getUserAge(address _user) external view returns (uint256) {
-        return Users[_user].age;
-    }
-
-    /**
      * @notice Gets user's balance
      * @param _user Address of the user
      * @return uint256 User balance
@@ -271,24 +252,6 @@ contract UsersContract is
      */
     function __isRegistered(address _user) public view returns (bool) {
         return Users[_user].isRegistered;
-    }
-
-    /**
-     * @notice Gets user's active status
-     * @param _user Address of the user
-     * @return bool Active status
-     */
-    function __getIsActive(address _user) external view returns (bool) {
-        return Users[_user].isActive;
-    }
-
-    /**
-     * @notice Gets user's display name
-     * @param _user Address of the user
-     * @return string memory User name
-     */
-    function __getUserName(address _user) external view returns (string memory) {
-        return Users[_user].name;
     }
 
     /**
