@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-abstract contract systemAddressUtils {
+abstract contract AddressUtils {
 
     bool hasCalled;
 
@@ -9,11 +9,6 @@ abstract contract systemAddressUtils {
 
     modifier callerZeroAddr() {
         if (msg.sender == address(0)) revert addressUtilsEror("Caller cannot be zero address");
-        _;
-    }
-
-    modifier ctcCall(address ctcAddress) {
-        if (msg.sender != ctcAddress) revert addressUtilsEror("Caller is not authorized contract");
         _;
     }
 

@@ -18,7 +18,7 @@ import "./interfaces/IAddressRegistry.sol";
  * @dev Uses AccessControl for permissioning and includes setters restricted to employees.
  *      All monetary values are stored in wei unless specified otherwise.
  */
-contract dataContract is MainAccesControlPipes, Pausable, systemAddressUtils {
+contract dataContract is MainAccesControlPipes, Pausable, AddressUtils {
     
     // =============================================================
     // Struct Definitions

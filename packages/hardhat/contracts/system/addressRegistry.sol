@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract AddressRegistry is
-    systemAddressUtils,
+    AddressUtils,
     MainAccesControlPipes,
     Initializable,
     UUPSUpgradeable,
@@ -24,6 +24,8 @@ contract AddressRegistry is
     address public mainContract;
     address payable public walletContract;
     address public dataContract;
+    address public taskDataContract;
+    address public taskDataContractCaller;
 
     // Reserved storage space for future upgrades
     uint256[50] private ___gap;
@@ -45,7 +47,8 @@ contract AddressRegistry is
         address usersContract,
         address mainContract,
         address walletContract,
-        address dataContract
+        address dataContract,
+        address taskDataContract
     );
 
     // =============================================================
@@ -68,14 +71,16 @@ contract AddressRegistry is
         address _usersContract,
         address _mainContract,
         address payable _walletContract,
-        address _dataContract
+        address _dataContract,
+        address _taskDataContract
     ) public initializer {
         if (
             _accessControlContract == address(0) ||
             _usersContract == address(0) ||
             _mainContract == address(0) ||
             _walletContract == address(0) ||
-            _dataContract == address(0)
+            _dataContract == address(0) || 
+            _taskDataContract == address(0)
         ) {
             revert AddressRegistryErr("All addresses must be non-zero");
         }
@@ -85,13 +90,15 @@ contract AddressRegistry is
         mainContract = _mainContract;
         walletContract = _walletContract;
         dataContract = _dataContract;
+        taskDataContract = _taskDataContract;
 
         emit ContractInitialized(
             _accessControlContract,
             _usersContract,
             _mainContract,
             _walletContract,
-            _dataContract
+            _dataContract,
+            _taskDataContract
         );
     }
 
@@ -175,6 +182,21 @@ contract AddressRegistry is
         dataContract = _newData;
 
         emit AddressRegistryEvent("DataAddressChanged", _newData);
+    }
+
+    /// @dev Updates TaskData contract address.
+    function changeTaskDataAddr(address _newTaskData)
+        external
+        onlyOwner(accessControlContract)
+        callerZeroAddr
+    {
+        if (__isZeroAdr(_newTaskData)) {
+            revert AddressRegistryErr("New address cannot be zero");
+        }
+
+        taskDataContract = _newTaskData;
+
+        emit AddressRegistryEvent("TaskDataAddressChanged", _newTaskData);
     }
 
     // =============================================================

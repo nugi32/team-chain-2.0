@@ -18,4 +18,10 @@ interface IAddressRegistry {
 
     /// @return The Data contract address
     function __dataContract() external view returns (address);
+
+    /// @return The TaskData contract address
+    function __taskDataContract() external view returns (address);
+
+    /// @return The TaskData contract caller address
+    function __taskDataContractCaller() external view returns (address);
 }

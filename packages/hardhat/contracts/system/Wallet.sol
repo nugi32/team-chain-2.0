@@ -28,7 +28,7 @@ contract System_wallet is
     UUPSUpgradeable,
     PausableUpgradeable,
     SystemReentrancyGuard,
-    systemAddressUtils
+    AddressUtils
 {
     using SafeERC20 for IERC20;
 
