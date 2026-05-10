@@ -11,10 +11,12 @@ import { config } from "hardhat";
 async function main() {
   const networkIndex = process.argv.indexOf("--network");
   const networkName = networkIndex !== -1 ? process.argv[networkIndex + 1] : config.defaultNetwork;
+  const originalArgs = process.argv.slice(2);
+  const hasTags = originalArgs.some(arg => arg === "--tags" || arg === "-t");
+  const deployArgs = hasTags ? ["deploy", ...originalArgs] : ["deploy", "--tags", "FullSystem", ...originalArgs];
 
   if (networkName === "localhost" || networkName === "hardhat") {
-    // Deploy command on the localhost network
-    const hardhat = spawn("hardhat", ["deploy", ...process.argv.slice(2)], {
+    const hardhat = spawn("hardhat", deployArgs, {
       stdio: "inherit",
       env: process.env,
       shell: process.platform === "win32",
@@ -39,7 +41,7 @@ async function main() {
     const wallet = await Wallet.fromEncryptedJson(encryptedKey, pass);
     process.env.__RUNTIME_DEPLOYER_PRIVATE_KEY = wallet.privateKey;
 
-    const hardhat = spawn("hardhat", ["deploy", ...process.argv.slice(2)], {
+    const hardhat = spawn("hardhat", deployArgs, {
       stdio: "inherit",
       env: process.env,
       shell: process.platform === "win32",
