@@ -1,4 +1,5 @@
 import React from "react";
+import FadeInSection from "@/components/global/FadeInSection";
 
 const points = [
   "Fully on-chain contribution tracking",
@@ -9,24 +10,26 @@ const points = [
 
 const WhyDifferent = () => {
   return (
-    <section className="py-16 px-6 bg-gray-950 text-white">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-8">
-          Why It’s Different
-        </h2>
+    <FadeInSection>
+      <section className="py-16 px-6 bg-gray-950 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-8">
+            Why It’s Different
+          </h2>
 
-        <div className="space-y-4">
-          {points.map((point, i) => (
-            <div
-              key={i}
-              className="p-4 border border-indigo-500/30 rounded-lg bg-indigo-500/5"
-            >
-              {point}
-            </div>
-          ))}
+          <div className="space-y-4">
+            {points.map((point, i) => (
+              <div
+                key={i}
+                className="p-4 border border-indigo-500/30 rounded-lg bg-indigo-500/5"
+              >
+                {point}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </FadeInSection>
   );
 };
 

@@ -8,10 +8,16 @@ import TokenModel from "~~/components/homePage/TokenModel";
 import UseCases from "~~/components/homePage/UseCases";
 import WhyDifferent from "~~/components/homePage/WhyDifferent";
 
+import ScrollHandler from "@/components/global/ScrollHandler";
+import { Suspense } from "react";
+
 
 export default function Home() {
   return (
     <>
+      <Suspense fallback={null}>
+        <ScrollHandler />
+      </Suspense>
       <Hero />
       <ProblemSolution />
       <HowItWorks />

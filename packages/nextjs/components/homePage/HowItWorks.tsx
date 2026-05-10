@@ -1,4 +1,5 @@
 import React from "react";
+import FadeInSection from "@/components/global/FadeInSection";
 
 const steps = [
   {
@@ -35,32 +36,34 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="py-16 px-6 bg-black text-white">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          How It Works
-        </h2>
+    <FadeInSection>
+      <section className="py-16 px-6 bg-black text-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            How It Works
+          </h2>
 
-        <div className="grid md:grid-cols-5 gap-6">
-          {steps.map((item, index) => (
-            <div
-              key={index}
-              className="p-6 rounded-xl border border-gray-800 bg-gray-900 hover:border-indigo-500 transition"
-            >
-              <div className="text-indigo-400 font-bold text-lg mb-2">
-                {item.step}
+          <div className="grid md:grid-cols-5 gap-6">
+            {steps.map((item, index) => (
+              <div
+                key={index}
+                className="p-6 rounded-xl border border-gray-800 bg-gray-900 hover:border-indigo-500 transition"
+              >
+                <div className="text-indigo-400 font-bold text-lg mb-2">
+                  {item.step}
+                </div>
+                <h3 className="font-semibold text-lg mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  {item.description}
+                </p>
               </div>
-              <h3 className="font-semibold text-lg mb-2">
-                {item.title}
-              </h3>
-              <p className="text-gray-400 text-sm">
-                {item.description}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </FadeInSection>
   );
 };
 
