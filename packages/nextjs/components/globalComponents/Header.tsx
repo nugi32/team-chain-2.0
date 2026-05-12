@@ -11,6 +11,10 @@ import {
   Clock, UserCheck, MessageSquare, AlertTriangle, CheckCheck,
 } from "lucide-react";
 
+import { useTargetNetwork } from "~~/hooks/scaffold-eth";
+import { hardhat } from "viem/chains";
+
+
 /* ─────────────────────────────────────
    TYPES & DATA
 ────────────────────────────────────── */
@@ -182,7 +186,6 @@ function MobileMenu({ pathname, onClose }: { pathname: string; onClose: () => vo
 
       <div className="mt-3 pt-3 border-t border-gray-800/60 flex flex-col gap-2">
         <RainbowKitCustomConnectButton />
-        <FaucetButton />
       </div>
     </motion.div>
   );
@@ -192,6 +195,8 @@ function MobileMenu({ pathname, onClose }: { pathname: string; onClose: () => vo
    HEADER
 ────────────────────────────────────── */
 export const Header = () => {
+  const { targetNetwork } = useTargetNetwork();
+  const isLocalNetwork = targetNetwork.id === hardhat.id;
   const pathname = usePathname();
 
   const [notifOpen,  setNotifOpen]  = useState(false);
@@ -273,7 +278,7 @@ export const Header = () => {
 
           {/* Faucet — desktop only */}
           <div className="hidden lg:block">
-            <FaucetButton />
+        {isLocalNetwork && <FaucetButton />}
           </div>
 
           {/* Wallet — desktop only */}
