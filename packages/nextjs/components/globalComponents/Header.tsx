@@ -25,6 +25,14 @@ interface Notification {
   read: boolean;
 }
 
+const userInitials = "JD"; // Placeholder for user initials, replace with dynamic data as needed
+
+const avatar = (
+  <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-xs font-bold flex-shrink-0">
+    {userInitials}
+  </div>
+);
+
 const INITIAL_NOTIFICATIONS: Notification[] = [
   { id: 1, type: "deadline", msg: "DAO Governance Module overdue", time: "Just now", urgent: true,  read: false },
   { id: 2, type: "review",   msg: "2 approvals pending on Cross-Chain Oracle", time: "4h ago", urgent: false, read: false },
@@ -42,8 +50,7 @@ const NOTIF_META: Record<NotifType, { icon: React.ReactNode; color: string }> = 
 const NAV_LINKS = [
   { label: "Dashboard",  href: "/dashboard" },
   { label: "Explore",    href: "/explore" },
-  { label: "Staking",    href: "/staking" },
-  { label: "Governance", href: "/governance" },
+  { label: "How It Works",    href: "/howItWorks" },
 ] as const;
 
 /* ─────────────────────────────────────
@@ -224,7 +231,7 @@ export const Header = () => {
       <div className="max-w-[1440px] mx-auto px-4 md:px-6 h-14 flex items-center justify-between gap-4">
 
         {/* ── Logo ── */}
-        <Link href="/dashboard" className="flex items-center gap-2.5 flex-shrink-0">
+        <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
           <div className="w-7 h-7 rounded-lg bg-indigo-500 flex items-center justify-center">
             <GitBranch className="w-4 h-4 text-white" />
           </div>
@@ -339,6 +346,12 @@ export const Header = () => {
               )}
             </AnimatePresence>
           </button>
+
+          {/* User initials avatar */}
+          <a href="/settings/0" className="hidden sm:flex items-center gap-2">
+            {avatar}
+          </a>
+
         </div>
       </div>
 
@@ -348,6 +361,7 @@ export const Header = () => {
           <MobileMenu pathname={pathname} onClose={() => setMobileOpen(false)} />
         )}
       </AnimatePresence>
+
     </header>
   );
 };

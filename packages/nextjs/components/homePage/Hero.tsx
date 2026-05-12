@@ -1,15 +1,16 @@
 'use client'
-import FadeInSection from "@/components/global/FadeInSection";
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
+import FadeInSection from '@/components/global/FadeInSection'
+
 const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
-  { name: 'Company', href: '#' },
+  { name: 'Features', href: '/features' },
+  { name: 'Pricing', href: '/pricing' },
+  { name: 'About', href: '/about' },
 ]
 
 export default function Hero() {
@@ -18,17 +19,22 @@ export default function Hero() {
   return (
     <div className="bg-gray-900">
       <header className="absolute inset-x-0 top-0 z-50">
-        <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
+        <nav
+          aria-label="Global"
+          className="flex items-center justify-between p-6 lg:px-8"
+        >
           <div className="flex lg:flex-1">
-            <a href="#" className="-m-1.5 p-1.5">
+            <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
+
               <img
-                alt=""
+                alt="Logo"
                 src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
                 className="h-8 w-auto"
               />
-            </a>
+            </Link>
           </div>
+
           <div className="flex lg:hidden">
             <button
               type="button"
@@ -36,63 +42,84 @@ export default function Hero() {
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-200"
             >
               <span className="sr-only">Open main menu</span>
+
               <Bars3Icon aria-hidden="true" className="size-6" />
             </button>
           </div>
+
           <div className="hidden lg:flex lg:gap-x-12">
             {navigation.map((item) => (
-              <a key={item.name} href={item.href} className="text-sm/6 font-semibold text-white">
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm/6 font-semibold text-white"
+              >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </div>
+
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="getStarted" className="text-sm/6 font-semibold text-white">
+            <Link
+              href="/getStarted"
+              className="text-sm/6 font-semibold text-white"
+            >
               Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
+            </Link>
           </div>
         </nav>
-        <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
+
+        <Dialog
+          open={mobileMenuOpen}
+          onClose={setMobileMenuOpen}
+          className="lg:hidden"
+        >
           <div className="fixed inset-0 z-50" />
+
           <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-100/10">
             <div className="flex items-center justify-between">
-              <a href="#" className="-m-1.5 p-1.5">
+              <Link href="/" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
+
                 <img
-                  alt=""
+                  alt="Logo"
                   src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
                   className="h-8 w-auto"
                 />
-              </a>
+              </Link>
+
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 className="-m-2.5 rounded-md p-2.5 text-gray-200"
               >
                 <span className="sr-only">Close menu</span>
+
                 <XMarkIcon aria-hidden="true" className="size-6" />
               </button>
             </div>
+
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-white/10">
                 <div className="space-y-2 py-6">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
                       href={item.href}
                       className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5"
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
+
                 <div className="py-6">
-                  <a
-                    href="getStarted"
+                  <Link
+                    href="/getStarted"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-white hover:bg-white/5"
                   >
                     Get Started
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -111,40 +138,57 @@ export default function Hero() {
                 clipPath:
                   'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
               }}
-              className="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"
+              className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-30 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
             />
           </div>
+
           <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
             <div className="hidden sm:mb-8 sm:flex sm:justify-center">
               <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
-                Read Our Documentation.{' '}
-                <a href="documentation" className="font-semibold text-indigo-400">
-                  <span aria-hidden="true" className="absolute inset-0" />
+                Read Our Documentation{' '}
+                <Link
+                  href="/documentation"
+                  className="font-semibold text-indigo-400"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0"
+                  />
+
                   Read more <span aria-hidden="true">&rarr;</span>
-                </a>
+                </Link>
               </div>
             </div>
+
             <div className="text-center">
               <h1 className="text-5xl font-semibold tracking-tight text-balance text-white sm:text-7xl">
                 Build & Collaborate On-Chain
               </h1>
+
               <p className="mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8">
-                TeamChain is a decentralized collaboration platform where teams can manage projects,
-                share ownership, and execute workflows transparently on blockchain.
+                TeamChain is a decentralized collaboration platform where teams
+                can manage projects, share ownership, and execute workflows
+                transparently on blockchain.
               </p>
+
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <a
-                  href="getStarted"
+                <Link
+                  href="/getStarted"
                   className="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 >
                   Get started
-                </a>
-                <a href="documentation" className="text-sm/6 font-semibold text-white">
+                </Link>
+
+                <Link
+                  href="/howItWorks"
+                  className="text-sm/6 font-semibold text-white"
+                >
                   Learn more <span aria-hidden="true">→</span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
+
           <div
             aria-hidden="true"
             className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
@@ -154,7 +198,7 @@ export default function Hero() {
                 clipPath:
                   'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
               }}
-              className="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"
+              className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
             />
           </div>
         </div>

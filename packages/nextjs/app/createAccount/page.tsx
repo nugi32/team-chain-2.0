@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
+import Link from "next/link";
+
 /* ─────────────────────────────────────────────
    COUNTRY DATA  (flag · name · dial code · iso)
 ───────────────────────────────────────────────*/
@@ -67,7 +69,6 @@ const COUNTRIES = [
   { flag: "🇭🇰", name: "Hong Kong", code: "+852", iso: "HK" },
   { flag: "🇭🇺", name: "Hungary", code: "+36", iso: "HU" },
   { flag: "🇮🇸", name: "Iceland", code: "+354", iso: "IS" },
-  { flag: "🇮🇳", name: "India", code: "+91", iso: "IN" },
   { flag: "🇮🇩", name: "Indonesia", code: "+62", iso: "ID" },
   { flag: "🇮🇷", name: "Iran", code: "+98", iso: "IR" },
   { flag: "🇮🇶", name: "Iraq", code: "+964", iso: "IQ" },
@@ -786,7 +787,9 @@ export default function TeamChainCreateAccountPage() {
                     : "bg-gray-800 text-gray-600 cursor-not-allowed",
                 ].join(" ")}
               >
+                <Link href="/dashboard" className="flex items-center gap-2 justify-center">
                 {walletAddress ? "Create Account & Sign Transaction" : "Connect Wallet to Continue"}
+                </Link>
               </button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import FadeInSection from "@/components/global/FadeInSection";
+import Link from "next/link";
 
 const CTA = () => {
   return (
@@ -14,12 +15,12 @@ const CTA = () => {
           </p>
 
           <div className="flex justify-center gap-4">
-            <a href="getStarted" className="text-sm/6 font-semibold text-black bg-white px-4 py-2 rounded-lg">
+            <Link href="/getStarted" className="text-sm/6 font-semibold text-black bg-white px-4 py-2 rounded-lg">
               Get Started <span aria-hidden="true">→</span>
-            </a>
-            <a href="documentation" className="text-sm/6 font-semibold text-white px-4 py-2 rounded-lg border border-white/50">
+            </Link>
+            <Link href="/howItWorks" className="text-sm/6 font-semibold text-white px-4 py-2 rounded-lg border border-white/50">
               Learn more <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
