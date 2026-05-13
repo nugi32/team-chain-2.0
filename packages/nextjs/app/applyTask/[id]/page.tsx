@@ -29,6 +29,15 @@ import {
   Trophy,
 } from "lucide-react";
 
+import StatPill from "@/components/task-apply/StatPill";
+import MilestoneRow from "@/components/task-apply/MilestoneRow";
+import SectionLabel from "@/components/task-apply/SectionLabel";
+import BadgeChip from "@/components/task-apply/BadgeChip";
+import StakePanel from "@/components/task-apply/StakePanel";
+import SuccessOverlay from "@/components/task-apply/SuccessOverlay";
+import RelatedTasks from "@/components/task-apply/RelatedTasks";
+import TeamSection from "@/components/task-apply/TeamSection";
+
 /* ─── MOCK DATA ─────────────────────────────────────────────── */
 const TASK = {
   id: "task-001",
@@ -101,386 +110,6 @@ const RELATED = [
     avatarColor: "from-violet-600 to-purple-600",
   },
 ];
-
-/* ─── HELPERS ───────────────────────────────────────────────── */
-const riskColors: Record<string, string> = {
-  emerald: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  amber: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-  red: "text-red-400 bg-red-500/10 border-red-500/20",
-};
-
-const STEPS = [
-  { id: 1, label: "Review Task" },
-  { id: 2, label: "Stake USDC" },
-  { id: 3, label: "Confirm & Sign" },
-];
-
-/* ─── SUBCOMPONENTS ─────────────────────────────────────────── */
-function StatPill({
-  icon: Icon,
-  label,
-  value,
-  accent = false,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-  accent?: boolean;
-}) {
-  return (
-    <div
-      className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 ${
-        accent
-          ? "border-indigo-500/30 bg-indigo-500/10"
-          : "border-gray-800 bg-gray-900"
-      }`}
-    >
-      <Icon className={`w-4 h-4 ${accent ? "text-indigo-400" : "text-gray-400"}`} />
-      <div>
-        <p className="text-[10px] text-gray-500 leading-none mb-0.5">{label}</p>
-        <p className={`text-sm font-semibold ${accent ? "text-indigo-300" : "text-white"}`}>
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function MilestoneRow({
-  label,
-  pct,
-  idx,
-}: {
-  label: string;
-  pct: number;
-  idx: number;
-}) {
-  return (
-    <div className="flex items-start gap-3 py-2.5 border-b border-gray-800/60 last:border-0">
-      <div className="w-5 h-5 rounded-full border border-indigo-500/40 bg-indigo-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-        <span className="text-[9px] font-bold text-indigo-400">{idx + 1}</span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs text-gray-300 leading-snug">{label}</p>
-      </div>
-      <span className="text-[10px] font-semibold text-indigo-400 flex-shrink-0">{pct}%</span>
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-2 mb-3">
-      <div className="w-1 h-4 bg-indigo-500 rounded-full" />
-      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-        {children}
-      </span>
-    </div>
-  );
-}
-
-function BadgeChip({ badge }: { badge: string }) {
-  return (
-    <span className="text-[9px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2 py-0.5">
-      {badge}
-    </span>
-  );
-}
-
-/* ─── STAKE PANEL ───────────────────────────────────────────── */
-function StakePanel({
-  step,
-  setStep,
-  onConfirm,
-}: {
-  step: number;
-  setStep: (n: number) => void;
-  onConfirm: () => void;
-}) {
-  const [agreed, setAgreed] = useState(false);
-  const [staking, setStaking] = useState(false);
-
-  const handleStake = () => {
-    setStaking(true);
-    setTimeout(() => {
-      setStaking(false);
-      setStep(3);
-    }, 1500);
-  };
-
-  const handleSign = () => {
-    setStaking(true);
-    setTimeout(() => {
-      setStaking(false);
-      onConfirm();
-    }, 1800);
-  };
-
-  return (
-    <div className="rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-      {/* Step progress */}
-      <div className="px-5 pt-5 pb-4 border-b border-gray-800">
-        <div className="flex items-center gap-1">
-          {STEPS.map((s, i) => (
-            <React.Fragment key={s.id}>
-              <div className="flex items-center gap-1.5">
-                <div
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-colors ${
-                    step >= s.id
-                      ? "bg-indigo-500 text-white"
-                      : "bg-gray-800 text-gray-500"
-                  }`}
-                >
-                  {step > s.id ? <CheckCircle2 className="w-3 h-3" /> : s.id}
-                </div>
-                <span
-                  className={`text-[10px] font-medium ${
-                    step >= s.id ? "text-gray-200" : "text-gray-600"
-                  }`}
-                >
-                  {s.label}
-                </span>
-              </div>
-              {i < STEPS.length - 1 && (
-                <div
-                  className={`h-px flex-1 mx-1 transition-colors ${
-                    step > s.id ? "bg-indigo-500/60" : "bg-gray-800"
-                  }`}
-                />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-
-      <div className="p-5 space-y-4">
-        {/* Step 1 — Review */}
-        {step === 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5 flex gap-3">
-              <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-semibold text-amber-300">Stake-Backed Commitment</p>
-                <p className="text-[11px] text-gray-400 mt-0.5 leading-relaxed">
-                  Joining this task locks{" "}
-                  <span className="text-white font-semibold">40 USDC</span> as stake. If you
-                  abandon without resolution, part of your stake may be slashed.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                Stake Summary
-              </p>
-              {[
-                ["You lock", "40 USDC"],
-                ["Potential reward", "+120 USDC"],
-                ["Net if successful", "+80 USDC"],
-                ["Slash if abandoned", "Up to −20 USDC"],
-              ].map(([k, v]) => (
-                <div key={k} className="flex justify-between text-xs">
-                  <span className="text-gray-500">{k}</span>
-                  <span
-                    className={`font-semibold ${
-                      v.startsWith("+")
-                        ? "text-emerald-400"
-                        : v.startsWith("Up to")
-                        ? "text-red-400"
-                        : "text-white"
-                    }`}
-                  >
-                    {v}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <label className="flex items-start gap-2.5 cursor-pointer group">
-              <div
-                onClick={() => setAgreed(!agreed)}
-                className={`w-4 h-4 rounded border flex-shrink-0 mt-0.5 flex items-center justify-center transition-colors ${
-                  agreed
-                    ? "bg-indigo-500 border-indigo-500"
-                    : "border-gray-600 group-hover:border-gray-500"
-                }`}
-              >
-                {agreed && <CheckCircle2 className="w-3 h-3 text-white" />}
-              </div>
-              <p className="text-[11px] text-gray-400 leading-relaxed">
-                I understand the stake terms and commit to completing this task by{" "}
-                <span className="text-white font-medium">{TASK.deadlineDate}</span>.
-              </p>
-            </label>
-
-            <button
-              onClick={() => agreed && setStep(2)}
-              disabled={!agreed}
-              className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-sm font-semibold text-white transition-colors"
-            >
-              Continue to Stake
-            </button>
-          </motion.div>
-        )}
-
-        {/* Step 2 — Stake */}
-        {step === 2 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
-            <div className="rounded-xl border border-gray-800 bg-gray-950 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-400">Wallet</span>
-                <span className="text-xs font-mono text-gray-300">0x4a2f...8e3c</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-400">USDC Balance</span>
-                <span className="text-xs font-semibold text-white">320.00 USDC</span>
-              </div>
-              <div className="h-px bg-gray-800" />
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-400">Amount to Lock</span>
-                <span className="text-sm font-bold text-indigo-300">40.00 USDC</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-400">Remaining</span>
-                <span className="text-xs text-gray-300">280.00 USDC</span>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-gray-800 bg-gray-950 p-3.5 flex gap-3">
-              <Lock className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
-              <p className="text-[11px] text-gray-400 leading-relaxed">
-                Funds are locked in the Team Chain smart contract escrow and released automatically
-                upon task approval.
-              </p>
-            </div>
-
-            <button
-              onClick={handleStake}
-              disabled={staking}
-              className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2"
-            >
-              {staking ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
-                  />
-                  Locking Stake…
-                </>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4" />
-                  Lock 40 USDC
-                </>
-              )}
-            </button>
-          </motion.div>
-        )}
-
-        {/* Step 3 — Sign */}
-        {step === 3 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3.5 flex gap-3">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-semibold text-emerald-300">Stake Locked ✓</p>
-                <p className="text-[11px] text-gray-400 mt-0.5">
-                  40 USDC escrowed. Sign to finalize your commitment.
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-gray-800 bg-gray-950 p-4 space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                Signing Message
-              </p>
-              <p className="text-[11px] font-mono text-gray-400 leading-relaxed break-all">
-                "I commit to task-001 on Team Chain. Stake: 40 USDC. Deadline:{" "}
-                {TASK.deadlineDate}. Chain: Mainnet."
-              </p>
-            </div>
-
-            <button
-              onClick={handleSign}
-              disabled={staking}
-              className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2"
-            >
-              {staking ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
-                  />
-                  Signing…
-                </>
-              ) : (
-                <>
-                  <BadgeCheck className="w-4 h-4" />
-                  Sign & Join Task
-                </>
-              )}
-            </button>
-          </motion.div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─── SUCCESS OVERLAY ───────────────────────────────────────── */
-function SuccessOverlay({ onClose }: { onClose: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm px-4"
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="w-full max-w-sm rounded-2xl border border-emerald-500/30 bg-gray-900 p-8 text-center"
-      >
-        <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2 className="w-8 h-8 text-emerald-400" />
-        </div>
-        <h2 className="text-xl font-bold text-white mb-2">You're In!</h2>
-        <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-          You've successfully joined{" "}
-          <span className="text-white font-medium">{TASK.title}</span>. Your stake of{" "}
-          <span className="text-indigo-300 font-semibold">40 USDC</span> is now locked.
-        </p>
-        <div className="space-y-2.5">
-          <button
-            onClick={onClose}
-            className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold text-white transition-colors"
-          >
-            Go to Dashboard
-          </button>
-          <button className="w-full py-2.5 rounded-xl border border-gray-700 hover:border-gray-600 text-sm text-gray-300 transition-colors">
-            View Task Details
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
 
 /* ─── PAGE ──────────────────────────────────────────────────── */
 export default function TaskApplyPage() {
@@ -667,80 +296,16 @@ export default function TaskApplyPage() {
             </div>
 
             {/* ── RELATED TASKS ── */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <GitBranch className="w-3.5 h-3.5 text-gray-600" />
-                <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Similar Tasks</span>
-                <div className="flex-1 h-px bg-gray-800" />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {RELATED.map(r => (
-                  <motion.div
-                    key={r.id}
-                    whileHover={{ y: -2 }}
-                    className="rounded-2xl border border-gray-800 bg-gray-900 p-4 cursor-pointer hover:border-gray-700 transition-colors"
-                  >
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${r.avatarColor} flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white`}>
-                        {r.teamAvatar}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-semibold text-gray-200 truncate">{r.title}</h4>
-                        <p className="text-[11px] text-indigo-400">{r.project}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 text-[10px] text-gray-500 mb-3">
-                      <span className="text-amber-400 font-semibold">{r.stake} ETH stake</span>
-                      <span>·</span>
-                      <span className="text-emerald-400 font-semibold">{r.reward} ETH reward</span>
-                      <span>·</span>
-                      <span>{r.deadline}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-wrap gap-1">
-                        {r.skills.slice(0, 2).map(s => (
-                          <span key={s} className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700/50 text-[9px] font-mono text-gray-500">{s}</span>
-                        ))}
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-600" />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+            <RelatedTasks tasks={RELATED} />
 
             {/* Team card */}
-            <div>
-              <SectionLabel>About the Team</SectionLabel>
-              <div className="rounded-2xl border border-gray-800 bg-gray-900/60 p-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-white">{TASK.teamAvatar}</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-bold text-gray-100">{TASK.teamName}</h3>
-                      <BadgeChip badge="Verified Team" />
-                    </div>
-                    <p className="text-xs text-gray-500 mb-3">On-chain governance infrastructure and DAO tooling on Ethereum.</p>
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex items-center gap-1.5">
-                        <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                        <span className="text-xs text-gray-400"><span className="font-semibold text-gray-200">{TASK.teamRep}</span> reputation</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <CircleDot className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-xs text-gray-400"><span className="font-semibold text-gray-200">{TASK.teamCompletions}</span> completions</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="w-3.5 h-3.5 text-indigo-400" />
-                        <span className="text-xs text-gray-400"><span className="font-semibold text-gray-200">{TASK.teamMembers}</span> members</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <TeamSection
+              teamAvatar={TASK.teamAvatar}
+              teamName={TASK.teamName}
+              teamRep={TASK.teamRep}
+              teamCompletions={TASK.teamCompletions}
+              teamMembers={TASK.teamMembers}
+            />
           </div>
 
           {/* ─── Right sidebar ─── */}
@@ -776,7 +341,12 @@ export default function TaskApplyPage() {
             </div>
 
             {/* Stake panel */}
-            <StakePanel step={step} setStep={setStep} onConfirm={() => setSuccess(true)} />
+            <StakePanel
+              step={step}
+              setStep={setStep}
+              onConfirm={() => setSuccess(true)}
+              task={TASK}
+            />
 
             {/* Additional info */}
             <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4 space-y-3">
@@ -805,8 +375,14 @@ export default function TaskApplyPage() {
       </div>
 
       <AnimatePresence>
-        {success && <SuccessOverlay onClose={() => setSuccess(false)} />}
+        {success && <SuccessOverlay onClose={() => setSuccess(false)} taskTitle={TASK.title} />}
       </AnimatePresence>
     </div>
   );
 }
+
+const riskColors: Record<string, string> = {
+  emerald: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+  amber: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+  red: "text-red-400 bg-red-500/10 border-red-500/20",
+};
