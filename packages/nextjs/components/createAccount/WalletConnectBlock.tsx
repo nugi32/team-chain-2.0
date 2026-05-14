@@ -1,27 +1,60 @@
-import React from "react";
-import { Wallet, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+"use client";
 
-interface WalletConnectBlockProps {
-  walletAddress: string | null;
-  walletLoading: boolean;
-  walletError: string | null;
-  onConnect: () => void;
-  onDisconnect: () => void;
-}
+import React, { useRef } from "react";
+import {
+  Wallet,
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 
-export default function WalletConnectBlock({
-  walletAddress,
-  walletLoading,
-  walletError,
-  onConnect,
-  onDisconnect,
-}: WalletConnectBlockProps) {
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAccount, useDisconnect } from "wagmi";
+
+export default function WalletConnectBlock() {
+  const { openConnectModal } = useConnectModal();
+
+  const {
+    address,
+    isConnected,
+    isConnecting,
+    isDisconnected,
+  } = useAccount();
+
+  const { disconnect } = useDisconnect();
+
+  const disconnectedRef = useRef(false);
+
+  /**
+   * Disconnect wallet + clear caches
+   */
+  const disconnectWallet = () => {
+    if (!disconnectedRef.current) {
+      disconnectedRef.current = true;
+
+      try {
+        localStorage.removeItem("wagmi.store");
+        localStorage.removeItem("rk-connected-wallets");
+        sessionStorage.clear();
+
+        disconnect();
+      } catch (err) {
+        console.log(err);
+      }
+
+      // allow future disconnects
+      setTimeout(() => {
+        disconnectedRef.current = false;
+      }, 500);
+    }
+  };
+
   return (
     <section className="mb-3">
       <div
         className={[
           "rounded-3xl border p-6 transition-all duration-300",
-          walletAddress
+          isConnected
             ? "border-emerald-500/40 bg-emerald-500/5"
             : "border-indigo-500/40 bg-indigo-500/5",
         ].join(" ")}
@@ -30,10 +63,12 @@ export default function WalletConnectBlock({
           <div
             className={[
               "w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0",
-              walletAddress ? "bg-emerald-500/20" : "bg-indigo-500/20",
+              isConnected
+                ? "bg-emerald-500/20"
+                : "bg-indigo-500/20",
             ].join(" ")}
           >
-            {walletAddress ? (
+            {isConnected ? (
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
             ) : (
               <Wallet className="w-5 h-5 text-indigo-300" />
@@ -44,14 +79,15 @@ export default function WalletConnectBlock({
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <p className="font-semibold text-sm">
-                  {walletAddress
+                  {isConnected
                     ? "Wallet Connected"
                     : "Connect Wallet — Required"}
                 </p>
+
                 <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">
-                  {walletAddress ? (
+                  {isConnected ? (
                     <span className="font-mono text-emerald-400">
-                      {walletAddress}
+                      {address}
                     </span>
                   ) : (
                     "Your wallet signs the profile creation transaction. A small gas fee (~$0.01–$0.05) is deducted from your connected wallet."
@@ -59,14 +95,14 @@ export default function WalletConnectBlock({
                 </p>
               </div>
 
-              {!walletAddress && (
+              {!isConnected && (
                 <button
                   type="button"
-                  onClick={onConnect}
-                  disabled={walletLoading}
+                  onClick={() => openConnectModal?.()}
+                  disabled={isConnecting}
                   className="flex-shrink-0 inline-flex items-center gap-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 px-4 py-2 text-sm font-medium transition-colors"
                 >
-                  {walletLoading ? (
+                  {isConnecting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Connecting…
@@ -80,10 +116,10 @@ export default function WalletConnectBlock({
                 </button>
               )}
 
-              {walletAddress && (
+              {isConnected && (
                 <button
                   type="button"
-                  onClick={onDisconnect}
+                  onClick={disconnectWallet}
                   className="text-xs text-gray-500 hover:text-red-400 transition-colors"
                 >
                   Disconnect
@@ -91,10 +127,10 @@ export default function WalletConnectBlock({
               )}
             </div>
 
-            {walletError && (
-              <div className="mt-3 flex items-center gap-2 text-xs text-red-400">
+            {isDisconnected && (
+              <div className="mt-3 flex items-center gap-2 text-xs text-gray-400">
                 <AlertCircle className="w-3.5 h-3.5" />
-                {walletError}
+                Wallet disconnected
               </div>
             )}
           </div>

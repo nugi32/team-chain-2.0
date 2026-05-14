@@ -4,7 +4,7 @@ export default function Field({
   hint,
   children,
 }: {
-  label: string;
+  label: React.ReactNode;
   required?: boolean;
   hint?: string;
   children: React.ReactNode;

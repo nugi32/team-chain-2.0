@@ -3,23 +3,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Wallet } from "lucide-react";
-import Link from "next/link";
 
-import WalletConnectBlock from "@/components/account/WalletConnectBlock";
-import ProfileForm from "@/components/account/ProfileForm";
+import WalletConnectBlock from "@/components/createAccount/WalletConnectBlock";
+import ProfileForm from "@/components/createAccount/ProfileForm";
+import { COUNTRIES } from "@/components/createAccount/Countries";
 
 /* ─── MOCK DATA ─────────────────────────────────────────────── */
-export const COUNTRIES = [
-  { flag: "🇦🇫", name: "Afghanistan", code: "+93", iso: "AF" },
-  { flag: "🇦🇱", name: "Albania", code: "+355", iso: "AL" },
-  // … truncated for brevity, paste the full COUNTRIES array here …
-  { flag: "🇿🇼", name: "Zimbabwe", code: "+263", iso: "ZW" },
-];
-
 export default function TeamChainCreateAccountPage() {
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [walletLoading, setWalletLoading] = useState(false);
-  const [walletError, setWalletError] = useState<string | null>(null);
+
+  //const { isConnected } = useAccount();
+  const isConnected = true; // Force connected for testing
 
   const [country, setCountry] = useState(
     COUNTRIES.find((c) => c.iso === "ID")!
@@ -32,19 +25,6 @@ export default function TeamChainCreateAccountPage() {
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-
-  /* Simulate wallet connect */
-  const connectWallet = async () => {
-    setWalletLoading(true);
-    setWalletError(null);
-    await new Promise((r) => setTimeout(r, 1800));
-    if (Math.random() > 0.2) {
-      setWalletAddress("0x4A3B...9F2C");
-    } else {
-      setWalletError("Connection rejected. Please try again.");
-    }
-    setWalletLoading(false);
-  };
 
   /* Simulate send OTP */
   const sendCode = async () => {
@@ -117,17 +97,11 @@ export default function TeamChainCreateAccountPage() {
           </div>
 
           {/* Wallet connect block */}
-          <WalletConnectBlock
-            walletAddress={walletAddress}
-            walletLoading={walletLoading}
-            walletError={walletError}
-            onConnect={connectWallet}
-            onDisconnect={() => setWalletAddress(null)}
-          />
+          <WalletConnectBlock/>
 
           {/* Profile form (disabled until wallet connected) */}
           <ProfileForm
-            disabled={!walletAddress}
+            disabled={!isConnected}
             country={country}
             onCountryChange={setCountry}
             phone={phone}

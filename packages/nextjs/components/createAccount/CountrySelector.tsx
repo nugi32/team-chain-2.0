@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronDown } from "lucide-react";
-import { COUNTRIES } from "@/components/account/Countries";
+import { COUNTRIES } from "@/components/createAccount/Countries";
 
 interface Country {
   flag: string;
