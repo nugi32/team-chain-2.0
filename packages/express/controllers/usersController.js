@@ -30,7 +30,7 @@ export const createUser = async (req, res) => {
     // We never trust the owner field from the request body
     const userData = {
       ...value,
-      owner
+      owner: req.user.walletAddress,
     }
 
     const result = await User.insertOne(userData)

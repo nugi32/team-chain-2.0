@@ -28,6 +28,7 @@
     "blo": "^1.2.0",
     "burner-connector": "0.0.20",
     "daisyui": "^5.0.9",
+    "ethers": "^6.16.0",
     "framer-motion": "^12.38.0",
     "kubo-rpc-client": "^5.0.2",
     "lucide-react": "^1.14.0",

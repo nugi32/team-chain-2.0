@@ -18,10 +18,10 @@ export async function handleLogin(
     });
 
     console.log("Login response:", response.data);
-/*
+
     if (!response.data?.id) {
       throw new Error("Backend did not return an id");
-    }*/
+    }
 
     return "10"//response.data.id as string;
   } catch (error: any) {

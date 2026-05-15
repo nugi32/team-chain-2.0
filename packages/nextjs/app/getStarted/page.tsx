@@ -1,6 +1,6 @@
 "use client";
 
-import React, { MutableRefObject, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload,
@@ -26,7 +26,10 @@ import { useSession } from "next-auth/react";
 import Field from "@/components/createAccount/Field";
 import WalletConnectBlock from "@/components/createAccount/WalletConnectBlock";
 import { handleCreateAccount, type Role } from "@/utils/lib/getStarted";
-import { notification } from "~~/utils/scaffold-eth";
+
+import { useAccount } from 'wagmi';
+import { getValidJwt, initCachedToken } from '@/utils/globalLib/walletAuth';
+import { notification } from '~~/utils/scaffold-eth';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -35,7 +38,7 @@ interface ProfileFormProps {
   avatarPreview: string | null;
   onAvatarChange?: (preview: string | null) => void;
   onAvatarUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  fileRef: MutableRefObject<HTMLInputElement | null>;
+  fileRef: React.RefObject<HTMLInputElement>;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -61,15 +64,31 @@ const isValidUri = (v: string) => {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function ProfileForm({
-  disabled,
-  avatarPreview,
-  onAvatarChange = () => {},
-  onAvatarUpload,
-  fileRef,
-}: ProfileFormProps) {
+export default function ProfileForm() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { address, isConnected } = useAccount();
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    initCachedToken();
+  }, []);
+
+  const disabled = false;
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setAvatarPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   // ── Field state ───────────────────────────────────────────────────────────
   const [name, setName] = useState("");
@@ -92,9 +111,9 @@ export default function ProfileForm({
   useEffect(() => {
     if (!session?.user) return;
     if (session.user.name) setName((prev) => (prev ? prev : session.user!.name!));
-    if (session.user.image && !avatarPreview) onAvatarChange(session.user.image);
+    if (session.user.image && !avatarPreview) setAvatarPreview(session.user.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [session, avatarPreview]);
 
   // ── Derived session values ────────────────────────────────────────────────
   const githubUsername =
@@ -238,9 +257,16 @@ export default function ProfileForm({
       return;
     }
 
-    setIsSubmitting(true);
+      if (!isConnected || !address) {
+    notification.error('Please connect your wallet first.');
+    return;
+  }
+
+  setIsSubmitting(true);
 
     try {
+
+      const token = await getValidJwt(address);
       // Prepare data for the API – roleValue is already the correct Role type
       const formData = {
         name: name.trim(),
@@ -257,7 +283,7 @@ export default function ProfileForm({
         },
       };
 
-      const accountId = await handleCreateAccount(formData);
+      const accountId = await handleCreateAccount(formData,token);
 
       if (!accountId) {
         throw new Error("No ID returned from account creation");
@@ -347,7 +373,7 @@ export default function ProfileForm({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={onAvatarUpload}
+              onChange={handleAvatarUpload}
             />
             {avatarPreview && session?.user?.image === avatarPreview && (
               <p className="text-[10px] text-gray-600 mt-1 text-center">from GitHub</p>
@@ -492,7 +518,7 @@ export default function ProfileForm({
               >
                 <button
                   onClick={() =>
-                    signIn("github", { callbackUrl: "/createAccount" }, { prompt: "select_account" })
+                    signIn("github", { callbackUrl: "/getStarted" }, { prompt: "select_account" })
                   }
                   onBlur={() => touch("github")}
                   type="button"

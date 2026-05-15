@@ -1,7 +1,7 @@
-import axios from "axios";
+// utils/lib/getStarted.ts
+import axios from 'axios';
 
-// Match the exact roles from your component
-export type Role = "Developer" | "Designer" | "Project Manager";
+export type Role = 'developer' | 'designer' | 'project_manager'; // match backend enum
 
 export interface CreateAccountPayload {
   name: string;
@@ -18,44 +18,27 @@ export interface CreateAccountPayload {
   };
 }
 
-interface CreateAccountResponse {
-  id: string;
-  message?: string;
-}
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
 
-// Replace with your actual backend URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
-
-console.log("API Base URL:", API_BASE_URL);
-
-export const handleCreateAccount = async (
-  formData: CreateAccountPayload
-): Promise<string> => {
-  try {
-    const response = await axios.post<CreateAccountResponse>(
-      `${API_BASE_URL}/api/users`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    // Ensure the response contains an id
-    if (!response.data.id) {
-      throw new Error("No account ID returned from server");
+export async function handleCreateAccount(
+  formData: CreateAccountPayload,
+  jwtToken: string
+): Promise<string> {
+    console.log('Creating account with data:', formData);
+    console.log(jwtToken);
+  const response = await axios.post<{ id: string }>(
+    `${API_BASE}/api/users`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
     }
+  );
 
-    return response.data.id;
-  } catch (error: unknown) {
-    console.error("Failed to create account:", error);
-
-    if (axios.isAxiosError(error)) {
-      const message = error.response?.data?.message || "Failed to create account";
-      throw new Error(message);
-    }
-
-    throw new Error("Unexpected error occurred");
+  if (!response.data.id) {
+    throw new Error('No account ID returned from server');
   }
-};
+  return response.data.id;
+}
