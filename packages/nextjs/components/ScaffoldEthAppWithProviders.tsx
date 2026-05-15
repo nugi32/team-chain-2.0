@@ -14,7 +14,7 @@ import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { usePathname } from "next/navigation";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
-  const hideHeader = ["/", "/documentation", "/getStarted", "/createAccount"].includes(usePathname());
+  const hideHeader = ["/", "/documentation", "/getStarted", "/login"].includes(usePathname());
   return (
     <>
       <div className="flex flex-col min-h-screen">

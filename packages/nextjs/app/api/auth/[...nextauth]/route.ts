@@ -1,12 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 
-const whitelist: string[] = process.env.WHITELIST
-  ? process.env.WHITELIST.split(",").map((email) =>
-      email.trim().toLowerCase()
-    )
-  : [];
-
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
@@ -22,39 +16,34 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-callbacks: {
-  async signIn({ user }) {
-    if (!user.email) return false;
+  callbacks: {
+    async jwt({ token, profile }) {
+      if (profile) {
+        const githubProfile = profile as any;
 
-    return whitelist.includes(user.email.toLowerCase());
+        token.username = githubProfile.login;
+        token.email = githubProfile.email;
+        token.name = githubProfile.name;
+        token.avatar = githubProfile.avatar_url;
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.username = token.username as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.image = token.avatar as string;
+      }
+
+      return session;
+    },
   },
 
-  async jwt({ token, profile }) {
-    if (profile) {
-      const githubProfile = profile as any;
-
-      token.username = githubProfile.login;
-      token.email = githubProfile.email;
-      token.name = githubProfile.name;
-      token.avatar = githubProfile.avatar_url;
-    }
-
-    return token;
-  },
-
-  async session({ session, token }) {
-    if (session.user) {
-      session.user.username = token.username as string;
-      session.user.email = token.email as string;
-      session.user.name = token.name as string;
-      session.user.image = token.avatar as string;
-    }
-
-    return session;
-  },
-},
   pages: {
-    signIn: "/createAccount",
+    signIn: "/getStarted",
     error: "/unauthorized",
   },
 };

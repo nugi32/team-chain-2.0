@@ -1,316 +1,729 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { Wallet, User, ArrowLeft, ShieldCheck } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
-import { useRouter } from "next/navigation";
-
-import { Button } from "@/components/globalComponents/button";
-import { Card, CardContent } from "@/components/globalComponents/card";
-
+import React, { MutableRefObject, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  useConnectModal,
-  useAccountModal,
-  useChainModal,
-} from "@rainbow-me/rainbowkit";
+  Upload,
+  Mail,
+  CheckCircle2,
+  User,
+  Wallet,
+  AlertCircle,
+  Plus,
+  Trash2,
+  ChevronDown,
+  FileText,
+  AlignLeft,
+  Type,
+  Link2,
+  ArrowLeft,
+} from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
-import { useAccount, useDisconnect } from "wagmi";
-
+import Field from "@/components/createAccount/Field";
+import WalletConnectBlock from "@/components/createAccount/WalletConnectBlock";
+import { handleCreateAccount, type Role } from "@/utils/lib/getStarted";
 import { notification } from "~~/utils/scaffold-eth";
 
-export default function TeamChainLoginPage() {
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface ProfileFormProps {
+  disabled: boolean;
+  avatarPreview: string | null;
+  onAvatarChange?: (preview: string | null) => void;
+  onAvatarUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fileRef: MutableRefObject<HTMLInputElement | null>;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+// Map user‑friendly labels to the actual Role values expected by the backend.
+// Adjust the `value` fields to match your backend's Role enum.
+const roleOptions = [
+  { label: "Developer", value: "developer" as Role },
+  { label: "Designer", value: "designer" as Role },
+  { label: "Project Manager", value: "project_manager" as Role },
+] as const;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const isValidUri = (v: string) => {
+  try {
+    new URL(v);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function ProfileForm({
+  disabled,
+  avatarPreview,
+  onAvatarChange = () => {},
+  onAvatarUpload,
+  fileRef,
+}: ProfileFormProps) {
   const router = useRouter();
+  const { data: session } = useSession();
 
-  const { openConnectModal } = useConnectModal();
-  const { openAccountModal } = useAccountModal();
-  const { openChainModal } = useChainModal();
+  // ── Field state ───────────────────────────────────────────────────────────
+  const [name, setName] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [roleValue, setRoleValue] = useState<Role | "">("");
+  const [roleOpen, setRoleOpen] = useState(false);
 
-  const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
+  // Description sub-fields
+  const [descHeader, setDescHeader] = useState("");
+  const [descSummary, setDescSummary] = useState("");
+  const [descPoints, setDescPoints] = useState<string[]>([""]);
+  const [descFooter, setDescFooter] = useState("");
 
-  const [manualConnect, setManualConnect] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  // supaya disconnect cuma sekali saat page dibuka
-  const disconnectedRef = useRef(false);
+  // Submission state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /**
-   * FORCE DISCONNECT
-   * saat user buka halaman login
-   */
+  // ── Auto-fill from GitHub session ─────────────────────────────────────────
   useEffect(() => {
-    if (!disconnectedRef.current) {
-      disconnectedRef.current = true;
+    if (!session?.user) return;
+    if (session.user.name) setName((prev) => (prev ? prev : session.user!.name!));
+    if (session.user.image && !avatarPreview) onAvatarChange(session.user.image);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
-      try {
-        // clear wagmi cache
-        localStorage.removeItem("wagmi.store");
+  // ── Derived session values ────────────────────────────────────────────────
+  const githubUsername =
+    (session?.user as { login?: string })?.login ??
+    session?.user?.name?.toLowerCase().replace(/\s+/g, "") ??
+    null;
+  const githubUri = githubUsername
+    ? `https://github.com/${githubUsername}`
+    : null;
+  const email = session?.user?.email ?? null;
+  const isGithubLinked = !!session?.user;
 
-        // clear rainbowkit cache
-        localStorage.removeItem("rk-connected-wallets");
+  // ── Validation ────────────────────────────────────────────────────────────
+  const errors: Record<string, string> = {};
 
-        // clear session
-        sessionStorage.clear();
+  if (touched.name && name.trim().length < 3)
+    errors.name = "Name must be at least 3 characters.";
+  if (touched.github && !isGithubLinked)
+    errors.github = "GitHub account must be linked.";
+  if (touched.linkedin) {
+    if (!linkedin) errors.linkedin = "LinkedIn URL is required.";
+    else if (!isValidUri(linkedin))
+      errors.linkedin = "Must be a valid URL (e.g. https://linkedin.com/in/…).";
+  }
+  if (touched.role && !roleValue) errors.role = "Please select a role.";
 
-        // disconnect wallet
-        disconnect();
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  }, [disconnect]);
+  // Description validation
+  if (touched.descHeader && descHeader.trim().length < 3)
+    errors.descHeader = "Header must be at least 3 characters.";
+  if (touched.descSummary && descSummary.length > 200)
+    errors.descSummary = "Summary must be 200 characters or fewer.";
+  if (touched.descFooter && descFooter.length > 100)
+    errors.descFooter = "Footer must be 100 characters or fewer.";
+  const invalidPoints = descPoints.filter((p) => p.trim().length > 0 && p.trim().length < 3);
+  if (touched.descPoints && invalidPoints.length > 0)
+    errors.descPoints = "Each point must be at least 3 characters.";
+  if (touched.descPoints && descPoints.filter((p) => p.trim()).length === 0)
+    errors.descPoints = "At least one point is required.";
 
-  /**
-   * REDIRECT SETELAH CONNECT
-   * + COUNTDOWN
-   * + CANCEL BUTTON
-   */
-  useEffect(() => {
-    if (!manualConnect) return;
+  const profilePictureUri = avatarPreview ?? null;
 
+  const isFormValid =
+    name.trim().length >= 3 &&
+    isGithubLinked &&
+    githubUri &&
+    isValidUri(linkedin) &&
+    roleValue &&
+    profilePictureUri &&
+    descHeader.trim().length >= 3 &&
+    descSummary.length <= 200 &&
+    descFooter.length <= 100 &&
+    descPoints.filter((p) => p.trim().length >= 3).length >= 1;
+
+  // ── Styles ────────────────────────────────────────────────────────────────
+  const inputBase =
+    "w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-sm text-white outline-none placeholder-gray-600 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
+  const inputError =
+    "border-rose-500 focus:border-rose-500 focus:ring-rose-500/20";
+  const errMsg = "text-xs text-rose-400 mt-1.5 flex items-center gap-1";
+
+  const touch = (key: string) => setTouched((t) => ({ ...t, [key]: true }));
+
+  // ── Points helpers ────────────────────────────────────────────────────────
+  const addPoint = () => setDescPoints((p) => [...p, ""]);
+  const removePoint = (i: number) =>
+    setDescPoints((p) => p.filter((_, idx) => idx !== i));
+  const updatePoint = (i: number, v: string) =>
+    setDescPoints((p) => p.map((x, idx) => (idx === i ? v : x)));
+
+  // ── Countdown + redirect helper ──────────────────────────────────────────
+  const startCountdownRedirect = (targetPath: string, onCancel: () => void) => {
     let countdown = 5;
     let cancelled = false;
-
     let interval: NodeJS.Timeout;
     let timeout: NodeJS.Timeout;
 
-    const startRedirectFlow = async () => {
-      if (isConnected && address) {
-        console.log("Wallet connected:", address);
-
-        // contoh API login
-        // await fetch("/api/login", {
-        //   method: "POST",
-        //   body: JSON.stringify({ address }),
-        // });
-
-        const toastId = notification.info(
-          <div className="flex flex-col gap-3 min-w-[250px]">
-            <div className="text-sm leading-6">
-              Wallet connected successfully.
-              <br />
-              Redirecting to dashboard in{" "}
-              <span
-                id="redirect-countdown"
-                className="font-bold text-indigo-400"
-              >
-                {countdown}
-              </span>
-              s...
-            </div>
-
-            <button
-              className="rounded-xl border border-red-500 bg-red-500/10 px-3 py-2 text-sm hover:bg-red-500/20 transition"
-              onClick={() => {
-                cancelled = true;
-
-                clearInterval(interval);
-                clearTimeout(timeout);
-
-                notification.remove(toastId);
-
-                notification.warning("Redirect cancelled");
-
-                // reset state
-                setManualConnect(false);
-              }}
-            >
-              Cancel Redirect
-            </button>
-          </div>,
-          {
-            duration: 6000,
-          }
-        );
-
-        interval = setInterval(() => {
-          countdown--;
-
-          const el = document.getElementById("redirect-countdown");
-
-          if (el) {
-            el.innerText = countdown.toString();
-          }
-        }, 1000);
-
-        timeout = setTimeout(() => {
-          clearInterval(interval);
-
-          if (!cancelled) {
+    const toastId = notification.info(
+      <div className="flex flex-col gap-3 min-w-[250px]">
+        <div className="text-sm leading-6">
+          Account created successfully!
+          <br />
+          Redirecting to dashboard in{" "}
+          <span id="redirect-countdown" className="font-bold text-indigo-400">
+            {countdown}
+          </span>
+          s…
+        </div>
+        <button
+          className="rounded-xl border border-red-500 bg-red-500/10 px-3 py-2 text-sm hover:bg-red-500/20 transition"
+          onClick={() => {
+            cancelled = true;
+            clearInterval(interval);
+            clearTimeout(timeout);
             notification.remove(toastId);
+            notification.warning("Redirect cancelled");
+            onCancel();
+          }}
+        >
+          Cancel Redirect
+        </button>
+      </div>,
+      { duration: 6000 }
+    );
 
-            router.push("/dashboard");
-          }
-        }, 5000);
+    interval = setInterval(() => {
+      countdown--;
+      const el = document.getElementById("redirect-countdown");
+      if (el) el.innerText = countdown.toString();
+    }, 1000);
+
+    timeout = setTimeout(() => {
+      clearInterval(interval);
+      if (!cancelled) {
+        notification.remove(toastId);
+        router.push(targetPath);
       }
-    };
-
-    startRedirectFlow();
+    }, 5000);
 
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [manualConnect, isConnected, address, router]);
+  };
+
+  // ── Form submission ───────────────────────────────────────────────────────
+  const handleSubmit = async () => {
+    // Mark all fields as touched to show validation errors
+    setTouched({
+      name: true,
+      github: true,
+      linkedin: true,
+      role: true,
+      descHeader: true,
+      descSummary: true,
+      descPoints: true,
+      descFooter: true,
+    });
+
+    if (!isFormValid) {
+      notification.error("Please fill in all required fields correctly.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepare data for the API – roleValue is already the correct Role type
+      const formData = {
+        name: name.trim(),
+        role: roleValue,
+        linkedin: linkedin.trim(),
+        github: githubUri,
+        email: email || undefined,
+        avatar: profilePictureUri,
+        description: {
+          header: descHeader.trim(),
+          summary: descSummary.trim(),
+          points: descPoints.filter((p) => p.trim().length >= 3),
+          footer: descFooter.trim(),
+        },
+      };
+
+      const accountId = await handleCreateAccount(formData);
+
+      if (!accountId) {
+        throw new Error("No ID returned from account creation");
+      }
+
+      // Show countdown & redirect
+      startCountdownRedirect(`/dashboard/${accountId}`, () => {
+        setIsSubmitting(false);
+      });
+    } catch (error) {
+      console.error("Account creation failed:", error);
+      notification.error(
+        error instanceof Error ? error.message : "Failed to create account. Please try again."
+      );
+      setIsSubmitting(false);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-6 py-10">
-      <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-8 items-stretch">
-        {/* LEFT PANEL */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="hidden lg:flex flex-col justify-between rounded-3xl border border-gray-800 bg-gray-900 p-8"
+    <div
+      className={[
+        "rounded-3xl border border-gray-800 bg-gray-900 shadow-2xl transition-all duration-300",
+        "max-w-3xl mx-auto w-full",
+        disabled ? "opacity-50 pointer-events-none" : "",
+      ].join(" ")}
+    >
+      <div className="p-8 space-y-6">
+        {/* Back button & header */}
+        <button
+          onClick={() => window.history.back()}
+          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-white transition-colors mb-2"
         >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="mb-6"
+        >
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs text-indigo-300 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            Team Chain Protocol
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Create Your Account</h1>
+          <p className="text-sm text-gray-400 mt-2 leading-relaxed max-w-lg">
+            Set up your on-chain identity. Wallet connection is required upfront — a small gas fee
+            will be charged to register your profile on-chain.
+          </p>
+        </motion.div>
+
+        {/* Wallet connect block */}
+        <WalletConnectBlock />
+
+        {/* ── Avatar + Name ──────────────────────────────────────────────── */}
+        <div className="flex items-start gap-5">
+          {/* Avatar */}
           <div>
+            <label className="block text-sm font-medium text-gray-200 mb-1.5">
+              Avatar <span className="text-rose-400">*</span>
+            </label>
             <button
-              onClick={() => window.history.back()}
-              className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-8"
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="relative w-20 h-20 rounded-2xl border border-dashed border-gray-700 bg-gray-950 hover:border-indigo-500 transition-colors overflow-hidden flex items-center justify-center group"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Back
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="avatar" className="w-full h-full object-cover" />
+              ) : (
+                <div className="flex flex-col items-center gap-1 text-gray-600 group-hover:text-gray-400 transition-colors">
+                  <Upload className="w-5 h-5" />
+                  <span className="text-[10px]">Upload</span>
+                </div>
+              )}
+              {avatarPreview && (
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Upload className="w-5 h-5 text-white" />
+                </div>
+              )}
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={onAvatarUpload}
+            />
+            {avatarPreview && session?.user?.image === avatarPreview && (
+              <p className="text-[10px] text-gray-600 mt-1 text-center">from GitHub</p>
+            )}
+          </div>
+
+          {/* Name */}
+          <div className="flex-1">
+            <Field label="Full Name" required>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                <input
+                  type="text"
+                  placeholder="Your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onBlur={() => touch("name")}
+                  className={[inputBase, "pl-11", errors.name ? inputError : ""].join(" ")}
+                />
+              </div>
+              {errors.name && (
+                <p className={errMsg}>
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.name}
+                </p>
+              )}
+            </Field>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-800" />
+
+        {/* ── Role ───────────────────────────────────────────────────────── */}
+        <Field label="Role" required>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setRoleOpen((o) => !o)}
+              onBlur={() => {
+                touch("role");
+                setTimeout(() => setRoleOpen(false), 150);
+              }}
+              className={[
+                "w-full rounded-2xl border px-4 py-3 text-sm text-left flex items-center justify-between transition-colors",
+                errors.role
+                  ? "border-rose-500 bg-gray-950 text-rose-300"
+                  : roleValue
+                  ? "border-gray-800 bg-gray-950 text-white focus:border-indigo-500"
+                  : "border-gray-800 bg-gray-950 text-gray-600",
+              ].join(" ")}
+            >
+              {roleOptions.find((opt) => opt.value === roleValue)?.label || "Select a role…"}
+              <ChevronDown
+                className={[
+                  "w-4 h-4 text-gray-500 transition-transform",
+                  roleOpen ? "rotate-180" : "",
+                ].join(" ")}
+              />
             </button>
 
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs text-indigo-300 mb-5 m-5">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Recommended authentication method
-            </div>
-
-            <h1 className="text-4xl font-bold leading-tight mb-4">
-              Access Team Chain
-            </h1>
-
-            <p className="text-gray-400 leading-7 max-w-md">
-              Team Chain supports multiple authentication methods, but
-              wallet-based login is the primary access layer for protocol
-              participation.
+            <AnimatePresence>
+              {roleOpen && (
+                <motion.ul
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute z-20 mt-1.5 w-full rounded-2xl border border-gray-700 bg-gray-900 shadow-xl overflow-hidden"
+                >
+                  {roleOptions.map((opt) => (
+                    <li key={opt.value}>
+                      <button
+                        type="button"
+                        onMouseDown={() => {
+                          setRoleValue(opt.value);
+                          setRoleOpen(false);
+                          touch("role");
+                        }}
+                        className={[
+                          "w-full px-4 py-3 text-sm text-left hover:bg-indigo-500/10 hover:text-indigo-300 transition-colors",
+                          roleValue === opt.value ? "text-indigo-300 bg-indigo-500/10" : "text-gray-300",
+                        ].join(" ")}
+                      >
+                        {opt.label}
+                      </button>
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </div>
+          {errors.role && (
+            <p className={errMsg}>
+              <AlertCircle className="w-3 h-3" />
+              {errors.role}
             </p>
-          </div>
+          )}
+        </Field>
 
-          <div className="rounded-2xl border border-gray-800 bg-gray-950 p-5 mt-8">
-            <h2 className="font-semibold mb-3 text-white">
-              Why connect wallet?
-            </h2>
+        <div className="border-t border-gray-800" />
 
-            <ul className="space-y-3 text-sm text-gray-400 leading-6">
-              <li>
-                • Required to sign transactions, stake, vote, and claim rewards.
-              </li>
-
-              <li>
-                • Wallet identity stores contribution history and protocol
-                reputation.
-              </li>
-
-              <li>
-                • GitHub or username login only provides read access to
-                dashboards and public data.
-              </li>
-            </ul>
-          </div>
-        </motion.div>
-
-        {/* RIGHT PANEL */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
-          <Card className="bg-gray-900 border-gray-800 rounded-3xl shadow-2xl h-full">
-            <CardContent className="p-8 md:p-10">
-              <div className="lg:hidden mb-6">
+        {/* ── GitHub OAuth ───────────────────────────────────────────────── */}
+        <Field label="GitHub" hint="OAuth login — links your account and populates your profile URI">
+          <AnimatePresence mode="wait">
+            {isGithubLinked ? (
+              <motion.div
+                key="linked"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-between rounded-2xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-emerald-300 font-medium">@{githubUsername}</p>
+                    {githubUri && (
+                      <p className="text-xs text-gray-500 font-mono mt-0.5">{githubUri}</p>
+                    )}
+                    {email && (
+                      <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                        <Mail className="w-3 h-3" />
+                        {email}
+                      </p>
+                    )}
+                  </div>
+                </div>
                 <button
-                  onClick={() => window.history.back()}
-                  className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back
-                </button>
-              </div>
-
-              <div className="mb-8">
-                <h2 className="text-2xl font-semibold mb-2">
-                  Get Started
-                </h2>
-
-                <p className="text-sm text-gray-400 leading-6">
-                  Choose your preferred sign-in method. For full protocol
-                  interaction, wallet connection is required.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {/* CONNECT WALLET */}
-                <button
-                  className="w-full rounded-2xl border border-indigo-500 bg-indigo-500/10 hover:bg-indigo-500/20 transition-colors p-4 text-left group"
-                  onClick={() => {
-                    setManualConnect(true);
-                    openConnectModal?.();
-                  }}
+                  onClick={() => signOut({ callbackUrl: "/createAccount" })}
                   type="button"
+                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors underline underline-offset-2"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="rounded-xl bg-indigo-500/20 p-2">
-                      <Wallet className="w-5 h-5 text-indigo-300" />
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-4">
-                        <span className="font-medium">
-                          Connect Wallet
-                        </span>
-
-                        <span className="text-xs rounded-full border border-indigo-500/40 px-2 py-1 text-indigo-300">
-                          Recommended
-                        </span>
-                      </div>
-
-                      <p className="text-sm text-gray-400 mt-1 leading-6">
-                        Full access: transactions, staking, governance voting,
-                        rewards, and protocol actions.
-                      </p>
-                    </div>
-                  </div>
+                  Change
                 </button>
-
-                {/* GITHUB */}
-                <button className="w-full rounded-2xl border border-gray-800 hover:border-gray-700 transition-colors p-4 text-left">
-                  <div className="flex items-start gap-4">
-                    <div className="rounded-xl bg-gray-800 p-2">
-                      <FaGithub className="w-5 h-5 text-gray-300" />
-                    </div>
-
-                    <div>
-                      <span className="font-medium">
-                        Continue with GitHub
-                      </span>
-
-                      <p className="text-sm text-gray-400 mt-1 leading-6">
-                        Read-only access for profile sync, public activity, and
-                        team discovery.
-                      </p>
-                    </div>
-                  </div>
-                </button>
-                
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-gray-800">
-                <p className="text-sm text-gray-400 mb-4">
-                  New to Team Chain?
-                </p>
-
-                <Button
-                  className="w-full rounded-2xl h-12"
+              </motion.div>
+            ) : (
+              <motion.div
+                key="unlinked"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <button
                   onClick={() =>
-                    (window.location.href = "/createAccount")
+                    signIn("github", { callbackUrl: "/createAccount" }, { prompt: "select_account" })
                   }
+                  onBlur={() => touch("github")}
+                  type="button"
+                  className={[
+                    "w-full rounded-2xl border px-4 py-3 text-sm transition-colors flex items-center gap-2",
+                    errors.github
+                      ? "border-rose-500 bg-rose-500/5 text-rose-300 hover:bg-rose-500/10"
+                      : "border-gray-700 bg-gray-950 hover:border-gray-600 hover:bg-gray-900 text-gray-300",
+                  ].join(" ")}
                 >
-                  Create Account
-                </Button>
+                  <FaGithub className="w-4 h-4" />
+                  Connect GitHub Account
+                </button>
+                {errors.github && (
+                  <p className={errMsg}>
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.github}
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Field>
+
+        <div className="border-t border-gray-800" />
+
+        {/* ── LinkedIn ───────────────────────────────────────────────────── */}
+        <Field label="LinkedIn" required hint="Public profile URL (https://linkedin.com/in/…)">
+          <div className="relative">
+            <FaLinkedin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+            <input
+              type="url"
+              placeholder="https://linkedin.com/in/yourhandle"
+              value={linkedin}
+              onChange={(e) => setLinkedin(e.target.value)}
+              onBlur={() => touch("linkedin")}
+              className={[inputBase, "pl-11", errors.linkedin ? inputError : ""].join(" ")}
+            />
+          </div>
+          {errors.linkedin && (
+            <p className={errMsg}>
+              <AlertCircle className="w-3 h-3" />
+              {errors.linkedin}
+            </p>
+          )}
+        </Field>
+
+        <div className="border-t border-gray-800" />
+
+        {/* ── Description ────────────────────────────────────────────────── */}
+        <div>
+          <p className="text-sm font-medium text-gray-200 mb-4 flex items-center gap-2">
+            <FileText className="w-4 h-4 text-indigo-400" />
+            Profile Description
+          </p>
+
+          <div className="rounded-2xl border border-gray-800 bg-gray-950/60 p-5 space-y-4">
+            {/* Header */}
+            <Field label="Header" required hint="Short headline — max 100 chars">
+              <div className="relative">
+                <Type className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                <input
+                  type="text"
+                  maxLength={100}
+                  placeholder="e.g. Full-Stack Developer & Open-Source Contributor"
+                  value={descHeader}
+                  onChange={(e) => setDescHeader(e.target.value)}
+                  onBlur={() => touch("descHeader")}
+                  className={[inputBase, "pl-11", errors.descHeader ? inputError : ""].join(" ")}
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-600">
+                  {descHeader.length}/100
+                </span>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              {errors.descHeader && (
+                <p className={errMsg}>
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.descHeader}
+                </p>
+              )}
+            </Field>
+
+            {/* Summary */}
+            <Field label="Summary" hint="Brief bio — max 200 chars">
+              <div className="relative">
+                <textarea
+                  maxLength={200}
+                  rows={3}
+                  placeholder="A short summary about yourself and what you bring to the team…"
+                  value={descSummary}
+                  onChange={(e) => setDescSummary(e.target.value)}
+                  onBlur={() => touch("descSummary")}
+                  className={[inputBase, "resize-none", errors.descSummary ? inputError : ""].join(
+                    " "
+                  )}
+                />
+                <span className="absolute right-4 bottom-3 text-xs text-gray-600">
+                  {descSummary.length}/200
+                </span>
+              </div>
+              {errors.descSummary && (
+                <p className={errMsg}>
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.descSummary}
+                </p>
+              )}
+            </Field>
+
+            {/* Points */}
+            <Field
+              label="Key Points"
+              required
+              hint="Bullet highlights — at least 1, each 3–100 chars"
+            >
+              <div className="space-y-2">
+                <AnimatePresence initial={false}>
+                  {descPoints.map((point, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex gap-2"
+                    >
+                      <div className="relative flex-1">
+                        <AlignLeft className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-600" />
+                        <input
+                          type="text"
+                          maxLength={100}
+                          placeholder={`Point ${i + 1}`}
+                          value={point}
+                          onChange={(e) => updatePoint(i, e.target.value)}
+                          onBlur={() => touch("descPoints")}
+                          className={[
+                            inputBase,
+                            "pl-10",
+                            errors.descPoints ? inputError : "",
+                          ].join(" ")}
+                        />
+                      </div>
+                      {descPoints.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removePoint(i)}
+                          className="flex-shrink-0 w-11 h-11 rounded-2xl border border-gray-800 bg-gray-950 hover:border-rose-500/50 hover:text-rose-400 text-gray-600 transition-colors flex items-center justify-center"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+
+                <button
+                  type="button"
+                  onClick={addPoint}
+                  className="w-full rounded-2xl border border-dashed border-gray-700 bg-transparent hover:border-indigo-500/50 hover:text-indigo-400 text-gray-600 transition-colors text-xs py-2.5 flex items-center justify-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Add Point
+                </button>
+              </div>
+              {errors.descPoints && (
+                <p className={errMsg}>
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.descPoints}
+                </p>
+              )}
+            </Field>
+
+            {/* Footer */}
+            <Field label="Footer" hint="Closing note — max 100 chars">
+              <div className="relative">
+                <Link2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                <input
+                  type="text"
+                  maxLength={100}
+                  placeholder="e.g. Open to remote roles worldwide"
+                  value={descFooter}
+                  onChange={(e) => setDescFooter(e.target.value)}
+                  onBlur={() => touch("descFooter")}
+                  className={[inputBase, "pl-11", errors.descFooter ? inputError : ""].join(" ")}
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-600">
+                  {descFooter.length}/100
+                </span>
+              </div>
+              {errors.descFooter && (
+                <p className={errMsg}>
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.descFooter}
+                </p>
+              )}
+            </Field>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Footer / Submit ─────────────────────────────────────────────── */}
+      <div className="px-8 pb-8 pt-2 border-t border-gray-800/50">
+        <div className="flex items-center gap-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 px-4 py-3 mb-6 text-xs text-gray-400 leading-relaxed">
+          <Wallet className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+          <span>
+            Submitting this form will prompt a{" "}
+            <span className="text-indigo-300 font-medium">wallet signature</span> to register your
+            profile on-chain. A gas fee of approximately{" "}
+            <span className="text-white font-medium">$0.01–$0.05</span> will be deducted from your
+            connected wallet.
+          </span>
+        </div>
+
+        <button
+          type="button"
+          disabled={disabled || !isFormValid || isSubmitting}
+          onClick={handleSubmit}
+          className={[
+            "w-full h-12 rounded-2xl text-sm font-semibold tracking-wide transition-all duration-200",
+            !disabled && isFormValid && !isSubmitting
+              ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+              : "bg-gray-800 text-gray-600 cursor-not-allowed",
+          ].join(" ")}
+        >
+          {isSubmitting
+            ? "Creating Account..."
+            : !disabled && isFormValid
+            ? "Create Account & Sign Transaction"
+            : disabled
+            ? "Connect Wallet to Continue"
+            : "Complete all required fields"}
+        </button>
       </div>
     </div>
   );

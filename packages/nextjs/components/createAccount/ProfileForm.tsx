@@ -285,7 +285,7 @@ export default function ProfileForm({
                 >
                   <button
                     onClick={() =>
-                      signIn("github", { callbackUrl: "/createAccount" }, { prompt: "select_account" })
+                      signIn("github", { callbackUrl: "/getStarted" }, { prompt: "select_account" })
                     }
                     onBlur={() => setTouched((t) => ({ ...t, github: true }))}
                     type="button"
