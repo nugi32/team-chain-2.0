@@ -22836,6 +22836,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"team-chain-express-fetch@workspace:packages/express-fetch":
+  version: 0.0.0-use.local
+  resolution: "team-chain-express-fetch@workspace:packages/express-fetch"
+  dependencies:
+    bcrypt: "npm:^6.0.0"
+    cors: "npm:^2.8.6"
+    dotenv: "npm:^17.4.2"
+    ethers: "npm:^6.16.0"
+    express: "npm:^5.2.1"
+    express-rate-limit: "npm:^8.3.0"
+    helmet: "npm:^8.1.0"
+    joi: "npm:^18.1.2"
+    jsonwebtoken: "npm:^9.0.3"
+    morgan: "npm:^1.10.1"
+    multer: "npm:^2.0.2"
+    nodemon: "npm:^3.1.14"
+    uuid: "npm:^14.0.0"
+    zod: "npm:^4.3.6"
+  languageName: unknown
+  linkType: soft
+
 "text-decoder@npm:^1.1.0":
   version: 1.2.7
   resolution: "text-decoder@npm:1.2.7"
