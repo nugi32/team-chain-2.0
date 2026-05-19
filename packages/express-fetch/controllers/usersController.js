@@ -3,7 +3,7 @@ import { createUserSchema } from "../models/users.js";
 const API_BASE_URL = process.env.API_URL || "http://localhost:4000";
 
 // Helper function to perform fetch with timeout and common headers
-const fetchWithTimeout = async (url, options = {}, timeout = 5000) => {
+const fetchWithTimeout = async (url, options = {}, timeout = 15000) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   try {
@@ -54,7 +54,7 @@ export const createUser = async (req, res) => {
     // ✅ CRITICAL: Add owner from authenticated user
     const userData = {
       ...value,
-      owner: req.user.walletAddress,
+      owner: value.walletAddress,
     };
 
     const response = await fetchWithTimeout(`${API_BASE_URL}`, {
@@ -72,7 +72,11 @@ export const createUser = async (req, res) => {
     }
 
     const result = await response.json();
-    res.status(201).json(result);
+    // Map _id from backend to id for frontend
+    res.status(201).json({
+      ...result,
+      id: result._id || result.id,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

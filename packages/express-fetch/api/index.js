@@ -12,10 +12,6 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: "API is running!" });
-});
-/*
 app.use(cors({
   origin: [
     "http://localhost:3000",
@@ -25,12 +21,16 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-*/
+
+app.get("/", (req, res) => {
+  res.json({ message: "API is running!" });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", tasksData);
 app.use("/api/users", usersData);
 
-app.listen(process.env.PORT || 5000,  "0.0.0.0",() => {
+app.listen(5000,  "0.0.0.0",() => {
   console.log(`Server is running on http://localhost:5000`);
 })
 

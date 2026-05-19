@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getAccount, signMessage } from '@wagmi/core'; // or your wallet library (etherjs, viem)
 import { wagmiConfig } from '@/services/web3/wagmiConfig'; // adjust path to your wagmi config
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
 interface JwtResponse {
   token: string;

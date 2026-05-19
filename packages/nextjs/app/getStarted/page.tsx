@@ -283,7 +283,7 @@ export default function ProfileForm() {
         },
       };
 
-      const accountId = await handleCreateAccount(formData,token);
+      const accountId = await handleCreateAccount(formData, token, address);
 
       if (!accountId) {
         throw new Error("No ID returned from account creation");
