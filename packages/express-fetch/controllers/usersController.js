@@ -41,6 +41,49 @@ export const getAllUsers = async (_req, res) => {
   }
 };
 
+// GET user by id
+// ✅ Public endpoint (atau bisa diproteksi sesuai kebutuhan)
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const response = await fetchWithTimeout(`${API_BASE_URL}/${id}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const errorText = await response.text();
+      console.error(errorText);
+
+      return res
+        .status(response.status)
+        .json({ error: "Failed to fetch user" });
+    }
+
+    const user = await response.json();
+
+    // Optional: map _id -> id
+    res.json({
+      ...user,
+      id: user._id || user.id,
+    });
+  } catch (err) {
+    console.error(err);
+
+    if (err.name === "AbortError") {
+      return res.status(408).json({ error: "Request timeout" });
+    }
+
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // POST tambah user (create profile)
 // ✅ Protected with auth + rate limiting
 export const createUser = async (req, res) => {

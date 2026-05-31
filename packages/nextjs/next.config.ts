@@ -3,6 +3,18 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "example.com",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+    ],
+  },
   typescript: {
     ignoreBuildErrors: process.env.NEXT_PUBLIC_IGNORE_BUILD_ERROR === "true",
   },
@@ -22,6 +34,7 @@ if (isIpfs) {
   nextConfig.output = "export";
   nextConfig.trailingSlash = true;
   nextConfig.images = {
+    ...nextConfig.images,
     unoptimized: true,
   };
 }

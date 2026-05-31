@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -13,7 +13,11 @@ import {
 
 import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { hardhat } from "viem/chains";
+import { handleFetchUserHeader, handleUserInitials } from "@/utils/lib/header";
 
+import Image from "next/image";
+
+import defaultProfile from "@/public/defaultProfile.jpg";
 
 /* ─────────────────────────────────────
    TYPES & DATA
@@ -29,32 +33,24 @@ interface Notification {
   read: boolean;
 }
 
-const userInitials = "JD"; // Placeholder for user initials, replace with dynamic data as needed
-
-const avatar = (
-  <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-xs font-bold flex-shrink-0">
-    {userInitials}
-  </div>
-);
-
 const INITIAL_NOTIFICATIONS: Notification[] = [
-  { id: 1, type: "deadline", msg: "DAO Governance Module overdue", time: "Just now", urgent: true,  read: false },
-  { id: 2, type: "review",   msg: "2 approvals pending on Cross-Chain Oracle", time: "4h ago", urgent: false, read: false },
-  { id: 3, type: "invite",   msg: "Invited to join ZK Rollup SDK", time: "1d ago", urgent: false, read: false },
-  { id: 4, type: "dispute",  msg: "L2 Bridge dispute awaiting arbitration", time: "2d ago", urgent: true,  read: false },
+  { id: 1, type: "deadline", msg: "DAO Governance Module overdue", time: "Just now", urgent: true, read: false },
+  { id: 2, type: "review", msg: "2 approvals pending on Cross-Chain Oracle", time: "4h ago", urgent: false, read: false },
+  { id: 3, type: "invite", msg: "Invited to join ZK Rollup SDK", time: "1d ago", urgent: false, read: false },
+  { id: 4, type: "dispute", msg: "L2 Bridge dispute awaiting arbitration", time: "2d ago", urgent: true, read: false },
 ];
 
 const NOTIF_META: Record<NotifType, { icon: React.ReactNode; color: string }> = {
-  deadline: { icon: <Clock className="w-3.5 h-3.5" />,       color: "text-red-400 bg-red-500/10" },
-  review:   { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-amber-400 bg-amber-500/10" },
-  invite:   { icon: <UserCheck className="w-3.5 h-3.5" />,    color: "text-indigo-400 bg-indigo-500/10" },
-  dispute:  { icon: <AlertTriangle className="w-3.5 h-3.5" />, color: "text-orange-400 bg-orange-500/10" },
+  deadline: { icon: <Clock className="w-3.5 h-3.5" />, color: "text-red-400 bg-red-500/10" },
+  review: { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-amber-400 bg-amber-500/10" },
+  invite: { icon: <UserCheck className="w-3.5 h-3.5" />, color: "text-indigo-400 bg-indigo-500/10" },
+  dispute: { icon: <AlertTriangle className="w-3.5 h-3.5" />, color: "text-orange-400 bg-orange-500/10" },
 };
 
 const NAV_LINKS = [
-  { label: "Dashboard",  href: "/dashboard" },
-  { label: "Explore",    href: "/explore" },
-  { label: "How It Works",    href: "/howItWorks" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Explore", href: "/explore" },
+  { label: "How It Works", href: "/howItWorks" },
 ] as const;
 
 /* ─────────────────────────────────────
@@ -195,15 +191,46 @@ function MobileMenu({ pathname, onClose }: { pathname: string; onClose: () => vo
    HEADER
 ────────────────────────────────────── */
 export const Header = () => {
+  const params = useParams();
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === hardhat.id;
   const pathname = usePathname();
 
-  const [notifOpen,  setNotifOpen]  = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
 
   const notifRef = useRef<HTMLDivElement>(null);
+
+  const [profilePicture, setProfilePicture] = useState<string>("");
+  const [userInitials, setUserInitials] = useState<string>("");
+
+  useEffect(() => {
+
+    const id = Array.isArray(params.id)
+      ? params.id[0]
+      : params.id;
+
+    if (!id) {
+      throw new Error("Missing id");
+    }
+    const fetchProfilePict = async () => {
+      if (!id) {
+        console.warn("cannot get user id to fetch");
+      }
+
+      try {
+        const result = await handleFetchUserHeader(id);
+        setProfilePicture(result.profilePicture);
+        setUserInitials(result.name);
+        console.log(result);
+      } catch (err) {
+        console.error(`err while getting user profile picture. err message: ${err}`);
+      }
+    }
+
+    fetchProfilePict();
+  }, [params.id]);
 
   /* Close notification panel on outside click */
   useEffect(() => {
@@ -278,7 +305,7 @@ export const Header = () => {
 
           {/* Faucet — desktop only */}
           <div className="hidden lg:block">
-        {isLocalNetwork && <FaucetButton />}
+            {isLocalNetwork && <FaucetButton />}
           </div>
 
           {/* Wallet — desktop only */}
@@ -353,9 +380,17 @@ export const Header = () => {
           </button>
 
           {/* User initials avatar */}
-          <a href="/settings/0" className="hidden sm:flex items-center gap-2">
-            {avatar}
-          </a>
+          <Link href={`/settings/${params.id}`} className="hidden sm:flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-xs font-bold flex-shrink-0 overflow-hidden">
+              <Image
+                src={profilePicture || defaultProfile}
+                alt="Profile picture"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+          </Link>
 
         </div>
       </div>

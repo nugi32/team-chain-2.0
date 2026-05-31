@@ -25,11 +25,15 @@ import { useSession } from "next-auth/react";
 
 import Field from "@/components/createAccount/Field";
 import WalletConnectBlock from "@/components/createAccount/WalletConnectBlock";
-import { handleCreateAccount, type Role } from "@/utils/lib/getStarted";
+import { useCreateAccount } from "@/utils/lib/getStarted";
 
 import { useAccount } from 'wagmi';
-import { getValidJwt, initCachedToken } from '@/utils/globalLib/walletAuth';
+import { initCachedToken } from '@/utils/globalLib/walletAuth';
 import { notification } from '~~/utils/scaffold-eth';
+import { getValidJwt } from "@/utils/globalLib/walletAuth";
+
+
+export type Role = 'developer' | 'designer' | 'project_manager';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -43,8 +47,6 @@ interface ProfileFormProps {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-// Map user‑friendly labels to the actual Role values expected by the backend.
-// Adjust the `value` fields to match your backend's Role enum.
 const roleOptions = [
   { label: "Developer", value: "developer" as Role },
   { label: "Designer", value: "designer" as Role },
@@ -70,6 +72,8 @@ export default function ProfileForm() {
   const { address, isConnected } = useAccount();
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  // ✅ Hook called at top level of component
 
   useEffect(() => {
     initCachedToken();
@@ -140,7 +144,6 @@ export default function ProfileForm() {
   }
   if (touched.role && !roleValue) errors.role = "Please select a role.";
 
-  // Description validation
   if (touched.descHeader && descHeader.trim().length < 3)
     errors.descHeader = "Header must be at least 3 characters.";
   if (touched.descSummary && descSummary.length > 200)
@@ -240,7 +243,6 @@ export default function ProfileForm() {
 
   // ── Form submission ───────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    // Mark all fields as touched to show validation errors
     setTouched({
       name: true,
       github: true,
@@ -257,17 +259,14 @@ export default function ProfileForm() {
       return;
     }
 
-      if (!isConnected || !address) {
-    notification.error('Please connect your wallet first.');
-    return;
-  }
+    if (!isConnected || !address) {
+      notification.error("Please connect your wallet first.");
+      return;
+    }
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
     try {
-
-      const token = await getValidJwt(address);
-      // Prepare data for the API – roleValue is already the correct Role type
       const formData = {
         name: name.trim(),
         role: roleValue,
@@ -282,14 +281,16 @@ export default function ProfileForm() {
           footer: descFooter.trim(),
         },
       };
+        //const { createAccount } = useCreateAccount(formData);
+            //const jwt = await getValidJwt(address);
 
-      const accountId = await handleCreateAccount(formData, token, address);
+      // ✅ Call the inner async function, not the hook itself
+      const accountId = await useCreateAccount(formData,address);
 
       if (!accountId) {
         throw new Error("No ID returned from account creation");
       }
 
-      // Show countdown & redirect
       startCountdownRedirect(`/dashboard/${accountId}`, () => {
         setIsSubmitting(false);
       });
@@ -611,9 +612,7 @@ export default function ProfileForm() {
                   value={descSummary}
                   onChange={(e) => setDescSummary(e.target.value)}
                   onBlur={() => touch("descSummary")}
-                  className={[inputBase, "resize-none", errors.descSummary ? inputError : ""].join(
-                    " "
-                  )}
+                  className={[inputBase, "resize-none", errors.descSummary ? inputError : ""].join(" ")}
                 />
                 <span className="absolute right-4 bottom-3 text-xs text-gray-600">
                   {descSummary.length}/200

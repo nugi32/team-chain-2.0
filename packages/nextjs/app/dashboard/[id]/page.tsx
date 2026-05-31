@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Layers, Activity, Coins, Users,
@@ -14,6 +14,9 @@ import ReputationActivity from "@/components/dashboard/ReputationActivity";
 import FinancialSummary from "@/components/dashboard/FinancialSummary";
 import TeamCollaboration from "@/components/dashboard/TeamCollaboration";
 import SectionHeading from "@/components/dashboard/SectionHeading";
+
+import {handleGetDashboard} from "@/utils/lib/dashboard";
+import { useParams } from "next/navigation";
 
 /* ─── MOCK DATA ─────────────────────────────────────────────── */
 const USER = {
@@ -126,6 +129,31 @@ const INVITATIONS = [
 
 /* ─── PAGE ──────────────────────────────────────────────────── */
 export default function TeamChainDashboard() {
+
+  const param = useParams();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+
+      const id = Array.isArray(param.id) ? param.id[0] : param.id;
+
+      if (!id) {
+        console.warn("No dashboard user id available yet.");
+        return;
+      }
+
+      try {
+        const userData = await handleGetDashboard(id);
+        console.log("Fetched user data:", userData);
+        // You can set this data to state if needed
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUser();
+  }, [param.id]);
+
   const [kanbanTab, setKanbanTab] = useState<KanbanTab>("Active");
 
   return (

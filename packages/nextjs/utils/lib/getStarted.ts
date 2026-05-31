@@ -1,65 +1,19 @@
-// utils/lib/getStarted.ts
-import axios from 'axios';
+import { getValidJwt } from "@/utils/globalLib/walletAuth";
+import { handleCreateAccount, type CreateAccountPayload } from "@/utils/lib/express/mutations/users";
 
-export type Role = 'developer' | 'designer' | 'project_manager'; // match backend enum
+export async function useCreateAccount(_data: CreateAccountPayload, address: string) {
 
-export interface CreateAccountPayload {
-  name: string;
-  role: Role;
-  linkedin: string;
-  github: string;
-  email?: string;
-  avatar?: string;
-  description: {
-    header: string;
-    summary: string;
-    points: string[];
-    footer: string;
-  };
-}
+  try {
+    const jwt = await getValidJwt(address);
+    const result = await handleCreateAccount(_data,jwt,address);
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
-
-export async function handleCreateAccount(
-  formData: CreateAccountPayload,
-  jwtToken: string,
-  walletAddress: string
-): Promise<string> {
-    console.log('Creating account with data:', formData);
-    console.log(jwtToken);
-    
-    // Map role from lowercase to capitalized format expected by backend
-    const roleMap: Record<string, string> = {
-      'developer': 'Developer',
-      'designer': 'Designer',
-      'project_manager': 'Project Manager'
-    };
-
-    // Map frontend data to backend schema
-    const backendData = {
-      walletAddress,
-      name: formData.name,
-      email: formData.email || '',
-      github: formData.github,
-      linkedin: formData.linkedin,
-      role: roleMap[formData.role] || formData.role,
-      profilePicture: formData.avatar || '',
-      description: formData.description,
-    };
-
-  const response = await axios.post<{ id: string }>(
-    `${API_BASE}/api/users`,
-    backendData,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwtToken}`,
-      },
+    if(!result) {
+      throw new Error("databased not return id")
     }
-  );
-
-  if (!response.data.id) {
-    throw new Error('No account ID returned from server');
+    console.warn(result)
+    return result;
+  } catch(err) {
+    console.error(`An error occured while registering ${err}`)
+    return err;
   }
-  return response.data.id;
 }

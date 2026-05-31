@@ -3,7 +3,7 @@ import { authMiddleware } from "../middlewares/authMiddleware.js"
 import { ownershipMiddleware } from "../middlewares/ownershipMiddleware.js"
 import rateLimit from "express-rate-limit"
 import express from "express"
-import { getAllUsers, createUser, updateUser, deleteUser } from "../controllers/usersController.js"
+import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from "../controllers/usersController.js"
 
 const router = express.Router()
 
@@ -24,6 +24,7 @@ const taskOwnershipCheck = ownershipMiddleware(async (req) => {
 // GET semua user (public endpoint - no auth required)
 router.get("/", getAllUsers)
 
+router.get("/:id", getUserById)
 // POST tambah user (create profile)
 // ✅ Protected with auth + rate limiting
 router.post(
