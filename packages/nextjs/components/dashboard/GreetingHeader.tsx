@@ -12,12 +12,13 @@ export default function GreetingHeader({ user }: { user: User }) {
         <h1 className="text-2xl font-bold tracking-tight">
           Welcome back, {user.name.split(" ")[0]} 👋
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          You have{" "}
-          <span className="text-red-400 font-medium">1 overdue task</span>{" "}
-          and{" "}
-          <span className="text-amber-400 font-medium">2 pending reviews</span>.
-        </p>
+       <p className="text-sm text-gray-500 mt-1">
+  Monitor{" "}
+  <span className="text-indigo-400 font-medium">active commitments</span>,{" "}
+  stay aligned with{" "}
+  <span className="text-amber-400 font-medium">pending reviews</span>, and
+  keep momentum going.
+</p>
       </div>
       <button
         onClick={() => {

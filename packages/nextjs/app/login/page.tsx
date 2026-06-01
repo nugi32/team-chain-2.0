@@ -19,36 +19,6 @@ import { useSession } from "next-auth/react";
 import { handleLogin } from "@/utils/lib/login";
 
 // ---------------------------------------------------------------------------
-// Helper — call your backend and return the user ID
-// ---------------------------------------------------------------------------
-async function fetchUserIdFromBackend(
-  method: "wallet" | "github",
-  identifier: string
-): Promise<string> {
-  const endpoint =
-    method === "wallet" ? "/api/login/wallet" : "/api/login/github";
-
-  const body =
-    method === "wallet"
-      ? { address: identifier }
-      : { username: identifier };
-
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Backend responded with ${res.status}`);
-  }
-
-  const data = await res.json();
-  if (!data.id) throw new Error("Backend did not return an id");
-  return data.id as string;
-}
-
-// ---------------------------------------------------------------------------
 // Countdown + redirect helper
 // ---------------------------------------------------------------------------
 function startCountdownRedirect({
@@ -174,11 +144,14 @@ export default function TeamChainLoginPage() {
   const handleSuccessfulLogin = useCallback(
     async (method: "wallet" | "github", identifier: string) => {
       if (!method) return;
+
       setIsLoading(true);
 
       try {
-         const userId = await handleLogin(method, identifier);
-        //const userId = "0";//-----------------------------------------------------------------------------------------------------------------------------------------------------
+        const userId = await handleLogin(method, identifier);
+
+        // simpan user id buat dipakai nanti
+        localStorage.setItem("userId", userId);
 
         const cleanup = startCountdownRedirect({
           router,
@@ -192,13 +165,16 @@ export default function TeamChainLoginPage() {
         return cleanup;
       } catch (err) {
         console.error("Login error:", err);
+
         notification.error("Login failed. Please try again.");
+
         setActiveMethod(null);
         setIsLoading(false);
       }
     },
     [router]
   );
+
 
   // -------------------------------------------------------------------------
   // WALLET trigger

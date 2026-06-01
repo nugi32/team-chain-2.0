@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import {
-  Coins, Wallet, Lock, TrendingUp, Gift,
-  ArrowUpRight, ArrowDownRight,
+  Coins,
+  Wallet,
+  Lock,
+  TrendingUp,
+  Gift,
+  ArrowUpRight,
+  ArrowDownRight,
 } from "lucide-react";
+import { ethers } from "ethers";
 import SectionHeading from "./SectionHeading";
+import { useUsersContractService } from "@/utils/lib/smartContractWrapper/user/User";
 
 interface Transaction {
   id: number;
@@ -29,6 +36,50 @@ export default function FinancialSummary({
   pendingRewards,
   transactions,
 }: FinancialSummaryProps) {
+  const { withdrawUserFund, withdrawAllUserFund } =
+    useUsersContractService();
+
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+  const handleWithdraw = async () => {
+    try {
+      if (!withdrawAmount) return;
+
+      setIsWithdrawing(true);
+
+      const amountInWei = ethers.parseEther(withdrawAmount);
+
+      const result = await withdrawUserFund(amountInWei);
+
+      if (!result.success) {
+        alert(result.error);
+      } else {
+        setWithdrawAmount("");
+      }
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsWithdrawing(false);
+    }
+  };
+
+  const handleWithdrawAll = async () => {
+    try {
+      setIsWithdrawing(true);
+
+      const result = await withdrawAllUserFund();
+
+      if (!result.success) {
+        alert(result.error);
+      }
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsWithdrawing(false);
+    }
+  };
+
   return (
     <div className="md:col-span-1">
       <SectionHeading
@@ -74,16 +125,58 @@ export default function FinancialSummary({
                 s.color,
               ].join(" ")}
             >
-              {s.icon} {s.label}
+              {s.icon}
+              {s.label}
             </div>
-            <p className={["text-sm font-mono font-semibold", s.color].join(" ")}>
+
+            <p
+              className={[
+                "text-sm font-mono font-semibold",
+                s.color,
+              ].join(" ")}
+            >
               {s.val}
             </p>
           </div>
         ))}
       </div>
 
-      {/* Claim rewards button */}
+      {/* Withdraw section */}
+      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-3 mb-3">
+        <p className="text-[10px] text-gray-600 uppercase tracking-wider font-medium mb-2">
+          Withdraw Funds
+        </p>
+
+        <div className="flex gap-2">
+          <input
+            type="number"
+            min="0"
+            step="0.0001"
+            placeholder="0.10 ETH"
+            value={withdrawAmount}
+            onChange={(e) => setWithdrawAmount(e.target.value)}
+            className="flex-1 rounded-xl border border-gray-800 bg-gray-950 px-3 py-2 text-xs text-gray-200 outline-none focus:border-blue-500"
+          />
+
+          <button
+            onClick={handleWithdraw}
+            disabled={isWithdrawing || !withdrawAmount}
+            className="rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/15 px-4 text-xs font-medium text-blue-300 transition-colors disabled:opacity-50"
+          >
+            WD
+          </button>
+        </div>
+
+        <button
+          onClick={handleWithdrawAll}
+          disabled={isWithdrawing}
+          className="w-full mt-2 rounded-xl border border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium py-2 transition-colors disabled:opacity-50"
+        >
+          Withdraw All
+        </button>
+      </div>
+
+      {/* Claim rewards */}
       <button className="w-full rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-emerald-300 text-xs font-medium py-2.5 mb-3 flex items-center justify-center gap-2 transition-colors">
         <Gift className="w-3.5 h-3.5" />
         Claim {pendingRewards} ETH Rewards
@@ -93,6 +186,7 @@ export default function FinancialSummary({
       <p className="text-[10px] text-gray-600 uppercase tracking-wider font-medium mb-2 px-1">
         Recent Transactions
       </p>
+
       <div className="rounded-2xl border border-gray-800 bg-gray-900 divide-y divide-gray-800/70">
         {transactions.map((tx) => (
           <div
@@ -103,7 +197,9 @@ export default function FinancialSummary({
               <div
                 className={[
                   "w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0",
-                  tx.out ? "bg-red-500/10" : "bg-emerald-500/10",
+                  tx.out
+                    ? "bg-red-500/10"
+                    : "bg-emerald-500/10",
                 ].join(" ")}
               >
                 {tx.out ? (
@@ -112,21 +208,32 @@ export default function FinancialSummary({
                   <ArrowDownRight className="w-3.5 h-3.5 text-emerald-400" />
                 )}
               </div>
+
               <div className="min-w-0">
-                <p className="text-xs text-gray-300 truncate">{tx.label}</p>
-                <p className="text-[10px] text-gray-600">{tx.time}</p>
+                <p className="text-xs text-gray-300 truncate">
+                  {tx.label}
+                </p>
+                <p className="text-[10px] text-gray-600">
+                  {tx.time}
+                </p>
               </div>
             </div>
+
             <div className="text-right flex-shrink-0 ml-2">
               <p
                 className={[
                   "text-xs font-mono font-semibold",
-                  tx.out ? "text-red-400" : "text-emerald-400",
+                  tx.out
+                    ? "text-red-400"
+                    : "text-emerald-400",
                 ].join(" ")}
               >
                 {tx.amount}
               </p>
-              <p className="text-[10px] text-gray-600">{tx.usd}</p>
+
+              <p className="text-[10px] text-gray-600">
+                {tx.usd}
+              </p>
             </div>
           </div>
         ))}

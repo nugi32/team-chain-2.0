@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -13,7 +13,7 @@ import {
 
 import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { hardhat } from "viem/chains";
-import { handleFetchUserHeader, handleUserInitials } from "@/utils/lib/header";
+import { handleFetchUserHeader } from "@/utils/lib/header";
 
 import Image from "next/image";
 
@@ -138,12 +138,6 @@ function NotificationPanel({
 
       {/* Panel footer */}
       <div className="px-4 py-2.5 border-t border-gray-800">
-        <Link
-          href="/notifications"
-          className="text-[10px] text-gray-500 hover:text-indigo-400 transition-colors flex items-center justify-center gap-1"
-        >
-          View all notifications
-        </Link>
       </div>
     </motion.div>
   );
@@ -191,7 +185,6 @@ function MobileMenu({ pathname, onClose }: { pathname: string; onClose: () => vo
    HEADER
 ────────────────────────────────────── */
 export const Header = () => {
-  const params = useParams();
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === hardhat.id;
   const pathname = usePathname();
@@ -204,33 +197,35 @@ export const Header = () => {
 
   const [profilePicture, setProfilePicture] = useState<string>("");
   const [userInitials, setUserInitials] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
-
-    const id = Array.isArray(params.id)
-      ? params.id[0]
-      : params.id;
+    const id = localStorage.getItem("userId");
 
     if (!id) {
-      throw new Error("Missing id");
+      console.warn("cannot get user id from localStorage");
+      return;
     }
-    const fetchProfilePict = async () => {
-      if (!id) {
-        console.warn("cannot get user id to fetch");
-      }
 
+    setUserId(id);
+
+    const fetchProfilePict = async () => {
       try {
         const result = await handleFetchUserHeader(id);
+
         setProfilePicture(result.profilePicture);
         setUserInitials(result.name);
+
         console.log(result);
       } catch (err) {
-        console.error(`err while getting user profile picture. err message: ${err}`);
+        console.error(
+          `err while getting user profile picture. err message: ${err}`
+        );
       }
-    }
+    };
 
     fetchProfilePict();
-  }, [params.id]);
+  }, []);
 
   /* Close notification panel on outside click */
   useEffect(() => {
@@ -380,7 +375,7 @@ export const Header = () => {
           </button>
 
           {/* User initials avatar */}
-          <Link href={`/settings/${params.id}`} className="hidden sm:flex items-center gap-2">
+          <Link href={`/settings/${userId}`} className="hidden sm:flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-xs font-bold flex-shrink-0 overflow-hidden">
               <Image
                 src={profilePicture || defaultProfile}

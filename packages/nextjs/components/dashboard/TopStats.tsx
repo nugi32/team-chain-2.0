@@ -1,7 +1,13 @@
 import React from "react";
 import {
-  Shield, Lock, Target, Award, Coins,
-  ArrowUpRight, CheckCircle2, Gift,
+  Shield,
+  Lock,
+  Target,
+  Award,
+  Coins,
+  ArrowUpRight,
+  CheckCircle2,
+  Gift,
 } from "lucide-react";
 import StatCard from "./StatCard";
 
@@ -13,7 +19,7 @@ const TIER_STYLE: Record<string, string> = {
 };
 
 interface UserStats {
-  tier: string;
+  tier?: string;
   reputationScore: number;
   reputationDelta: number;
   activeStake: number;
@@ -25,6 +31,8 @@ interface UserStats {
 }
 
 export default function TopStats({ user }: { user: UserStats }) {
+  const tier = user.tier ?? "Bronze";
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
       <StatCard
@@ -44,19 +52,21 @@ export default function TopStats({ user }: { user: UserStats }) {
           <div
             className={[
               "text-[10px] font-semibold rounded-full border px-2 py-0.5",
-              TIER_STYLE[user.tier],
+              TIER_STYLE[tier],
             ].join(" ")}
           >
-            {user.tier}
+            {tier}
           </div>
         }
       />
+
       <StatCard
         icon={<Lock className="w-4 h-4 text-amber-400" />}
         label="Active Stake Locked"
         value={<span className="font-mono">{user.activeStake} ETH</span>}
         sub={`$${user.stakeUSD.toLocaleString()} USD`}
       />
+
       <StatCard
         icon={<Target className="w-4 h-4 text-emerald-400" />}
         label="Success Rate"
@@ -68,12 +78,14 @@ export default function TopStats({ user }: { user: UserStats }) {
           </span>
         }
       />
+
       <StatCard
         icon={<Award className="w-4 h-4 text-yellow-400" />}
         label="Global Rank"
         value={`#${user.rank}`}
         sub="Top contributor this week"
       />
+
       <StatCard
         icon={<Coins className="w-4 h-4 text-gray-400" />}
         label="Available Balance"

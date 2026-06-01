@@ -1,19 +1,52 @@
+import { useState } from "react";
 import { getValidJwt } from "@/utils/globalLib/walletAuth";
-import { handleCreateAccount, type CreateAccountPayload } from "@/utils/lib/express/mutations/users";
+import {
+  handleCreateAccount,
+  type CreateAccountPayload,
+} from "@/utils/lib/express/mutations/users";
+import { useUsersContractService } from "@/utils/lib/smartContractWrapper/user/User";
 
-export async function useCreateAccount(_data: CreateAccountPayload, address: string) {
+export function useCreateAccount() {
+  const { Register } = useUsersContractService();
 
-  try {
-    const jwt = await getValidJwt(address);
-    const result = await handleCreateAccount(_data,jwt,address);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    if(!result) {
-      throw new Error("databased not return id")
+  const createAccount = async (
+    data: CreateAccountPayload,
+    address: string
+  ) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await Register(data.github);
+
+      const jwt = await getValidJwt(address);
+
+      const result = await handleCreateAccount(data, jwt, address);
+
+      if (!result) {
+        throw new Error("Database did not return id");
+      }
+
+      return result;
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Unexpected error occurred";
+
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
     }
-    console.warn(result)
-    return result;
-  } catch(err) {
-    console.error(`An error occured while registering ${err}`)
-    return err;
-  }
+  };
+
+  return {
+    createAccount,
+    loading,
+    error,
+  };
 }

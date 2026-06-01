@@ -27,13 +27,11 @@ import Field from "@/components/createAccount/Field";
 import WalletConnectBlock from "@/components/createAccount/WalletConnectBlock";
 import { useCreateAccount } from "@/utils/lib/getStarted";
 
+import type { Role } from "@/utils/lib/express/mutations/users";
+
 import { useAccount } from 'wagmi';
 import { initCachedToken } from '@/utils/globalLib/walletAuth';
 import { notification } from '~~/utils/scaffold-eth';
-import { getValidJwt } from "@/utils/globalLib/walletAuth";
-
-
-export type Role = 'developer' | 'designer' | 'project_manager';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -72,6 +70,8 @@ export default function ProfileForm() {
   const { address, isConnected } = useAccount();
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const {createAccount} = useCreateAccount();
+
 
   // ✅ Hook called at top level of component
 
@@ -285,7 +285,7 @@ export default function ProfileForm() {
             //const jwt = await getValidJwt(address);
 
       // ✅ Call the inner async function, not the hook itself
-      const accountId = await useCreateAccount(formData,address);
+      const accountId = await createAccount(formData,address);
 
       if (!accountId) {
         throw new Error("No ID returned from account creation");
