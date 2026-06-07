@@ -21,6 +21,7 @@ const userSchema = Joi.object({
       .required(),
     footer: Joi.string().max(100).required(),
   }).required(),
+  skills: Joi.array().items(Joi.string().min(2).max(50)).required(),
   owner: Joi.string()
     .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address")
     .required(), // ✅ Owner is required
@@ -48,4 +49,5 @@ export const createUserSchema = Joi.object({
       .required(),
     footer: Joi.string().max(100).required(),
   }).required(),
+  skills: Joi.array().items(Joi.string().min(2).max(50)).required(),
 })

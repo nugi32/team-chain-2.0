@@ -1,4 +1,4 @@
-// utils/lib/getStarted.ts
+// utils/lib/express/mutations/users.ts
 import axios from 'axios';
 import { getUserById } from "@/utils/lib/express/queries/users";
 
@@ -17,6 +17,7 @@ export interface CreateAccountPayload {
         points: string[];
         footer: string;
     };
+    skills: string[];
 }
 
 export type UpdateAccountPayload = Partial<CreateAccountPayload>;
@@ -48,23 +49,48 @@ export async function handleCreateAccount(
         role: roleMap[formData.role] || formData.role,
         profilePicture: formData.avatar || '',
         description: formData.description,
+        skills: formData.skills,
     };
 
-    const response = await axios.post<{ id: string }>(
-        `${API_BASE}/api/users`,
-        backendData,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwtToken}`,
-            },
-        }
-    );
+    try {
+        console.log('[handleCreateAccount] Sending POST to:', `${API_BASE}/api/users`);
+        const response = await axios.post<{ id: string }>(
+            `${API_BASE}/api/users`,
+            backendData,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${jwtToken}`,
+                },
+            }
+        );
 
-    if (!response.data.id) {
-        throw new Error('No account ID returned from server');
+        console.log('[handleCreateAccount] Response:', response.data);
+
+        if (!response.data.id) {
+            throw new Error('No account ID returned from server');
+        }
+        return response.data.id;
+    } catch (error: any) {
+        console.error('[handleCreateAccount] API call failed:', error);
+        
+        // Extract meaningful error message from axios error
+        if (error.response?.data?.message) {
+            console.error('[handleCreateAccount] Backend error:', error.response.data.message);
+            throw new Error(error.response.data.message);
+        }
+        
+        if (error.response?.data?.error) {
+            console.error('[handleCreateAccount] Backend error:', error.response.data.error);
+            throw new Error(error.response.data.error);
+        }
+
+        if (error.message) {
+            throw new Error(error.message);
+        }
+
+        throw new Error('Failed to create account on server');
     }
-    return response.data.id;
 }
 
 export async function handleUpdateAccount(

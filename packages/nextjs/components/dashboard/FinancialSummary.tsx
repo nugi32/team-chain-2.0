@@ -8,9 +8,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
-import { ethers } from "ethers";
 import SectionHeading from "./SectionHeading";
-import { useUsersContractService } from "@/utils/lib/smartContractWrapper/user/User";
+import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
+import { parseEther } from "viem";
 
 interface Transaction {
   id: number;
@@ -36,11 +36,9 @@ export default function FinancialSummary({
   pendingRewards,
   transactions,
 }: FinancialSummaryProps) {
-  const { withdrawUserFund, withdrawAllUserFund } =
-    useUsersContractService();
-
+  const { form, actions, loading } = useUsersContract();
   const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(loading.isPending);
 
   const handleWithdraw = async () => {
     try {
@@ -48,17 +46,13 @@ export default function FinancialSummary({
 
       setIsWithdrawing(true);
 
-      const amountInWei = ethers.parseEther(withdrawAmount);
+      const amountInWei = parseEther(withdrawAmount);
+      form.setWithdrawAmount(amountInWei);
 
-      const result = await withdrawUserFund(amountInWei);
-
-      if (!result.success) {
-        alert(result.error);
-      } else {
-        setWithdrawAmount("");
-      }
+      await actions.handleWithdrawUserFund();
+      setWithdrawAmount("");
     } catch (error: any) {
-      alert(error.message);
+      console.error("Error withdrawing funds:", error.message);
     } finally {
       setIsWithdrawing(false);
     }
@@ -67,14 +61,9 @@ export default function FinancialSummary({
   const handleWithdrawAll = async () => {
     try {
       setIsWithdrawing(true);
-
-      const result = await withdrawAllUserFund();
-
-      if (!result.success) {
-        alert(result.error);
-      }
+      await actions.handleWithdrawAllUserFund();
     } catch (error: any) {
-      alert(error.message);
+      console.error("Error withdrawing all funds:", error.message);
     } finally {
       setIsWithdrawing(false);
     }

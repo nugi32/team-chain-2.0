@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import axios from "axios";
-import { useTaskContractService } from "@/utils/lib/smartContractWrapper/user/taskData";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -51,149 +50,42 @@ type MergedTask = TaskApiData & {
   submit?: any;
 };
 
-export const useTaskData = () => {
-  const {
-    signer,
-    getTaskCounter,
-    getTask,
-    getTaskSubmit,
-  } = useTaskContractService();
+export const useTaskDataUtils = () => {
+  // NOTE: The blockchain hooks (useTaskData from smartContractWrapper) can only be 
+  // called at component level. This utility provides task data query helpers.
+  // For blockchain task data, use useTaskData hook directly in components.
+  
+  const [tasks, setTasks] = useState<MergedTask[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const [tasks, setTasks] =
-    useState<MergedTask[]>([]);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  //
-  // api
-  //
+  // Fetch API tasks only (offchain data)
   const fetchApiTasks = async () => {
-    const res = await axios.get(
-      `${API_BASE_URL}/api/tasks`,
-    );
-
+    const res = await axios.get(`${API_BASE_URL}/api/tasks`);
     return res.data;
   };
 
-  //
-  // only wallet-owned chain tasks
-  //
-  const fetchWalletChainTasks =
-    async () => {
-      if (!signer) return [];
+  // Fetch and merge tasks (API only for now, blockchain data should be fetched at component level)
+  const fetchAllTasks = useCallback(async () => {
+    try {
+      setLoading(true);
 
-      const address =
-        (
-          await signer.getAddress()
-        ).toLowerCase();
+      const apiTasks = await fetchApiTasks();
 
-      const counterRes =
-        await getTaskCounter();
+      const merged = apiTasks.map((task: TaskApiData) => ({
+        ...task,
+        onchain: { exists: false },
+        submit: null,
+      }));
 
-      if (!counterRes.success)
-        return [];
-
-      const counter = Number(
-        counterRes.data,
-      );
-
-      const matched = [];
-
-      //
-      // LOOP 1
-      //
-      for (
-        let i = 1;
-        i <= counter;
-        i++
-      ) {
-        const taskRes =
-          await getTask(i);
-
-        if (
-          !taskRes.success ||
-          !taskRes.data.exists
-        ) {
-          continue;
-        }
-
-        const task =
-          taskRes.data;
-
-        const creator =
-          task.creator.toLowerCase();
-
-        const member =
-          task.member.toLowerCase();
-
-        const isMine =
-          creator === address ||
-          member === address;
-
-        if (!isMine)
-          continue;
-
-        const submitRes =
-          await getTaskSubmit(i);
-
-        matched.push({
-          ...task,
-          submit:
-            submitRes.success
-              ? submitRes.data
-              : null,
-        });
-      }
-
-      return matched;
-    };
-
-  //
-  // merge
-  //
-  const fetchAllTasks =
-    useCallback(async () => {
-      try {
-        setLoading(true);
-
-        const [
-          apiTasks,
-          chainTasks,
-        ] = await Promise.all([
-          fetchApiTasks(),
-          fetchWalletChainTasks(),
-        ]);
-
-        const merged = [];
-
-        for (const chainTask of chainTasks) {
-          const apiTask = apiTasks.find(
-            (item: TaskApiData) =>
-              Number(item.id) ===
-              Number(chainTask.taskId)
-          );
-
-          if (!apiTask) continue;
-
-          merged.push({
-            ...apiTask,
-            onchain: chainTask,
-            submit: chainTask.submit,
-          });
-        }
-
-        setTasks(merged);
-
-        return merged;
-      } catch (err) {
-        console.error(err);
-
-        return [];
-      } finally {
-        setLoading(false);
-      }
-    }, [signer]);
+      setTasks(merged);
+      return merged;
+    } catch (err) {
+      console.error("Error fetching tasks:", err);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   //
   // single task

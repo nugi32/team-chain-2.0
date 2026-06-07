@@ -17,6 +17,14 @@ import {
   Type,
   Link2,
   ArrowLeft,
+  Code2,
+  Layers,
+  Cpu,
+  Smartphone,
+  Database,
+  Cloud,
+  Paintbrush,
+  X,
 } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -29,132 +37,282 @@ import { useCreateAccount } from "@/utils/lib/getStarted";
 
 import type { Role } from "@/utils/lib/express/mutations/users";
 
-import { useAccount } from 'wagmi';
-import { initCachedToken } from '@/utils/globalLib/walletAuth';
-import { notification } from '~~/utils/scaffold-eth';
+import { useAccount } from "wagmi";
+import { initCachedToken } from "@/utils/globalLib/walletAuth";
+import { notification } from "~~/utils/scaffold-eth";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { skills , type Skill, SkillCategory} from "@/utils/lib/helper/skills";
 
-interface ProfileFormProps {
-  disabled: boolean;
-  avatarPreview: string | null;
-  onAvatarChange?: (preview: string | null) => void;
-  onAvatarUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  fileRef: React.RefObject<HTMLInputElement>;
-}
+
+// ─── Category meta ────────────────────────────────────────────────────────────
+
+const categoryMeta: Record<
+  SkillCategory,
+  { label: string; Icon: React.ComponentType<{ className?: string }> }
+> = {
+  language: { label: "Languages",  Icon: Code2       },
+  frontend: { label: "Frontend",   Icon: Layers      },
+  backend:  { label: "Backend",    Icon: Cpu         },
+  mobile:   { label: "Mobile",     Icon: Smartphone  },
+  database: { label: "Database",   Icon: Database    },
+  devops:   { label: "DevOps",     Icon: Cloud       },
+  design:   { label: "Tools",      Icon: Paintbrush  },
+};
+
+const categoryOrder: SkillCategory[] = [
+  "language", "frontend", "backend", "mobile", "database", "devops", "design",
+];
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const roleOptions = [
-  { label: "Developer", value: "developer" as Role },
-  { label: "Designer", value: "designer" as Role },
+  { label: "Developer",       value: "developer"       as Role },
+  { label: "Designer",        value: "designer"        as Role },
   { label: "Project Manager", value: "project_manager" as Role },
 ] as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const isValidUri = (v: string) => {
+  try { new URL(v); return true; } catch { return false; }
+};
+
+// ─── Skills Selector ─────────────────────────────────────────────────────────
+
+interface SkillsSelectorProps {
+  selected: string[];
+  onChange: (ids: string[]) => void;
+  error?: string;
+}
+
+function SkillsSelector({ selected, onChange, error }: SkillsSelectorProps) {
+  const [activeCategory, setActiveCategory] = useState<SkillCategory>("language");
+
+  const toggle = (id: string) =>
+    onChange(
+      selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id]
+    );
+
+  const visibleSkills = skills.filter((s) => s.category === activeCategory);
+
+  const countFor = (cat: SkillCategory) =>
+    skills.filter((s) => s.category === cat && selected.includes(s.id)).length;
+
+  // Selected pill display (all selected)
+  const selectedSkillObjects = skills.filter((s) => selected.includes(s.id));
+
+  return (
+    <div className="space-y-4">
+      {/* Category tabs */}
+      <div className="flex flex-wrap gap-1.5">
+        {categoryOrder.map((cat) => {
+          const { label, Icon } = categoryMeta[cat];
+          const count = countFor(cat);
+          const isActive = activeCategory === cat;
+          return (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setActiveCategory(cat)}
+              className={[
+                "inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-all duration-150",
+                isActive
+                  ? "border-indigo-500/60 bg-indigo-500/15 text-indigo-300 shadow-sm shadow-indigo-500/10"
+                  : "border-gray-800 bg-gray-950 text-gray-500 hover:border-gray-700 hover:text-gray-300",
+              ].join(" ")}
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+              {count > 0 && (
+                <span
+                  className={[
+                    "rounded-full px-1.5 py-0 text-[10px] font-semibold",
+                    isActive
+                      ? "bg-indigo-500/30 text-indigo-200"
+                      : "bg-gray-800 text-gray-400",
+                  ].join(" ")}
+                >
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Skill chips grid */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeCategory}
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.15 }}
+          className="flex flex-wrap gap-2"
+        >
+          {visibleSkills.map((skill) => {
+            const isSelected = selected.includes(skill.id);
+            return (
+              <button
+                key={skill.id}
+                type="button"
+                onClick={() => toggle(skill.id)}
+                className={[
+                  "rounded-xl border px-3 py-1.5 text-xs font-medium transition-all duration-150 select-none",
+                  isSelected
+                    ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-200 shadow-sm shadow-indigo-500/10 ring-1 ring-indigo-500/20"
+                    : "border-gray-800 bg-gray-950 text-gray-400 hover:border-gray-700 hover:text-gray-200 hover:bg-gray-900",
+                ].join(" ")}
+              >
+                {isSelected && (
+                  <span className="mr-1 text-indigo-400">✓</span>
+                )}
+                {skill.name}
+              </button>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Selected pills summary */}
+      {selectedSkillObjects.length > 0 && (
+        <div className="rounded-2xl border border-gray-800 bg-gray-950/50 p-3">
+          <p className="text-[10px] text-gray-600 uppercase tracking-widest mb-2 font-medium">
+            Selected — {selectedSkillObjects.length} skill{selectedSkillObjects.length !== 1 ? "s" : ""}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            <AnimatePresence>
+              {selectedSkillObjects.map((s) => (
+                <motion.span
+                  key={s.id}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  transition={{ duration: 0.1 }}
+                  className="inline-flex items-center gap-1 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-1 text-[11px] text-indigo-300"
+                >
+                  {s.name}
+                  <button
+                    type="button"
+                    onClick={() => toggle(s.id)}
+                    className="ml-0.5 rounded-full text-indigo-400 hover:text-rose-400 transition-colors"
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </motion.span>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Clean LinkedIn URL  ──────────────────────────────────────────────────────
+const cleanLinkedInUrl = (url: string) => {
   try {
-    new URL(v);
-    return true;
+    const parsed = new URL(url);
+    return `${parsed.origin}${parsed.pathname}`.replace(/\/$/, "");
   } catch {
-    return false;
+    return url;
   }
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ProfileForm() {
-  const router = useRouter();
+  const router     = useRouter();
   const { data: session } = useSession();
   const { address, isConnected } = useAccount();
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  const fileRef    = useRef<HTMLInputElement | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const {createAccount} = useCreateAccount();
+  const { createAccount } = useCreateAccount();
 
-
-  // ✅ Hook called at top level of component
-
-  useEffect(() => {
-    initCachedToken();
-  }, []);
+  useEffect(() => { initCachedToken(); }, []);
 
   const disabled = false;
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result === "string") {
-        setAvatarPreview(reader.result);
-      }
+      if (typeof reader.result === "string") setAvatarPreview(reader.result);
     };
     reader.readAsDataURL(file);
   };
 
   // ── Field state ───────────────────────────────────────────────────────────
-  const [name, setName] = useState("");
-  const [linkedin, setLinkedin] = useState("");
+  const [name,      setName]      = useState("");
+  const [linkedin,  setLinkedin]  = useState("");
   const [roleValue, setRoleValue] = useState<Role | "">("");
-  const [roleOpen, setRoleOpen] = useState(false);
+  const [roleOpen,  setRoleOpen]  = useState(false);
 
   // Description sub-fields
-  const [descHeader, setDescHeader] = useState("");
+  const [descHeader,  setDescHeader]  = useState("");
   const [descSummary, setDescSummary] = useState("");
-  const [descPoints, setDescPoints] = useState<string[]>([""]);
-  const [descFooter, setDescFooter] = useState("");
+  const [descPoints,  setDescPoints]  = useState<string[]>([""]);
+  const [descFooter,  setDescFooter]  = useState("");
 
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  // Skills
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
-  // Submission state
+  const [touched,      setTouched]      = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ── Auto-fill from GitHub session ─────────────────────────────────────────
   useEffect(() => {
     if (!session?.user) return;
-    if (session.user.name) setName((prev) => (prev ? prev : session.user!.name!));
+    if (session.user.name)  setName((prev) => (prev ? prev : session.user!.name!));
     if (session.user.image && !avatarPreview) setAvatarPreview(session.user.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, avatarPreview]);
 
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   // ── Derived session values ────────────────────────────────────────────────
-  const githubUsername =
-    (session?.user as { login?: string })?.login ??
-    session?.user?.name?.toLowerCase().replace(/\s+/g, "") ??
-    null;
-  const githubUri = githubUsername
-    ? `https://github.com/${githubUsername}`
-    : null;
-  const email = session?.user?.email ?? null;
-  const isGithubLinked = !!session?.user;
+  const githubUsername = session?.user?.username;
+
+const githubUri = githubUsername
+  ? `https://github.com/${githubUsername}`
+  : null;
+
+const email = session?.user?.email ?? null;
+
+const isGithubLinked = !!githubUsername;
 
   // ── Validation ────────────────────────────────────────────────────────────
   const errors: Record<string, string> = {};
 
-  if (touched.name && name.trim().length < 3)
-    errors.name = "Name must be at least 3 characters.";
-  if (touched.github && !isGithubLinked)
-    errors.github = "GitHub account must be linked.";
+  if (touched.name     && name.trim().length < 3)          errors.name     = "Name must be at least 3 characters.";
+  if (touched.github   && !isGithubLinked)                  errors.github   = "GitHub account must be linked.";
   if (touched.linkedin) {
-    if (!linkedin) errors.linkedin = "LinkedIn URL is required.";
-    else if (!isValidUri(linkedin))
-      errors.linkedin = "Must be a valid URL (e.g. https://linkedin.com/in/…).";
+    if (!linkedin)             errors.linkedin = "LinkedIn URL is required.";
+    else if (!isValidUri(linkedin)) errors.linkedin = "Must be a valid URL (e.g. https://linkedin.com/in/…).";
   }
-  if (touched.role && !roleValue) errors.role = "Please select a role.";
+  if (touched.role        && !roleValue)                    errors.role        = "Please select a role.";
+  if (touched.descHeader  && descHeader.trim().length < 3)  errors.descHeader  = "Header must be at least 3 characters.";
+  if (touched.descSummary && descSummary.length > 200)      errors.descSummary = "Summary must be 200 characters or fewer.";
+  if (touched.descFooter  && descFooter.length > 100)       errors.descFooter  = "Footer must be 100 characters or fewer.";
 
-  if (touched.descHeader && descHeader.trim().length < 3)
-    errors.descHeader = "Header must be at least 3 characters.";
-  if (touched.descSummary && descSummary.length > 200)
-    errors.descSummary = "Summary must be 200 characters or fewer.";
-  if (touched.descFooter && descFooter.length > 100)
-    errors.descFooter = "Footer must be 100 characters or fewer.";
   const invalidPoints = descPoints.filter((p) => p.trim().length > 0 && p.trim().length < 3);
   if (touched.descPoints && invalidPoints.length > 0)
     errors.descPoints = "Each point must be at least 3 characters.";
   if (touched.descPoints && descPoints.filter((p) => p.trim()).length === 0)
     errors.descPoints = "At least one point is required.";
+
+  if (touched.skills && selectedSkills.length === 0)
+    errors.skills = "Please select at least one skill.";
 
   const profilePictureUri = avatarPreview ?? null;
 
@@ -168,21 +326,19 @@ export default function ProfileForm() {
     descHeader.trim().length >= 3 &&
     descSummary.length <= 200 &&
     descFooter.length <= 100 &&
-    descPoints.filter((p) => p.trim().length >= 3).length >= 1;
+    descPoints.filter((p) => p.trim().length >= 3).length >= 1 &&
+    selectedSkills.length >= 1;
 
   // ── Styles ────────────────────────────────────────────────────────────────
-  const inputBase =
-    "w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-sm text-white outline-none placeholder-gray-600 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
-  const inputError =
-    "border-rose-500 focus:border-rose-500 focus:ring-rose-500/20";
-  const errMsg = "text-xs text-rose-400 mt-1.5 flex items-center gap-1";
+  const inputBase  = "w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-sm text-white outline-none placeholder-gray-600 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
+  const inputError = "border-rose-500 focus:border-rose-500 focus:ring-rose-500/20";
+  const errMsg     = "text-xs text-rose-400 mt-1.5 flex items-center gap-1";
 
   const touch = (key: string) => setTouched((t) => ({ ...t, [key]: true }));
 
   // ── Points helpers ────────────────────────────────────────────────────────
-  const addPoint = () => setDescPoints((p) => [...p, ""]);
-  const removePoint = (i: number) =>
-    setDescPoints((p) => p.filter((_, idx) => idx !== i));
+  const addPoint    = ()              => setDescPoints((p) => [...p, ""]);
+  const removePoint = (i: number)    => setDescPoints((p) => p.filter((_, idx) => idx !== i));
   const updatePoint = (i: number, v: string) =>
     setDescPoints((p) => p.map((x, idx) => (idx === i ? v : x)));
 
@@ -196,13 +352,9 @@ export default function ProfileForm() {
     const toastId = notification.info(
       <div className="flex flex-col gap-3 min-w-[250px]">
         <div className="text-sm leading-6">
-          Account created successfully!
-          <br />
+          Account created successfully!<br />
           Redirecting to dashboard in{" "}
-          <span id="redirect-countdown" className="font-bold text-indigo-400">
-            {countdown}
-          </span>
-          s…
+          <span id="redirect-countdown" className="font-bold text-indigo-400">{countdown}</span>s…
         </div>
         <button
           className="rounded-xl border border-red-500 bg-red-500/10 px-3 py-2 text-sm hover:bg-red-500/20 transition"
@@ -229,36 +381,24 @@ export default function ProfileForm() {
 
     timeout = setTimeout(() => {
       clearInterval(interval);
-      if (!cancelled) {
-        notification.remove(toastId);
-        router.push(targetPath);
-      }
+      if (!cancelled) { notification.remove(toastId); router.push(targetPath); }
     }, 5000);
 
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
+    return () => { clearInterval(interval); clearTimeout(timeout); };
   };
 
   // ── Form submission ───────────────────────────────────────────────────────
   const handleSubmit = async () => {
     setTouched({
-      name: true,
-      github: true,
-      linkedin: true,
-      role: true,
-      descHeader: true,
-      descSummary: true,
-      descPoints: true,
-      descFooter: true,
+      name: true, github: true, linkedin: true, role: true,
+      descHeader: true, descSummary: true, descPoints: true, descFooter: true,
+      skills: true,
     });
 
     if (!isFormValid) {
       notification.error("Please fill in all required fields correctly.");
       return;
     }
-
     if (!isConnected || !address) {
       notification.error("Please connect your wallet first.");
       return;
@@ -268,37 +408,35 @@ export default function ProfileForm() {
 
     try {
       const formData = {
-        name: name.trim(),
-        role: roleValue,
-        linkedin: linkedin.trim(),
-        github: githubUri,
-        email: email || undefined,
-        avatar: profilePictureUri,
+        name:     name.trim(),
+        role:     roleValue,
+        linkedin: cleanLinkedInUrl(linkedin.trim()),
+        github:   githubUri,
+        email:    email || undefined,
+        avatar:   profilePictureUri,
         description: {
-          header: descHeader.trim(),
+          header:  descHeader.trim(),
           summary: descSummary.trim(),
-          points: descPoints.filter((p) => p.trim().length >= 3),
-          footer: descFooter.trim(),
+          points:  descPoints.filter((p) => p.trim().length >= 3),
+          footer:  descFooter.trim(),
         },
+        skills: selectedSkills,
       };
-        //const { createAccount } = useCreateAccount(formData);
-            //const jwt = await getValidJwt(address);
 
-      // ✅ Call the inner async function, not the hook itself
-      const accountId = await createAccount(formData,address);
+      console.log("[handleSubmit] Calling createAccount with:", formData);
+      const accountId = await createAccount(formData, address);
 
-      if (!accountId) {
-        throw new Error("No ID returned from account creation");
-      }
+      if (!accountId) throw new Error("No ID returned from account creation");
 
-      startCountdownRedirect(`/dashboard/${accountId}`, () => {
-        setIsSubmitting(false);
-      });
+      startCountdownRedirect(`/dashboard/${accountId}`, () => setIsSubmitting(false));
     } catch (error) {
-      console.error("Account creation failed:", error);
-      notification.error(
-        error instanceof Error ? error.message : "Failed to create account. Please try again."
-      );
+      console.error("[handleSubmit] Account creation failed:", error);
+      
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Failed to create account. Please try again.";
+      
+      notification.error(errorMessage);
       setIsSubmitting(false);
     }
   };
@@ -396,10 +534,7 @@ export default function ProfileForm() {
                 />
               </div>
               {errors.name && (
-                <p className={errMsg}>
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.name}
-                </p>
+                <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.name}</p>
               )}
             </Field>
           </div>
@@ -413,10 +548,7 @@ export default function ProfileForm() {
             <button
               type="button"
               onClick={() => setRoleOpen((o) => !o)}
-              onBlur={() => {
-                touch("role");
-                setTimeout(() => setRoleOpen(false), 150);
-              }}
+              onBlur={() => { touch("role"); setTimeout(() => setRoleOpen(false), 150); }}
               className={[
                 "w-full rounded-2xl border px-4 py-3 text-sm text-left flex items-center justify-between transition-colors",
                 errors.role
@@ -427,12 +559,7 @@ export default function ProfileForm() {
               ].join(" ")}
             >
               {roleOptions.find((opt) => opt.value === roleValue)?.label || "Select a role…"}
-              <ChevronDown
-                className={[
-                  "w-4 h-4 text-gray-500 transition-transform",
-                  roleOpen ? "rotate-180" : "",
-                ].join(" ")}
-              />
+              <ChevronDown className={["w-4 h-4 text-gray-500 transition-transform", roleOpen ? "rotate-180" : ""].join(" ")} />
             </button>
 
             <AnimatePresence>
@@ -448,11 +575,7 @@ export default function ProfileForm() {
                     <li key={opt.value}>
                       <button
                         type="button"
-                        onMouseDown={() => {
-                          setRoleValue(opt.value);
-                          setRoleOpen(false);
-                          touch("role");
-                        }}
+                        onMouseDown={() => { setRoleValue(opt.value); setRoleOpen(false); touch("role"); }}
                         className={[
                           "w-full px-4 py-3 text-sm text-left hover:bg-indigo-500/10 hover:text-indigo-300 transition-colors",
                           roleValue === opt.value ? "text-indigo-300 bg-indigo-500/10" : "text-gray-300",
@@ -467,10 +590,7 @@ export default function ProfileForm() {
             </AnimatePresence>
           </div>
           {errors.role && (
-            <p className={errMsg}>
-              <AlertCircle className="w-3 h-3" />
-              {errors.role}
-            </p>
+            <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.role}</p>
           )}
         </Field>
 
@@ -491,19 +611,16 @@ export default function ProfileForm() {
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-emerald-300 font-medium">@{githubUsername}</p>
-                    {githubUri && (
-                      <p className="text-xs text-gray-500 font-mono mt-0.5">{githubUri}</p>
-                    )}
+                    {githubUri && <p className="text-xs text-gray-500 font-mono mt-0.5">{githubUri}</p>}
                     {email && (
                       <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                        <Mail className="w-3 h-3" />
-                        {email}
+                        <Mail className="w-3 h-3" />{email}
                       </p>
                     )}
                   </div>
                 </div>
                 <button
-                  onClick={() => signOut({ callbackUrl: "/createAccount" })}
+                  onClick={() => signOut({ callbackUrl: "/getStarted" })}
                   type="button"
                   className="text-xs text-gray-500 hover:text-gray-300 transition-colors underline underline-offset-2"
                 >
@@ -518,9 +635,7 @@ export default function ProfileForm() {
                 exit={{ opacity: 0 }}
               >
                 <button
-                  onClick={() =>
-                    signIn("github", { callbackUrl: "/getStarted" }, { prompt: "select_account" })
-                  }
+                  onClick={() => signIn("github", { callbackUrl: "/getStarted" }, { prompt: "select_account" })}
                   onBlur={() => touch("github")}
                   type="button"
                   className={[
@@ -534,10 +649,7 @@ export default function ProfileForm() {
                   Connect GitHub Account
                 </button>
                 {errors.github && (
-                  <p className={errMsg}>
-                    <AlertCircle className="w-3 h-3" />
-                    {errors.github}
-                  </p>
+                  <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.github}</p>
                 )}
               </motion.div>
             )}
@@ -560,10 +672,7 @@ export default function ProfileForm() {
             />
           </div>
           {errors.linkedin && (
-            <p className={errMsg}>
-              <AlertCircle className="w-3 h-3" />
-              {errors.linkedin}
-            </p>
+            <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.linkedin}</p>
           )}
         </Field>
 
@@ -595,10 +704,7 @@ export default function ProfileForm() {
                 </span>
               </div>
               {errors.descHeader && (
-                <p className={errMsg}>
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.descHeader}
-                </p>
+                <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descHeader}</p>
               )}
             </Field>
 
@@ -619,19 +725,12 @@ export default function ProfileForm() {
                 </span>
               </div>
               {errors.descSummary && (
-                <p className={errMsg}>
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.descSummary}
-                </p>
+                <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descSummary}</p>
               )}
             </Field>
 
             {/* Points */}
-            <Field
-              label="Key Points"
-              required
-              hint="Bullet highlights — at least 1, each 3–100 chars"
-            >
+            <Field label="Key Points" required hint="Bullet highlights — at least 1, each 3–100 chars">
               <div className="space-y-2">
                 <AnimatePresence initial={false}>
                   {descPoints.map((point, i) => (
@@ -652,11 +751,7 @@ export default function ProfileForm() {
                           value={point}
                           onChange={(e) => updatePoint(i, e.target.value)}
                           onBlur={() => touch("descPoints")}
-                          className={[
-                            inputBase,
-                            "pl-10",
-                            errors.descPoints ? inputError : "",
-                          ].join(" ")}
+                          className={[inputBase, "pl-10", errors.descPoints ? inputError : ""].join(" ")}
                         />
                       </div>
                       {descPoints.length > 1 && (
@@ -682,10 +777,7 @@ export default function ProfileForm() {
                 </button>
               </div>
               {errors.descPoints && (
-                <p className={errMsg}>
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.descPoints}
-                </p>
+                <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descPoints}</p>
               )}
             </Field>
 
@@ -707,12 +799,31 @@ export default function ProfileForm() {
                 </span>
               </div>
               {errors.descFooter && (
-                <p className={errMsg}>
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.descFooter}
-                </p>
+                <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descFooter}</p>
               )}
             </Field>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-800" />
+
+        {/* ── Skills ─────────────────────────────────────────────────────── */}
+        <div>
+          <p className="text-sm font-medium text-gray-200 mb-1 flex items-center gap-2">
+            <Code2 className="w-4 h-4 text-indigo-400" />
+            Skills
+            <span className="text-rose-400">*</span>
+          </p>
+          <p className="text-xs text-gray-500 mb-4">
+            Select technologies and tools you work with — at least one required.
+          </p>
+
+          <div className="rounded-2xl border border-gray-800 bg-gray-950/60 p-5">
+            <SkillsSelector
+              selected={selectedSkills}
+              onChange={(ids) => { setSelectedSkills(ids); touch("skills"); }}
+              error={errors.skills}
+            />
           </div>
         </div>
       </div>

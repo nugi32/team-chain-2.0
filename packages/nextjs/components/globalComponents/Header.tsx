@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -9,14 +9,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell, GitBranch, Menu, X,
   Clock, UserCheck, MessageSquare, AlertTriangle, CheckCheck,
+  Settings, LogOut, User, Mail, LayoutDashboard, ChevronRight,
 } from "lucide-react";
+
+import { FaGithub } from "react-icons/fa";
 
 import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { hardhat } from "viem/chains";
 import { handleFetchUserHeader } from "@/utils/lib/header";
 
 import Image from "next/image";
-
 import defaultProfile from "@/public/defaultProfile.jpg";
 
 /* ─────────────────────────────────────
@@ -34,23 +36,23 @@ interface Notification {
 }
 
 const INITIAL_NOTIFICATIONS: Notification[] = [
-  { id: 1, type: "deadline", msg: "DAO Governance Module overdue", time: "Just now", urgent: true, read: false },
-  { id: 2, type: "review", msg: "2 approvals pending on Cross-Chain Oracle", time: "4h ago", urgent: false, read: false },
-  { id: 3, type: "invite", msg: "Invited to join ZK Rollup SDK", time: "1d ago", urgent: false, read: false },
-  { id: 4, type: "dispute", msg: "L2 Bridge dispute awaiting arbitration", time: "2d ago", urgent: true, read: false },
+  { id: 1, type: "deadline", msg: "DAO Governance Module overdue",             time: "Just now", urgent: true,  read: false },
+  { id: 2, type: "review",   msg: "2 approvals pending on Cross-Chain Oracle", time: "4h ago",   urgent: false, read: false },
+  { id: 3, type: "invite",   msg: "Invited to join ZK Rollup SDK",             time: "1d ago",   urgent: false, read: false },
+  { id: 4, type: "dispute",  msg: "L2 Bridge dispute awaiting arbitration",    time: "2d ago",   urgent: true,  read: false },
 ];
 
 const NOTIF_META: Record<NotifType, { icon: React.ReactNode; color: string }> = {
-  deadline: { icon: <Clock className="w-3.5 h-3.5" />, color: "text-red-400 bg-red-500/10" },
-  review: { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-amber-400 bg-amber-500/10" },
-  invite: { icon: <UserCheck className="w-3.5 h-3.5" />, color: "text-indigo-400 bg-indigo-500/10" },
-  dispute: { icon: <AlertTriangle className="w-3.5 h-3.5" />, color: "text-orange-400 bg-orange-500/10" },
+  deadline: { icon: <Clock         className="w-3.5 h-3.5" />, color: "text-red-400    bg-red-500/10"    },
+  review:   { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-amber-400  bg-amber-500/10"  },
+  invite:   { icon: <UserCheck     className="w-3.5 h-3.5" />, color: "text-indigo-400 bg-indigo-500/10" },
+  dispute:  { icon: <AlertTriangle className="w-3.5 h-3.5" />, color: "text-orange-400 bg-orange-500/10" },
 };
 
 const NAV_LINKS = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Explore", href: "/explore" },
-  { label: "How It Works", href: "/howItWorks" },
+  { label: "Dashboard",    href: "/dashboard",   requiresUserId: true },
+  { label: "Explore",      href: "/explore"                           },
+  { label: "How It Works", href: "/howItWorks"                        },
 ] as const;
 
 /* ─────────────────────────────────────
@@ -137,7 +139,168 @@ function NotificationPanel({
       </div>
 
       {/* Panel footer */}
-      <div className="px-4 py-2.5 border-t border-gray-800">
+      <div className="px-4 py-2.5 border-t border-gray-800" />
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────
+   PROFILE DROPDOWN  ← new
+────────────────────────────────────── */
+function ProfileDropdown({
+  name,
+  email,
+  githubUrl,
+  profilePicture,
+  userId,
+  onClose,
+  onLogout,
+}: {
+  name: string;
+  email: string;
+  githubUrl: string;
+  profilePicture: string;
+  userId: string;
+  onClose: () => void;
+  onLogout: () => void;
+}) {
+  // "John Doe" → "JD"
+  const initials = name
+    .split(" ")
+    .map((w) => w[0] ?? "")
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  // strip https://github.com/ to show just the handle
+  const githubHandle = githubUrl
+    ? githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//i, "@")
+    : null;
+
+  type MenuItem = {
+    icon: React.ReactNode;
+    label: string;
+    href?: string;
+    danger?: boolean;
+    onClick?: () => void;
+  };
+
+  const menuItems: MenuItem[] = [
+    {
+      icon: <User className="w-3.5 h-3.5" />,
+      label: "View Profile",
+      href: `/profile/${userId}`,
+    },
+    {
+      icon: <LayoutDashboard className="w-3.5 h-3.5" />,
+      label: "Dashboard",
+      href: `/dashboard/${userId}`,
+    },
+    {
+      icon: <Settings className="w-3.5 h-3.5" />,
+      label: "Settings",
+      href: `/settings/${userId}`,
+    },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -6, scale: 0.97 }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
+      className="absolute right-0 top-full mt-2 z-50 w-[248px] rounded-2xl border border-gray-800 bg-gray-900 shadow-2xl overflow-hidden"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* ── Identity block ── */}
+      <div className="px-4 py-3.5 border-b border-gray-800">
+        <div className="flex items-center gap-3">
+          {/* Avatar */}
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex-shrink-0 overflow-hidden flex items-center justify-center">
+            {profilePicture ? (
+              <Image
+                src={profilePicture}
+                alt="Profile"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-indigo-300 text-sm font-bold leading-none">
+                {initials || "?"}
+              </span>
+            )}
+          </div>
+
+          {/* Text info */}
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-gray-100 truncate leading-tight">
+              {name || "Anonymous"}
+            </p>
+
+            {email && (
+              <p className="text-[10px] text-gray-500 truncate flex items-center gap-1 mt-0.5">
+                <Mail className="w-2.5 h-2.5 flex-shrink-0" />
+                {email}
+              </p>
+            )}
+
+            {githubHandle && (
+              <p className="text-[10px] text-indigo-400/80 truncate flex items-center gap-1 mt-0.5">
+                <FaGithub className="w-2.5 h-2.5 flex-shrink-0" />
+                {githubHandle}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Online status pill */}
+        <div className="mt-2.5 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+          <span className="text-[10px] text-emerald-400/80 font-medium">Online</span>
+        </div>
+      </div>
+
+      {/* ── Menu items ── */}
+      <div className="py-1.5">
+        {menuItems.map((item) =>
+          item.href ? (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={onClose}
+              className="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors group"
+            >
+              <span className="text-gray-500 group-hover:text-indigo-400 transition-colors">
+                {item.icon}
+              </span>
+              <span className="flex-1">{item.label}</span>
+              <ChevronRight className="w-3 h-3 text-gray-700 group-hover:text-gray-500 transition-colors" />
+            </Link>
+          ) : (
+            <button
+              key={item.label}
+              onClick={() => { item.onClick?.(); onClose(); }}
+              className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors group"
+            >
+              <span className="text-gray-500 group-hover:text-indigo-400 transition-colors">
+                {item.icon}
+              </span>
+              <span className="flex-1 text-left">{item.label}</span>
+            </button>
+          )
+        )}
+      </div>
+
+      {/* ── Divider + Logout ── */}
+      <div className="border-t border-gray-800 py-1.5">
+        <button
+          onClick={() => { onLogout(); onClose(); }}
+          className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors group"
+        >
+          <LogOut className="w-3.5 h-3.5 flex-shrink-0" />
+          <span>Log out</span>
+        </button>
       </div>
     </motion.div>
   );
@@ -164,16 +327,13 @@ function MobileMenu({ pathname, onClose }: { pathname: string; onClose: () => vo
             onClick={onClose}
             className={[
               "px-4 py-2.5 rounded-xl text-sm font-medium transition-colors",
-              active
-                ? "bg-gray-800 text-white"
-                : "text-gray-400 hover:text-white hover:bg-gray-900",
+              active ? "bg-gray-800 text-white" : "text-gray-400 hover:text-white hover:bg-gray-900",
             ].join(" ")}
           >
             {link.label}
           </Link>
         );
       })}
-
       <div className="mt-3 pt-3 border-t border-gray-800/60 flex flex-col gap-2">
         <RainbowKitCustomConnectButton />
       </div>
@@ -188,46 +348,42 @@ export const Header = () => {
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === hardhat.id;
   const pathname = usePathname();
+  const router = useRouter();
 
-  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifOpen,  setNotifOpen]  = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);   // ← new
   const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
 
-  const notifRef = useRef<HTMLDivElement>(null);
+  const notifRef   = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);          // ← new
 
   const [profilePicture, setProfilePicture] = useState<string>("");
-  const [userInitials, setUserInitials] = useState<string>("");
-  const [userId, setUserId] = useState<string>("");
+  const [userName,       setUserName]       = useState<string>("");
+  const [userEmail,      setUserEmail]      = useState<string>("");  // ← new
+  const [userGithub,     setUserGithub]     = useState<string>("");  // ← new
+  const [userId,         setUserId]         = useState<string>("");
 
   useEffect(() => {
     const id = localStorage.getItem("userId");
-
-    if (!id) {
-      console.warn("cannot get user id from localStorage");
-      return;
-    }
-
+    if (!id) { console.warn("cannot get user id from localStorage"); return; }
     setUserId(id);
 
-    const fetchProfilePict = async () => {
+    const fetchProfile = async () => {
       try {
         const result = await handleFetchUserHeader(id);
-
         setProfilePicture(result.profilePicture);
-        setUserInitials(result.name);
-
-        console.log(result);
+        setUserName(result.name);
+        setUserEmail(result.email);      // ← new
+        setUserGithub(result.githubUrl); // ← new
       } catch (err) {
-        console.error(
-          `err while getting user profile picture. err message: ${err}`
-        );
+        console.error(`err fetching user header: ${err}`);
       }
     };
-
-    fetchProfilePict();
+    fetchProfile();
   }, []);
 
-  /* Close notification panel on outside click */
+  /* Close notif panel on outside click */
   useEffect(() => {
     if (!notifOpen) return;
     const handler = (e: MouseEvent) => {
@@ -237,6 +393,17 @@ export const Header = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [notifOpen]);
+
+  /* Close profile dropdown on outside click */
+  useEffect(() => {
+    if (!profileOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node))
+        setProfileOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [profileOpen]);
 
   /* Close mobile menu on resize to desktop */
   useEffect(() => {
@@ -248,10 +415,18 @@ export const Header = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
   const urgentCount = notifications.filter((n) => n.urgent && !n.read).length;
 
-  const markAllRead = () =>
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  const markRead = (id: number) =>
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  const markAllRead = () => setNotifications((p) => p.map((n) => ({ ...n, read: true })));
+  const markRead = (id: number) => setNotifications((p) => p.map((n) => (n.id === id ? { ...n, read: true } : n)));
+
+  const handleLogout = () => {
+    localStorage.clear();           // wipe all local storage
+    router.push("/");               // redirect to landing
+  };
+
+  /* Close other panels when one opens */
+  const openProfile = () => { setProfileOpen((p) => !p); setNotifOpen(false); setMobileOpen(false); };
+  const openNotif   = () => { setNotifOpen((p)  => !p); setProfileOpen(false); setMobileOpen(false); };
+  const openMobile  = () => { setMobileOpen((p) => !p); setNotifOpen(false); setProfileOpen(false); };
 
   return (
     <header className="relative border-b border-gray-800 bg-gray-950/80 backdrop-blur-md sticky top-0 z-40">
@@ -272,24 +447,20 @@ export const Header = () => {
         {/* ── Nav (desktop, centered) ── */}
         <nav className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
           {NAV_LINKS.map((link) => {
-            const active = pathname === link.href || pathname.startsWith(link.href + "/");
+            const href = "requiresUserId" in link && link.requiresUserId
+              ? `/dashboard/${userId}`
+              : link.href;
+            const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
-                key={link.href}
-                href={link.href}
+                key={link.label}
+                href={href}
                 className={[
                   "relative px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors",
                   active ? "text-white" : "text-gray-500 hover:text-gray-200 hover:bg-gray-900",
                 ].join(" ")}
               >
-                {active && (
-                  <motion.div
-                    layoutId="nav-active-pill"
-                    className="absolute inset-0 bg-gray-800 rounded-lg"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{link.label}</span>
+                {link.label}
               </Link>
             );
           })}
@@ -311,7 +482,7 @@ export const Header = () => {
           {/* Notification bell */}
           <div ref={notifRef} className="relative">
             <button
-              onClick={() => { setNotifOpen((p) => !p); setMobileOpen(false); }}
+              onClick={openNotif}
               aria-label="Notifications"
               className={[
                 "relative w-8 h-8 rounded-xl border flex items-center justify-center transition-colors",
@@ -321,14 +492,11 @@ export const Header = () => {
               ].join(" ")}
             >
               <Bell className={["w-4 h-4 transition-colors", notifOpen ? "text-indigo-400" : "text-gray-400"].join(" ")} />
-
               <AnimatePresence>
                 {unreadCount > 0 && (
                   <motion.span
                     key="badge"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
+                    initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
                     className={[
                       "absolute -top-1 -right-1 min-w-[16px] h-4 rounded-full text-[9px] flex items-center justify-center font-bold px-0.5",
                       urgentCount > 0 ? "bg-red-500 text-white" : "bg-indigo-500 text-white",
@@ -339,7 +507,6 @@ export const Header = () => {
                 )}
               </AnimatePresence>
             </button>
-
             <AnimatePresence>
               {notifOpen && (
                 <NotificationPanel
@@ -353,7 +520,7 @@ export const Header = () => {
 
           {/* Mobile hamburger */}
           <button
-            onClick={() => { setMobileOpen((p) => !p); setNotifOpen(false); }}
+            onClick={openMobile}
             aria-label="Toggle menu"
             className="md:hidden w-8 h-8 rounded-xl border border-gray-800 bg-gray-900 flex items-center justify-center hover:border-gray-700 transition-colors"
           >
@@ -374,18 +541,41 @@ export const Header = () => {
             </AnimatePresence>
           </button>
 
-          {/* User initials avatar */}
-          <Link href={`/settings/${userId}`} className="hidden sm:flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-xs font-bold flex-shrink-0 overflow-hidden">
+          {/* ── Avatar + Profile dropdown ── */}
+          <div ref={profileRef} className="relative hidden sm:block">
+            <button
+              onClick={openProfile}
+              aria-label="Profile menu"
+              className={[
+                "w-8 h-8 rounded-xl border flex items-center justify-center overflow-hidden transition-colors flex-shrink-0",
+                profileOpen
+                  ? "border-indigo-500/60 ring-2 ring-indigo-500/30"
+                  : "border-indigo-500/30 bg-indigo-500/20 hover:border-indigo-500/50",
+              ].join(" ")}
+            >
               <Image
                 src={profilePicture || defaultProfile}
                 alt="Profile picture"
                 width={40}
                 height={40}
-                className="w-full h-full object-cover rounded-full"
+                className="w-full h-full object-cover"
               />
-            </div>
-          </Link>
+            </button>
+
+            <AnimatePresence>
+              {profileOpen && (
+                <ProfileDropdown
+                  name={userName}
+                  email={userEmail}
+                  githubUrl={userGithub}
+                  profilePicture={profilePicture}
+                  userId={userId}
+                  onClose={() => setProfileOpen(false)}
+                  onLogout={handleLogout}
+                />
+              )}
+            </AnimatePresence>
+          </div>
 
         </div>
       </div>

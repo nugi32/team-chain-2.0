@@ -1,249 +1,217 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useScaffoldContract } from "~~/hooks/scaffold-eth";
-import scaffoldConfig from "~~/scaffold.config";
-import { AllowedChainIds } from "~~/utils/scaffold-eth";
-import { useWalletClient } from "wagmi";
-import { BrowserProvider, ethers } from "ethers";
-import { createPublicClient, http } from "viem";
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { keccak256, stringToBytes } from "viem";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
-export const useUsersContractService = () => {
-  const { data: walletClient } = useWalletClient();
+export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
+  const { address: connectedAddress } = useAccount();
+  const targetUser = userAddress || connectedAddress || "";
 
-  const [signer, setSigner] = useState<ethers.Signer | null>(null);
-  const [walletChainId, setWalletChainId] = useState<number | undefined>(undefined);
-  const [isWalletChainResolved, setIsWalletChainResolved] = useState(false);
+  const [registerGitHubURL, setRegisterGitHubURL] = useState("");
+  const [registerUser, setRegisterUser] = useState(connectedAddress || "");
 
-  useEffect(() => {
-    async function loadSigner() {
-      if (!walletClient) {
-        setSigner(null);
-        return;
-      }
-      const provider = new BrowserProvider(walletClient.transport);
-      const signerInstance = await provider.getSigner();
-      setSigner(signerInstance);
-    }
-    loadSigner();
-  }, [walletClient]);
+  const [unregisterUser, setUnregisterUser] = useState(connectedAddress || "");
 
-  useEffect(() => {
-    async function loadWalletChainId() {
-      if (!walletClient) {
-        setWalletChainId(undefined);
-        setIsWalletChainResolved(true);
-        return;
-      }
-      try {
-        const chainId = await walletClient.getChainId();
-        setWalletChainId(chainId);
-      } catch (error) {
-        console.error("Failed to detect wallet chain id:", error);
-        setWalletChainId(undefined);
-      } finally {
-        setIsWalletChainResolved(true);
-      }
-    }
-    setIsWalletChainResolved(false);
-    loadWalletChainId();
-  }, [walletClient]);
+  const [withdrawFundUser, setWithdrawFundUser] = useState(connectedAddress || "");
+  const [withdrawAmount, setWithdrawAmount] = useState<bigint>(0n);
 
-  const activeChainId =
-    walletChainId &&
-    scaffoldConfig.targetNetworks.some((n) => n.id === walletChainId)
-      ? (walletChainId as AllowedChainIds)
-      : undefined;
+  const [withdrawAllUser, setWithdrawAllUser] = useState(connectedAddress || "");
 
-  const { data: rawContractData, isLoading: isContractLoading } =
-    useScaffoldContract({
-      contractName: "UsersContract",
-      walletClient,
-      chainId: activeChainId,
-    });
+  const [newRegistryAddress, setNewRegistryAddress] = useState("");
 
-  const hasWalletChainMismatch =
-    walletClient &&
-    isWalletChainResolved &&
-    walletChainId !== undefined &&
-    activeChainId === undefined;
+  const gitHash = githubUrl
+    ? keccak256(stringToBytes(githubUrl))
+    : undefined;
 
-  const isContractLoadingState =
-    isContractLoading ||
-    (walletClient && !isWalletChainResolved) ||
-    hasWalletChainMismatch;
-
-  const contract = rawContractData;
-
-  const ethersContract =
-    contract?.address && contract?.abi && signer
-      ? new ethers.Contract(contract.address, contract.abi, signer)
-      : null;
-
-  // ── Stable refs so useCallback functions below have empty dep arrays ────────
-  // Any consumer (e.g. useDashboard) that stores these functions in their own
-  // refs always gets a fresh value without causing re-render cascades.
-  const contractRef = useRef(contract);
-  const signerRef = useRef(signer);
-  const ethersContractRef = useRef(ethersContract);
-
-  contractRef.current = contract;
-  signerRef.current = signer;
-  ethersContractRef.current = ethersContract;
-
-  // Public client for read-only operations (no signer needed)
-  const publicClient = createPublicClient({
-    chain: scaffoldConfig.targetNetworks[0],
-    transport: http(),
+  const { data: userData, isLoading: isUserDataLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "Users",
+    args: [targetUser]
   });
 
-  //---------------------------------------------------------
-  // Wrappers — all stable (empty dep arrays, read from refs)
-  //---------------------------------------------------------
+  const { data: totalTasksCreated, isLoading: isTotalTasksCreatedLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "__getTotalTasksCreated",
+    args: [targetUser]
+  });
 
-  const getUsers = useCallback(async () => {
+  const { data: totalTasksCompleted, isLoading: isTotalTasksCompletedLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "__getTotalTasksCompleted",
+    args: [targetUser]
+  });
+
+  const { data: totalTasksFailed, isLoading: isTotalTasksFailedLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "__getTotalTasksFailed",
+    args: [targetUser]
+  });
+
+  const { data: reputation, isLoading: isReputationLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "__getUserReputation",
+    args: [targetUser]
+  });
+
+  const { data: balance, isLoading: isBalanceLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "__getUserBalance",
+    args: [targetUser]
+  });
+
+  const { data: isRegistered, isLoading: isIsRegisteredLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "__isRegistered",
+    args: [targetUser]
+  });
+
+  const { data: gitProfile, isLoading: isGitProfileLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "__getUserGitProfile",
+    args: [targetUser]
+  });
+
+  const { data: usedGitURL, isLoading: isUsedGitURLLoading } = useScaffoldReadContract({
+    contractName: "UsersContract",
+    functionName: "usedGitURL",
+    args: [gitHash]
+  });
+
+  const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "UsersContract" });
+
+  const handleRegister = async () => {
     try {
-      const c = contractRef.current;
-      if (!c) throw new Error("Contract not initialized");
-
-      const address = signerRef.current
-        ? await signerRef.current.getAddress()
-        : "0x0000000000000000000000000000000000000000";
-
-      try {
-        const result = await (c as any).read.Users({ args: [address] });
-        return { success: true, data: result };
-      } catch (contractError: any) {
-        if (
-          contractError.message?.includes("returned no data") ||
-          contractError.message?.includes("ZeroData")
-        ) {
-          return {
-            success: true,
-            data: {
-              GitProfile: "",
-              isRegistered: false,
-              totalTasksCreated: 0n,
-              totalTasksCompleted: 0n,
-              totalTasksFailed: 0n,
-              reputation: 0n,
-              balance: 0n,
-            },
-          };
-        }
-        throw contractError;
-      }
-    } catch (error: any) {
-      console.error("Failed to get users:", error);
-      return { success: false, error: error.message };
+      await writeContractAsync({
+        functionName: "Register",
+        args: [registerGitHubURL, registerUser || connectedAddress],
+      });
+    } catch (e) {
+      console.error("Error registering user", e);
     }
-  }, []); // stable — reads contract/signer from refs
+  };
 
-  const getUsedGitUrl = useCallback(async (bytecode: string) => {
+  const handleUnregister = async () => {
     try {
-      const c = contractRef.current;
-      if (!c) throw new Error("Contract not initialized");
-      const result = await (c as any).read.usedGitURL({ args: [bytecode] });
-      return { success: true, data: result };
-    } catch (error: any) {
-      console.error("Failed to get used Git URL:", error);
-      return { success: false, error: error.message };
+      await writeContractAsync({
+        functionName: "Unregister",
+        args: [unregisterUser || connectedAddress],
+      });
+    } catch (e) {
+      console.error("Error unregistering user", e);
     }
-  }, []);
+  };
 
-  const Register = useCallback(async (githubURL: string) => {
+  const handleWithdrawUserFund = async () => {
     try {
-      const ec = ethersContractRef.current;
-      const s = signerRef.current;
-      if (!ec || !s) throw new Error("Contract not initialized");
-      const address = await s.getAddress();
-      const tx = await ec.Register(githubURL, address);
-      await tx.wait();
-      return { success: true, txHash: tx.hash };
-    } catch (error: any) {
-      console.error("Registration failed:", error);
-      return { success: false, error: error.message };
+      await writeContractAsync({
+        functionName: "withdrawUserFund",
+        args: [withdrawFundUser || connectedAddress, withdrawAmount],
+      });
+    } catch (e) {
+      console.error("Error withdrawing funds", e);
     }
-  }, []);
+  };
 
-  const UnRegister = useCallback(async () => {
+  const handleWithdrawAllUserFund = async () => {
     try {
-      const ec = ethersContractRef.current;
-      const s = signerRef.current;
-      if (!ec || !s) throw new Error("Contract not initialized");
-      const address = await s.getAddress();
-      const tx = await ec.Unregister(address);
-      await tx.wait();
-      return { success: true, txHash: tx.hash };
-    } catch (error: any) {
-      console.error("Unregistration failed:", error);
-      return { success: false, error: error.message };
+      await writeContractAsync({
+        functionName: "withdrawAllUserFund",
+        args: [withdrawAllUser || connectedAddress],
+      });
+    } catch (e) {
+      console.error("Error withdrawing all funds", e);
     }
-  }, []);
+  };
 
-  const withdrawUserFund = useCallback(async (amount: number | bigint) => {
+  const handleChangeAddressRegistry = async () => {
     try {
-      const ec = ethersContractRef.current;
-      const s = signerRef.current;
-      if (!ec || !s) throw new Error("Contract not initialized");
-      const address = await s.getAddress();
-      const tx = await ec.withdrawUserFund(address, amount);
-      await tx.wait();
-      return { success: true, txHash: tx.hash };
-    } catch (error: any) {
-      console.error("Failed to withdraw user fund:", error);
-      return { success: false, error: error.message };
+      await writeContractAsync({
+        functionName: "__changeAddressRegistry",
+        args: [newRegistryAddress],
+      });
+    } catch (e) {
+      console.error("Error changing address registry", e);
     }
-  }, []);
+  };
 
-  const withdrawAllUserFund = useCallback(async () => {
+  const handlePause = async () => {
     try {
-      const ec = ethersContractRef.current;
-      const s = signerRef.current;
-      if (!ec || !s) throw new Error("Contract not initialized");
-      const address = await s.getAddress();
-      const tx = await ec.withdrawAllUserFund(address);
-      await tx.wait();
-      return { success: true, txHash: tx.hash };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      await writeContractAsync({
+        functionName: "pause"
+      });
+    } catch (e) {
+      console.error("Error pausing contract", e);
     }
-  }, []);
+  };
 
-  const pause = useCallback(async () => {
+  const handleUnpause = async () => {
     try {
-      const ec = ethersContractRef.current;
-      if (!ec || !signerRef.current) throw new Error("Contract not initialized");
-      const tx = await ec.pause();
-      await tx.wait();
-      return { success: true, txHash: tx.hash };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+      await writeContractAsync({
+        functionName: "unpause"
+      });
+    } catch (e) {
+      console.error("Error unpausing contract", e);
     }
-  }, []);
-
-  const unpause = useCallback(async () => {
-    try {
-      const ec = ethersContractRef.current;
-      if (!ec || !signerRef.current) throw new Error("Contract not initialized");
-      const tx = await ec.unpause();
-      await tx.wait();
-      return { success: true, txHash: tx.hash };
-    } catch (error: any) {
-      return { success: false, error: error.message };
-    }
-  }, []);
+  };
 
   return {
-    signer,
-    contract,
-    isContractLoading: isContractLoadingState,
-    hasWalletChainMismatch,
-    getUsers,
-    getUsedGitUrl,
-    Register,
-    UnRegister,
-    withdrawUserFund,
-    withdrawAllUserFund,
-    pause,
-    unpause,
+    user: {
+      targetUser,
+      userData,
+      totalTasksCreated,
+      totalTasksCompleted,
+      totalTasksFailed,
+      reputation,
+      balance,
+      isRegistered,
+      gitProfile,
+      usedGitURL,
+    },
+
+    loading: {
+      userData: isUserDataLoading,
+      totalTasksCreated: isTotalTasksCreatedLoading,
+      totalTasksCompleted: isTotalTasksCompletedLoading,
+      totalTasksFailed: isTotalTasksFailedLoading,
+      reputation: isReputationLoading,
+      balance: isBalanceLoading,
+      isRegistered: isIsRegisteredLoading,
+      gitProfile: isGitProfileLoading,
+      usedGitURL: isUsedGitURLLoading,
+      isPending,
+    },
+
+    form: {
+      registerGitHubURL,
+      setRegisterGitHubURL,
+
+      registerUser,
+      setRegisterUser,
+
+      unregisterUser,
+      setUnregisterUser,
+
+      withdrawFundUser,
+      setWithdrawFundUser,
+
+      withdrawAmount,
+      setWithdrawAmount,
+
+      withdrawAllUser,
+      setWithdrawAllUser,
+
+      newRegistryAddress,
+      setNewRegistryAddress,
+    },
+
+    actions: {
+      handleRegister,
+      handleUnregister,
+      handleWithdrawUserFund,
+      handleWithdrawAllUserFund,
+      handleChangeAddressRegistry,
+      handlePause,
+      handleUnpause,
+    },
   };
 };

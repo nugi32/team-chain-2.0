@@ -1,675 +1,571 @@
-import { useWalletClient } from "wagmi";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import { useEffect, useState, useCallback } from "react";
-import { ethers } from "ethers";
+import { useState } from "react";
+import { parseEther } from "viem";
+import { useAccount } from "wagmi";
+import { useScaffoldWriteContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
-/**
- * Standardized response shape for all wrapper functions.
- */
-export interface ContractResponse<T = unknown> {
-    success: boolean;
-    data?: T;
-    error?: string;
-    txHash?: string;
-    receipt?: ethers.TransactionReceipt;
-}
+export const useTaskController = () => {
+    const { address: connectedAddress } = useAccount();
 
-/**
- * Custom hook that provides a typed interface to the TaskController smart contract.
- * Uses wagmi's useWalletClient, Scaffold-ETH's useScaffoldContract and ethers v6.
- *
- * Returns the signer, the write-enabled contract, the signer address, and wrapper
- * functions for every public/external method of the contract.
- */
-export default function useTaskController() {
-    const { data: walletClient } = useWalletClient();
-    const { data: deployedContractData } =
-        useDeployedContractInfo("TaskController");
+    const [title, setTitle] = useState("");
+    const [githubUrl, setGithubUrl] = useState("");
+    const [deadlineHours, setDeadlineHours] = useState<bigint>(0n);
+    const [maxRevision, setMaxRevision] = useState<bigint>(0n);
+    const [createUser, setCreateUser] = useState(connectedAddress || "");
 
-    const [signer, setSigner] = useState<ethers.Signer | null>(null);
-    const [signerAddress, setSignerAddress] = useState<string>("");
-    const [writeContract, setWriteContract] = useState<ethers.Contract | null>(null);
+    const [deleteTaskId, setDeleteTaskId] = useState<bigint | undefined>(undefined);
+    const [deleteUser, setDeleteUser] = useState(connectedAddress || "");
 
-    // ---------------------------------------------------------------------------
-    // Set up ethers v6 BrowserProvider & signer, then connect the scaffold contract
-    // ---------------------------------------------------------------------------
-    useEffect(() => {
-        if (!walletClient) {
-            setSigner(null);
-            setSignerAddress("");
-            setWriteContract(null);
-            return;
-        }
+    const [activateTaskId, setActivateTaskId] = useState<bigint | undefined>(undefined);
+    const [activateUser, setActivateUser] = useState(connectedAddress || "");
 
-        const initSigner = async () => {
-            try {
-                // ethers v6 BrowserProvider from wagmi wallet client transport
-                const provider = new ethers.BrowserProvider(walletClient.transport);
-                const _signer = await provider.getSigner();
-                setSigner(_signer);
+    const [openRegTaskId, setOpenRegTaskId] = useState<bigint | undefined>(undefined);
 
-                const addr = await _signer.getAddress();
-                setSignerAddress(addr);
+    const [closeRegTaskId, setCloseRegTaskId] = useState<bigint | undefined>(undefined);
 
-                // Connect the deployed contract (read-only instance) with the signer
-                if (deployedContractData) {
-                    const contract = new ethers.Contract(
-                        deployedContractData.address,
-                        deployedContractData.abi,
-                        _signer
-                    );
-                    setWriteContract(contract);
-                }
-            } catch (error) {
-                console.error("Failed to initialize signer/contract:", error);
-                setSigner(null);
-                setSignerAddress("");
-                setWriteContract(null);
-            }
-        };
+    const [joinTaskId, setJoinTaskId] = useState<bigint | undefined>(undefined);
+    const [joinUser, setJoinUser] = useState(connectedAddress || "");
 
-        initSigner();
-    }, [walletClient, deployedContractData]);
+    const [withdrawTaskId, setWithdrawTaskId] = useState<bigint | undefined>(undefined);
+    const [withdrawUser, setWithdrawUser] = useState(connectedAddress || "");
 
-    // ---------------------------------------------------------------------------
-    // Helper: ensure contract is ready before making a call
-    // ---------------------------------------------------------------------------
-    const requireContract = (): ethers.Contract => {
-        if (!writeContract) {
-            throw new Error("Contract not initialized");
-        }
-        return writeContract;
-    };
+    const [approveTaskId, setApproveTaskId] = useState<bigint | undefined>(undefined);
+    const [approveApplicant, setApproveApplicant] = useState("");
 
-    // ---------------------------------------------------------------------------
-    // Wrapper for INITIALIZATION function
-    // ---------------------------------------------------------------------------
-    const initialize = useCallback(
-        async (_registryAddress: string): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.initialize(_registryAddress);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
+    const [rejectTaskId, setRejectTaskId] = useState<bigint | undefined>(undefined);
+    const [rejectApplicant, setRejectApplicant] = useState("");
 
-    // ---------------------------------------------------------------------------
-    // TASK LIFECYCLE
-    // ---------------------------------------------------------------------------
+    const [submitTaskId, setSubmitTaskId] = useState<bigint | undefined>(undefined);
+    const [pullRequestUrl, setPullRequestUrl] = useState("");
+    const [submitNote, setSubmitNote] = useState("");
+    const [submitUser, setSubmitUser] = useState(connectedAddress || "");
 
-    /**
-     * Creates a new task (payable).
-     * @param _Title Task title
-     * @param _GithubURL GitHub URL
-     * @param _DeadlineHours Deadline in hours (uint128)
-     * @param _MaximumRevision Max revisions (uint128)
-     * @param _user (optional) task creator address, defaults to signer
-     * @param valueWei Ether to send with the transaction (bigint)
-     */
-    const createTask = useCallback(
-        async (
-            _Title: string,
-            _GithubURL: string,
-            _DeadlineHours: number | bigint,
-            _MaximumRevision: number | bigint,
-            _user?: string,
-            valueWei?: bigint
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = _user ?? signerAddress;
-                const tx = await c.createTask(
-                    _Title,
-                    _GithubURL,
-                    _DeadlineHours,
-                    _MaximumRevision,
-                    userAddr,
-                    { value: valueWei }
-                );
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
+    const [resubmitTaskId, setResubmitTaskId] = useState<bigint | undefined>(undefined);
+    const [resubmitNote, setResubmitNote] = useState("");
+    const [githubFixedUrl, setGithubFixedUrl] = useState("");
+    const [resubmitUser, setResubmitUser] = useState(connectedAddress || "");
 
-    /**
-     * Deletes a task.
-     * @param _taskId Task ID
-     * @param _user (optional) user address (must be creator), defaults to signer
-     */
-    const deleteTask = useCallback(
-        async (_taskId: number | bigint, _user?: string): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = _user ?? signerAddress;
-                const tx = await c.deleteTask(_taskId, userAddr);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
+    const [revisionTaskId, setRevisionTaskId] = useState<bigint | undefined>(undefined);
+    const [revisionNote, setRevisionNote] = useState("");
+    const [additionalDeadlineHours, setAdditionalDeadlineHours] = useState<bigint>(0n);
 
-    /**
-     * Activates a task by providing creator stake (payable).
-     * @param taskId Task ID
-     * @param user (optional) creator address, defaults to signer
-     * @param valueWei Ether to send (bigint)
-     */
-    const activateTask = useCallback(
-        async (
-            taskId: number | bigint,
-            user?: string,
-            valueWei?: bigint
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = user ?? signerAddress;
-                const tx = await c.activateTask(taskId, userAddr, { value: valueWei });
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
+    const [approveTaskIdForCompletion, setApproveTaskIdForCompletion] = useState<bigint | undefined>(undefined);
 
-    /**
-     * Opens registration for a task.
-     * @param taskId Task ID
-     */
-    const openRegistration = useCallback(
-        async (taskId: number | bigint): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.openRegistration(taskId);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
+    const [cancelTaskId, setCancelTaskId] = useState<bigint | undefined>(undefined);
+    const [cancelUser, setCancelUser] = useState(connectedAddress || "");
 
-    /**
-     * Closes registration for a task.
-     * @param taskId Task ID
-     */
-    const closeRegistration = useCallback(
-        async (taskId: number | bigint): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.closeRegistration(taskId);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
+    const [triggerDeadlineTaskId, setTriggerDeadlineTaskId] = useState<bigint | undefined>(undefined);
 
-    // ---------------------------------------------------------------------------
-    // JOIN REQUEST FUNCTIONS
-    // ---------------------------------------------------------------------------
+    const [withdrawFee, setWithdrawFee] = useState(false);
 
-    /**
-     * Requests to join a task (payable).
-     * @param taskId Task ID
-     * @param user (optional) applicant address, defaults to signer
-     * @param valueWei Ether to send (bigint)
-     */
-    const requestJoinTask = useCallback(
-        async (
-            taskId: number | bigint,
-            user?: string,
-            valueWei?: bigint
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = user ?? signerAddress;
-                const tx = await c.requestJoinTask(taskId, userAddr, { value: valueWei });
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
+    const [newRegistryAddress, setNewRegistryAddress] = useState("");
 
-    /**
-     * Withdraws a pending join request.
-     * @param taskId Task ID
-     * @param user (optional) user address, defaults to signer
-     */
-    const withdrawJoinRequest = useCallback(
-        async (taskId: number | bigint, user?: string): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = user ?? signerAddress;
-                const tx = await c.withdrawJoinRequest(taskId, userAddr);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
+    const [pauseCaller, setPauseCaller] = useState(connectedAddress || "");
+    const [unpauseCaller, setUnpauseCaller] = useState(connectedAddress || "");
 
-    /**
-     * Approves a join request.
-     * @param taskId Task ID
-     * @param applicant Address of the applicant
-     */
-    const approveJoinRequest = useCallback(
-        async (
-            taskId: number | bigint,
-            applicant: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.approveJoinRequest(taskId, applicant);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
+    const [value, setValue] = useState("0");
 
-    /**
-     * Rejects a join request.
-     * @param taskId Task ID
-     * @param _applicant Address of the applicant
-     */
-    const rejectJoinRequest = useCallback(
-        async (
-            taskId: number | bigint,
-            _applicant: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.rejectJoinRequest(taskId, _applicant);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
+    const [rewardWei, setRewardWei] = useState<string>("0");
+    const [creatorStakeCaller, setCreatorStakeCaller] = useState(connectedAddress || "");
+    const [projectValueCaller, setProjectValueCaller] = useState(connectedAddress || "");
 
-    // ---------------------------------------------------------------------------
-    // SUBMISSION FUNCTIONS
-    // ---------------------------------------------------------------------------
+    const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "TaskController" });
 
-    /**
-     * Submits a task for review.
-     * @param taskId Task ID
-     * @param PullRequestURL PR URL
-     * @param Note Note
-     * @param user (optional) member address, defaults to signer
-     */
-    const requestSubmitTask = useCallback(
-        async (
-            taskId: number | bigint,
-            PullRequestURL: string,
-            Note: string,
-            user?: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = user ?? signerAddress;
-                const tx = await c.requestSubmitTask(taskId, PullRequestURL, Note, userAddr);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
-
-    /**
-     * Resubmits a task after revision.
-     * @param taskId Task ID
-     * @param Note Note
-     * @param GithubFixedURL Fixed GitHub URL
-     * @param user (optional) member address, defaults to signer
-     */
-    const reSubmitTask = useCallback(
-        async (
-            taskId: number | bigint,
-            Note: string,
-            GithubFixedURL: string,
-            user?: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = user ?? signerAddress;
-                const tx = await c.reSubmitTask(taskId, Note, GithubFixedURL, userAddr);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
-
-    /**
-     * Requests revision on a submission.
-     * @param taskId Task ID
-     * @param Note Note
-     * @param additionalDeadlineHours Additional deadline hours
-     */
-    const requestRevision = useCallback(
-        async (
-            taskId: number | bigint,
-            Note: string,
-            additionalDeadlineHours: number | bigint
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.requestRevision(taskId, Note, additionalDeadlineHours);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Approves a task submission.
-     * @param taskId Task ID
-     */
-    const approveTask = useCallback(
-        async (taskId: number | bigint): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.approveTask(taskId);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    // ---------------------------------------------------------------------------
-    // CANCELLATION FUNCTIONS
-    // ---------------------------------------------------------------------------
-
-    /**
-     * Cancels a task by the caller (creator or member).
-     * @param taskId Task ID
-     * @param user (optional) user address, defaults to signer
-     */
-    const cancelByMe = useCallback(
-        async (
-            taskId: number | bigint,
-            user?: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const userAddr = user ?? signerAddress;
-                const tx = await c.cancelByMe(taskId, userAddr);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract, signerAddress]
-    );
-
-    /**
-     * Triggers deadline consequence.
-     * @param taskId Task ID
-     */
-    const triggerDeadline = useCallback(
-        async (taskId: number | bigint): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.triggerDeadline(taskId);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    // ---------------------------------------------------------------------------
-    // VIEW / PURE FUNCTIONS (read-only, no transaction required)
-    // ---------------------------------------------------------------------------
-
-    /**
-     * Gets the number of join requests for a task.
-     * @param taskId Task ID
-     * @returns count as bigint
-     */
-    const getJoinRequestCount = useCallback(
-        async (taskId: number | bigint): Promise<ContractResponse<bigint>> => {
-            try {
-                const c = requireContract();
-                const result: bigint = await c.getJoinRequestCount(taskId);
-                return { success: true, data: result };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Gets the required member stake for a task.
-     * @param taskId Task ID
-     * @returns stake amount in wei as bigint
-     */
-    const getMemberRequiredStake = useCallback(
-        async (taskId: number | bigint): Promise<ContractResponse<bigint>> => {
-            try {
-                const c = requireContract();
-                const result: bigint = await c.getMemberRequiredStake(taskId);
-                return { success: true, data: result };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Calculates required creator stake.
-     * @param DeadlineHours Deadline in hours
-     * @param MaximumRevision Max revisions
-     * @param rewardWei Reward in wei
-     * @param Caller Address of the caller
-     * @returns stake amount in wei as bigint
-     */
-    const ___getCreatorStake = useCallback(
-        async (
-            DeadlineHours: number | bigint,
-            MaximumRevision: number | bigint,
-            rewardWei: bigint,
-            Caller: string
-        ): Promise<ContractResponse<bigint>> => {
-            try {
-                const c = requireContract();
-                const result: bigint = await c.___getCreatorStake(
-                    DeadlineHours,
-                    MaximumRevision,
-                    rewardWei,
-                    Caller
-                );
-                return { success: true, data: result };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Calculates project value.
-     * @param DeadlineHours Deadline in hours
-     * @param MaximumRevision Max revisions
-     * @param rewardWei Reward in wei
-     * @param Caller Address of the caller
-     * @returns project value in wei as bigint
-     */
-    const ___getProjectValue = useCallback(
-        async (
-            DeadlineHours: number | bigint,
-            MaximumRevision: number | bigint,
-            rewardWei: bigint,
-            Caller: string
-        ): Promise<ContractResponse<bigint>> => {
-            try {
-                const c = requireContract();
-                const result: bigint = await c.___getProjectValue(
-                    DeadlineHours,
-                    MaximumRevision,
-                    rewardWei,
-                    Caller
-                );
-                return { success: true, data: result };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    // ---------------------------------------------------------------------------
-    // OWNER / ADMIN FUNCTIONS
-    // ---------------------------------------------------------------------------
-
-    /**
-     * Withdraws accumulated protocol fees to system wallet (owner only).
-     */
-    const withdrawToSystemWallet = useCallback(async (): Promise<ContractResponse> => {
+    const handleCreateTask = async () => {
         try {
-            const c = requireContract();
-            const tx = await c.withdrawToSystemWallet();
-            const receipt = await tx.wait();
-            return { success: true, txHash: tx.hash, receipt };
-        } catch (error: any) {
-            return { success: false, error: error.message };
+            await writeContractAsync(
+                {
+                    functionName: "createTask",
+                    args: [title, githubUrl, deadlineHours, maxRevision, createUser || connectedAddress],
+                    value: parseEther(value),
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error creating task", e);
         }
-    }, [writeContract]);
-
-    /**
-     * Changes the address registry (owner only).
-     * @param newAddress New registry address
-     */
-    const __changeControllerAndModuleAddressRegistry = useCallback(
-        async (newAddress: string): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.__changeControllerAndModuleAddressRegistry(newAddress);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Pauses the contract (owner only).
-     * @param caller Address of the caller (must be non-zero)
-     */
-    const pause = useCallback(
-        async (caller: string): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.pause(caller);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Unpauses the contract (owner only).
-     * @param caller Address of the caller (must be non-zero)
-     */
-    const unpause = useCallback(
-        async (caller: string): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
-                const tx = await c.unpause(caller);
-                const receipt = await tx.wait();
-                return { success: true, txHash: tx.hash, receipt };
-            } catch (error: any) {
-                return { success: false, error: error.message };
-            }
-        },
-        [writeContract]
-    );
-
-    // ---------------------------------------------------------------------------
-    // Return everything
-    // ---------------------------------------------------------------------------
-    return {
-        signer,
-        signerAddress,
-        contract: writeContract, // write-enabled contract instance
-        // Initialization
-        initialize,
-        // Task lifecycle
-        createTask,
-        deleteTask,
-        activateTask,
-        openRegistration,
-        closeRegistration,
-        // Join requests
-        requestJoinTask,
-        withdrawJoinRequest,
-        approveJoinRequest,
-        rejectJoinRequest,
-        // Submissions
-        requestSubmitTask,
-        reSubmitTask,
-        requestRevision,
-        approveTask,
-        // Cancellation
-        cancelByMe,
-        triggerDeadline,
-        // View / Pure
-        getJoinRequestCount,
-        getMemberRequiredStake,
-        ___getCreatorStake,
-        ___getProjectValue,
-        // Owner
-        withdrawToSystemWallet,
-        __changeControllerAndModuleAddressRegistry,
-        pause,
-        unpause,
     };
-}
+
+    const handleDeleteTask = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "deleteTask",
+                    args: [deleteTaskId, deleteUser || connectedAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error deleting task", e);
+        }
+    };
+
+    const handleActivateTask = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "activateTask",
+                    args: [activateTaskId, activateUser || connectedAddress],
+                    value: parseEther(value),
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error activating task", e);
+        }
+    };
+
+    const handleOpenRegistration = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "openRegistration",
+                    args: [openRegTaskId],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error opening registration", e);
+        }
+    };
+
+    const handleCloseRegistration = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "closeRegistration",
+                    args: [closeRegTaskId],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error closing registration", e);
+        }
+    };
+
+    const handleRequestJoinTask = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "requestJoinTask",
+                    args: [joinTaskId, joinUser || connectedAddress],
+                    value: parseEther(value),
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error requesting join task", e);
+        }
+    };
+
+    const handleWithdrawJoinRequest = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "withdrawJoinRequest",
+                    args: [withdrawTaskId, withdrawUser || connectedAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error withdrawing join request", e);
+        }
+    };
+
+    const handleApproveJoinRequest = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "approveJoinRequest",
+                    args: [approveTaskId, approveApplicant],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error approving join request", e);
+        }
+    };
+
+    const handleRejectJoinRequest = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "rejectJoinRequest",
+                    args: [rejectTaskId, rejectApplicant],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error rejecting join request", e);
+        }
+    };
+
+    const handleRequestSubmitTask = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "requestSubmitTask",
+                    args: [submitTaskId, pullRequestUrl, submitNote, submitUser || connectedAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error submitting task", e);
+        }
+    };
+
+    const handleReSubmitTask = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "reSubmitTask",
+                    args: [resubmitTaskId, resubmitNote, githubFixedUrl, resubmitUser || connectedAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error resubmitting task", e);
+        }
+    };
+
+    const handleRequestRevision = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "requestRevision",
+                    args: [revisionTaskId, revisionNote, additionalDeadlineHours],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error requesting revision", e);
+        }
+    };
+
+    const handleApproveTask = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "approveTask",
+                    args: [approveTaskIdForCompletion],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error approving task", e);
+        }
+    };
+
+    const handleCancelByMe = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "cancelByMe",
+                    args: [cancelTaskId, cancelUser || connectedAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error cancelling by me", e);
+        }
+    };
+
+    const handleTriggerDeadline = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "triggerDeadline",
+                    args: [triggerDeadlineTaskId],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error triggering deadline", e);
+        }
+    };
+
+    const handleWithdrawToSystemWallet = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "withdrawToSystemWallet"
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error withdrawing to system wallet", e);
+        }
+    };
+
+    const handleChangeRegistryAddress = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "__changeControllerAndModuleAddressRegistry",
+                    args: [newRegistryAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error changing registry address", e);
+        }
+    };
+
+    const handlePause = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "pause",
+                    args: [pauseCaller || connectedAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error pausing", e);
+        }
+    };
+
+    const handleUnpause = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "unpause",
+                    args: [unpauseCaller || connectedAddress],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error unpausing", e);
+        }
+    };
+
+    const { data: joinRequestCount, isLoading: isJoinRequestCountLoading } = useScaffoldReadContract({
+        contractName: "TaskController",
+        functionName: "getJoinRequestCount",
+        args: [deleteTaskId]
+    });
+
+    const { data: memberRequiredStake, isLoading: isMemberRequiredStakeLoading } = useScaffoldReadContract({
+        contractName: "TaskController",
+        functionName: "getMemberRequiredStake",
+        args: [deleteTaskId]
+    });
+
+    const { data: creatorStake, isLoading: isCreatorStakeLoading } = useScaffoldReadContract({
+        contractName: "TaskController",
+        functionName: "___getCreatorStake",
+        args: [deadlineHours, maxRevision, BigInt(rewardWei || "0"), creatorStakeCaller || connectedAddress]
+    });
+
+    const { data: projectValue, isLoading: isProjectValueLoading } = useScaffoldReadContract({
+        contractName: "TaskController",
+        functionName: "___getProjectValue",
+        args: [deadlineHours, maxRevision, BigInt(rewardWei || "0"), projectValueCaller || connectedAddress]
+    });
+
+    return {
+        form: {
+            title,
+            setTitle,
+            githubUrl,
+            setGithubUrl,
+            deadlineHours,
+            setDeadlineHours,
+            maxRevision,
+            setMaxRevision,
+            value,
+            setValue,
+        },
+
+        task: {
+            deleteTaskId,
+            setDeleteTaskId,
+            activateTaskId,
+            setActivateTaskId,
+            openRegTaskId,
+            setOpenRegTaskId,
+            closeRegTaskId,
+            setCloseRegTaskId,
+            cancelTaskId,
+            setCancelTaskId,
+            triggerDeadlineTaskId,
+            setTriggerDeadlineTaskId,
+        },
+
+        joinRequest: {
+            joinTaskId,
+            setJoinTaskId,
+            joinUser,
+            setJoinUser,
+            withdrawTaskId,
+            setWithdrawTaskId,
+            withdrawUser,
+            setWithdrawUser,
+            approveTaskId,
+            setApproveTaskId,
+            approveApplicant,
+            setApproveApplicant,
+            rejectTaskId,
+            setRejectTaskId,
+            rejectApplicant,
+            setRejectApplicant,
+        },
+
+        submit: {
+            submitTaskId,
+            setSubmitTaskId,
+            pullRequestUrl,
+            setPullRequestUrl,
+            submitNote,
+            setSubmitNote,
+            submitUser,
+            setSubmitUser,
+
+            resubmitTaskId,
+            setResubmitTaskId,
+            resubmitNote,
+            setResubmitNote,
+            githubFixedUrl,
+            setGithubFixedUrl,
+            resubmitUser,
+            setResubmitUser,
+
+            revisionTaskId,
+            setRevisionTaskId,
+            revisionNote,
+            setRevisionNote,
+            additionalDeadlineHours,
+            setAdditionalDeadlineHours,
+
+            approveTaskIdForCompletion,
+            setApproveTaskIdForCompletion,
+        },
+
+        admin: {
+            createUser,
+            setCreateUser,
+            creatorStakeCaller,
+            setCreatorStakeCaller,
+            projectValueCaller,
+            setProjectValueCaller,
+            newRegistryAddress,
+            setNewRegistryAddress,
+            pauseCaller,
+            setPauseCaller,
+            unpauseCaller,
+            setUnpauseCaller,
+        },
+
+        actions: {
+            handleCreateTask,
+            handleDeleteTask,
+            handleActivateTask,
+            handleOpenRegistration,
+            handleCloseRegistration,
+            handleRequestJoinTask,
+            handleWithdrawJoinRequest,
+            handleApproveJoinRequest,
+            handleRejectJoinRequest,
+            handleRequestSubmitTask,
+            handleReSubmitTask,
+            handleRequestRevision,
+            handleApproveTask,
+            handleCancelByMe,
+            handleTriggerDeadline,
+            handleWithdrawToSystemWallet,
+            handleChangeRegistryAddress,
+            handlePause,
+            handleUnpause,
+        },
+
+        contract: {
+            joinRequestCount,
+            memberRequiredStake,
+            creatorStake,
+            projectValue,
+        },
+
+        loading: {
+            isPending,
+            joinRequestCount: isJoinRequestCountLoading,
+            memberRequiredStake: isMemberRequiredStakeLoading,
+            creatorStake: isCreatorStakeLoading,
+            projectValue: isProjectValueLoading,
+        },
+    };
+};

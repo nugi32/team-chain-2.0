@@ -1,269 +1,150 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useScaffoldContract } from "@/hooks/scaffold-eth";
-import scaffoldConfig from "~~/scaffold.config";
-import { AllowedChainIds } from "~~/utils/scaffold-eth";
-import { useWalletClient } from "wagmi";
-import { BrowserProvider, ethers } from "ethers";
+import { useAccount } from "wagmi";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
-// ── System (read-only) provider ───────────────────────────────────────────────
-// Built once at module level from the first configured RPC URL so it is never
-// re-created on re-renders. Used as a fallback when no wallet is connected.
-const SYSTEM_RPC =
-  scaffoldConfig.targetNetworks[0].rpcUrls.default.http[0] ?? "http://127.0.0.1:8545";
+export const useTaskData = (taskId?: number, options?: { user?: string; index?: number }) => {
+  const { address: connectedAddress } = useAccount();
+  const user = options?.user ?? connectedAddress;
+  const index = options?.index;
 
-const systemProvider = new ethers.JsonRpcProvider(SYSTEM_RPC);
+  const { data: task, isLoading: isTaskLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getTask",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-export const useTaskContractService = () => {
-  const { data: walletClient } = useWalletClient();
+  const { data: taskStatus, isLoading: isTaskStatusLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getTaskStatus",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  const [signer, setSigner] = useState<ethers.Signer | null>(null);
-  const [walletChainId, setWalletChainId] = useState<number | undefined>(undefined);
-  const [isWalletChainResolved, setIsWalletChainResolved] = useState(false);
+  const { data: taskParticipants, isLoading: isTaskParticipantsLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getTaskParticipants",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined],
+  });
 
-  useEffect(() => {
-    async function loadSigner() {
-      if (!walletClient) {
-        setSigner(null);
-        return;
-      }
-      const provider = new BrowserProvider(walletClient.transport);
-      const signerInstance = await provider.getSigner();
-      setSigner(signerInstance);
-    }
-    loadSigner();
-  }, [walletClient]);
+  const { data: taskFinancials, isLoading: isTaskFinancialsLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getTaskFinancials",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  useEffect(() => {
-    async function loadWalletChainId() {
-      if (!walletClient) {
-        setWalletChainId(undefined);
-        setIsWalletChainResolved(true);
-        return;
-      }
-      try {
-        const chainId = await walletClient.getChainId();
-        setWalletChainId(chainId);
-      } catch (error) {
-        console.error("Failed to detect wallet chain id:", error);
-        setWalletChainId(undefined);
-      } finally {
-        setIsWalletChainResolved(true);
-      }
-    }
-    setIsWalletChainResolved(false);
-    loadWalletChainId();
-  }, [walletClient]);
+  const { data: taskMetadata, isLoading: isTaskMetadataLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getTaskMetadata",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  // ── FIX: always fall back to the default target network so useScaffoldContract
-  //    initialises even when no wallet is connected. Without this, activeChainId
-  //    is undefined → contract is null → every getter throws immediately.
-  const activeChainId = (
-    walletChainId &&
-    scaffoldConfig.targetNetworks.some((n) => n.id === walletChainId)
-      ? walletChainId
-      : scaffoldConfig.targetNetworks[0].id
-  ) as AllowedChainIds;
+  const { data: taskFlags, isLoading: isTaskFlagsLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getTaskFlags",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  const { data: rawContractData, isLoading: isContractLoading } =
-    useScaffoldContract({
-      contractName: "taskData",
-      walletClient,
-      chainId: activeChainId,
-    });
+  const { data: joinRequests, isLoading: isJoinRequestsLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getJoinRequests",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  // hasWalletChainMismatch is still relevant for UI warnings / write guards.
-  // It only fires when a wallet IS connected but on the wrong chain.
-  const hasWalletChainMismatch =
-    walletClient &&
-    isWalletChainResolved &&
-    walletChainId !== undefined &&
-    !scaffoldConfig.targetNetworks.some((n) => n.id === walletChainId);
+  const { data: joinRequestByIndex, isLoading: isJoinRequestByIndexLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getJoinRequestByIndex",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined, index !== undefined ? BigInt(index) : undefined]
+  });
 
-  const isContractLoadingState =
-    isContractLoading ||
-    (walletClient && !isWalletChainResolved) ||
-    hasWalletChainMismatch;
+  const { data: joinRequestCount, isLoading: isJoinRequestCountLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getJoinRequestCount",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  const contract = rawContractData;
+  const { data: hasPendingRequest, isLoading: isHasPendingRequestLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__hasPendingRequest",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined, user]
+  });
 
-  // Ethers contract with signer — writes only; undefined when no wallet.
-  const ethersContract =
-    contract?.address && contract?.abi && signer
-      ? new ethers.Contract(contract.address, contract.abi, signer)
-      : null;
+  const { data: joinRequestByUser, isLoading: isJoinRequestByUserLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getJoinRequestByUser",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined, user]
+  });
 
-  // System (read-only) ethers contract — always available once scaffold gives
-  // us the address + ABI, regardless of whether a wallet is connected.
-  const systemEthersContract =
-    contract?.address && contract?.abi
-      ? new ethers.Contract(contract.address, contract.abi, systemProvider)
-      : null;
+  const { data: taskSubmit, isLoading: isTaskSubmitLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getTaskSubmit",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  // ── Stable refs ───────────────────────────────────────────────────────────
-  const contractRef            = useRef(contract);
-  const signerRef              = useRef(signer);
-  const ethersContractRef      = useRef(ethersContract);
-  const systemEthersContractRef = useRef(systemEthersContract);
+  const { data: submitStatus, isLoading: isSubmitStatusLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getSubmitStatus",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  contractRef.current             = contract;
-  signerRef.current               = signer;
-  ethersContractRef.current       = ethersContract;
-  systemEthersContractRef.current = systemEthersContract;
+  const { data: submitContent, isLoading: isSubmitContentLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getSubmitContent",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  // Helper: returns the viem contract for reads (scaffold's built-in public
-  // client) or throws a clear message if scaffold hasn't loaded yet.
-  function readContract() {
-    const c = contractRef.current;
-    if (!c) throw new Error("Contract not yet loaded");
-    return c as any;
-  }
+  const { data: submitRevision, isLoading: isSubmitRevisionLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getSubmitRevision",
+    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+  });
 
-  //---------------------------------------------------------
-  // GETTERS — use viem read via scaffold contract.
-  //   Falls back to systemEthersContract if viem path fails
-  //   (e.g. scaffold still initialising on first render).
-  //---------------------------------------------------------
+  const { data: globalState, isLoading: isGlobalStateLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "__getGlobalState"
+  });
 
-  const getTaskSubmit = useCallback(async (taskId: number | bigint) => {
-    try {
-      const result = await readContract().read.TaskSubmits({ args: [taskId] });
-      return { success: true, data: result };
-    } catch (viemErr) {
-      // Fallback: system ethers provider (no wallet required)
-      try {
-        const sc = systemEthersContractRef.current;
-        if (!sc) throw viemErr;
-        const result = await sc.TaskSubmits(taskId);
-        return { success: true, data: result };
-      } catch (error: any) {
-        console.error("Failed to get task submit:", error);
-        return { success: false, error: error.message };
-      }
-    }
-  }, []);
-
-  const getTask = useCallback(async (taskId: number | bigint) => {
-    try {
-      const result = await readContract().read.Tasks({ args: [taskId] });
-      return { success: true, data: result };
-    } catch (viemErr) {
-      try {
-        const sc = systemEthersContractRef.current;
-        if (!sc) throw viemErr;
-        const result = await sc.Tasks(taskId);
-        return { success: true, data: result };
-      } catch (error: any) {
-        console.error("Failed to get task:", error);
-        return { success: false, error: error.message };
-      }
-    }
-  }, []);
-
-  const getJoinRequest = useCallback(
-    async (taskId: number | bigint, index: number | bigint) => {
-      try {
-        const result = await readContract().read.joinRequests({ args: [taskId, index] });
-        return { success: true, data: result };
-      } catch (viemErr) {
-        try {
-          const sc = systemEthersContractRef.current;
-          if (!sc) throw viemErr;
-          const result = await sc.joinRequests(taskId, index);
-          return { success: true, data: result };
-        } catch (error: any) {
-          console.error("Failed to get join request:", error);
-          return { success: false, error: error.message };
-        }
-      }
-    },
-    [],
-  );
-
-  const getHasPendingRequest = useCallback(
-    async (taskId: number | bigint, user: string) => {
-      try {
-        const result = await readContract().read.hasPendingRequest({ args: [taskId, user] });
-        return { success: true, data: result };
-      } catch (viemErr) {
-        try {
-          const sc = systemEthersContractRef.current;
-          if (!sc) throw viemErr;
-          const result = await sc.hasPendingRequest(taskId, user);
-          return { success: true, data: result };
-        } catch (error: any) {
-          console.error("Failed to get pending request:", error);
-          return { success: false, error: error.message };
-        }
-      }
-    },
-    [],
-  );
-
-  const getJoinRequestIndex = useCallback(
-    async (taskId: number | bigint, user: string) => {
-      try {
-        const result = await readContract().read.joinRequestIndex({ args: [taskId, user] });
-        return { success: true, data: result };
-      } catch (viemErr) {
-        try {
-          const sc = systemEthersContractRef.current;
-          if (!sc) throw viemErr;
-          const result = await sc.joinRequestIndex(taskId, user);
-          return { success: true, data: result };
-        } catch (error: any) {
-          console.error("Failed to get join request index:", error);
-          return { success: false, error: error.message };
-        }
-      }
-    },
-    [],
-  );
-
-  const getTaskCounter = useCallback(async () => {
-    try {
-      const result = await readContract().read.taskCounter();
-      return { success: true, data: result };
-    } catch (viemErr) {
-      try {
-        const sc = systemEthersContractRef.current;
-        if (!sc) throw viemErr;
-        const result = await sc.taskCounter();
-        return { success: true, data: result };
-      } catch (error: any) {
-        console.error("Failed to get task counter:", error);
-        return { success: false, error: error.message };
-      }
-    }
-  }, []);
-
-  const getFeeCollected = useCallback(async () => {
-    try {
-      const result = await readContract().read.feeCollected();
-      return { success: true, data: result };
-    } catch (viemErr) {
-      try {
-        const sc = systemEthersContractRef.current;
-        if (!sc) throw viemErr;
-        const result = await sc.feeCollected();
-        return { success: true, data: result };
-      } catch (error: any) {
-        console.error("Failed to get fee collected:", error);
-        return { success: false, error: error.message };
-      }
-    }
-  }, []);
+  const { data: addressRegistry, isLoading: isAddressRegistryLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "addressRegistry"
+  });
 
   return {
-    signer,
-    contract,
-    isContractLoading: isContractLoadingState,
-    hasWalletChainMismatch,
-    getTaskSubmit,
-    getTask,
-    getJoinRequest,
-    getHasPendingRequest,
-    getJoinRequestIndex,
-    getTaskCounter,
-    getFeeCollected,
+    data: {
+      task,
+      taskStatus,
+      taskParticipants,
+      taskFinancials,
+      taskMetadata,
+      taskFlags,
+      joinRequests,
+      joinRequestByIndex,
+      joinRequestCount,
+      hasPendingRequest,
+      joinRequestByUser,
+      taskSubmit,
+      submitStatus,
+      submitContent,
+      submitRevision,
+      globalState,
+      addressRegistry,
+    },
+
+    loading: {
+      task: isTaskLoading,
+      taskStatus: isTaskStatusLoading,
+      taskParticipants: isTaskParticipantsLoading,
+      taskFinancials: isTaskFinancialsLoading,
+      taskMetadata: isTaskMetadataLoading,
+      taskFlags: isTaskFlagsLoading,
+      joinRequests: isJoinRequestsLoading,
+      joinRequestByIndex: isJoinRequestByIndexLoading,
+      joinRequestCount: isJoinRequestCountLoading,
+      hasPendingRequest: isHasPendingRequestLoading,
+      joinRequestByUser: isJoinRequestByUserLoading,
+      taskSubmit: isTaskSubmitLoading,
+      submitStatus: isSubmitStatusLoading,
+      submitContent: isSubmitContentLoading,
+      submitRevision: isSubmitRevisionLoading,
+      globalState: isGlobalStateLoading,
+      addressRegistry: isAddressRegistryLoading,
+    },
   };
 };

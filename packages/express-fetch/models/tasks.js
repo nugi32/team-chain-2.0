@@ -13,6 +13,7 @@ export const taskSchema = Joi.object({
     footer: Joi.string().max(100).required(),
   }).required(),
   picture: Joi.string().uri().required(),
+  skills: Joi.array().items(Joi.string().min(2).max(50)).required(),
   owner: Joi.string()
     .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address")
     .required(), // ✅ Owner is required and must be valid Ethereum address
@@ -32,4 +33,5 @@ export const createTaskSchema = Joi.object({
     footer: Joi.string().max(100).required(),
   }).required(),
   picture: Joi.string().uri().required(),
+  skills: Joi.array().items(Joi.string().min(2).max(50)).required(),  
 })

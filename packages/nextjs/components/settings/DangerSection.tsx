@@ -28,7 +28,7 @@ export default function DangerSection() {
           </button>
         </div>
 
-        {/* Deactivate */}
+        {/* Deactivate *}
         <div className="flex items-center justify-between p-4 rounded-xl border border-amber-500/20 bg-amber-500/5">
           <div>
             <p className="text-xs font-medium text-amber-300">Deactivate account</p>
@@ -69,7 +69,7 @@ export default function DangerSection() {
             onConfirm={() => setModal(null)}
             onClose={() => setModal(null)}
           />
-        )}
+        )}/*
         {modal === "deactivate" && (
           <ConfirmModal
             title="Deactivate your account?"
@@ -79,7 +79,7 @@ export default function DangerSection() {
             onConfirm={() => setModal(null)}
             onClose={() => setModal(null)}
           />
-        )}
+        )}*/
         {modal === "delete" && (
           <ConfirmModal
             title="Permanently delete account?"

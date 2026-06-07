@@ -1,4 +1,4 @@
-// utils/lib/getStarted.ts
+// utils/lib/express/mutations/tasks.ts
 import axios from "axios";
 import { getUserById } from "@/utils/lib/express/queries/users";
 
@@ -15,6 +15,7 @@ interface CreateTaskPayload {
     footer: string;
   };
   picture: string;
+  skills: string[];
 }
 
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
@@ -43,6 +44,7 @@ export async function handleCreateTask(
     title: formData.title,
     description: formData.description,
     picture: formData.picture,
+    skills: formData.skills,
   };
 
   const response = await axios.post<{ id: string }>(

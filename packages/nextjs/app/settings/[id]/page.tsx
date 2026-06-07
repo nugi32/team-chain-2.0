@@ -8,30 +8,39 @@ import {
 } from "lucide-react";
 
 import ProfileSection from "@/components/settings/ProfileSection";
+import DangerSection from "@/components/settings/DangerSection";
+
+/*
 import AccountSection from "@/components/settings/AccountSection";
 import WalletSection from "@/components/settings/WalletSection";
 import NotificationsSection from "@/components/settings/NotificationsSection";
 import PrivacySection from "@/components/settings/PrivacySection";
-import DangerSection from "@/components/settings/DangerSection";
+ */
 
-type Section = "profile" | "account" | "wallet" | "notifications" | "privacy" | "danger";
+type Section = "profile" |
+  //"account" | "wallet" | "notifications" | "privacy" | 
+  "danger";
 
 const NAV: { id: Section; icon: React.ReactNode; label: string; danger?: boolean }[] = [
-  { id: "profile",       icon: <User className="w-3.5 h-3.5" />,    label: "Profile" },
+  { id: "profile", icon: <User className="w-3.5 h-3.5" />, label: "Profile" },
+  /*
   { id: "account",       icon: <Lock className="w-3.5 h-3.5" />,    label: "Account & Security" },
   { id: "wallet",        icon: <Wallet className="w-3.5 h-3.5" />,  label: "Wallet" },
   { id: "notifications", icon: <Bell className="w-3.5 h-3.5" />,    label: "Notifications" },
   { id: "privacy",       icon: <Shield className="w-3.5 h-3.5" />,  label: "Privacy" },
-  { id: "danger",        icon: <AlertTriangle className="w-3.5 h-3.5" />, label: "Danger Zone", danger: true },
+   */
+  { id: "danger", icon: <AlertTriangle className="w-3.5 h-3.5" />, label: "Danger Zone", danger: true },
 ];
 
 const SECTION_MAP: Record<Section, React.ReactNode> = {
-  profile:       <ProfileSection />,
+  profile: <ProfileSection />,
+  /*
   account:       <AccountSection />,
   wallet:        <WalletSection />,
   notifications: <NotificationsSection />,
   privacy:       <PrivacySection />,
-  danger:        <DangerSection />,
+  */
+  danger: <DangerSection />,
 };
 
 export default function SettingsPage() {

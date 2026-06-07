@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useBalance } from "wagmi";
 import axios from "axios";
 import { getUserById } from "@/utils/lib/express/queries/users";
-import { useUsersContractService } from "@/utils/lib/smartContractWrapper/user/User";
-import { useTaskContractService } from "@/utils/lib/smartContractWrapper/user/taskData";
+import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
+import { useTaskData } from "@/utils/lib/smartContractWrapper/user/taskData";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -406,189 +406,62 @@ async function fetchApiTasks(): Promise<TaskApiData[]> {
 // ── Unified hook ──────────────────────────────────────────────────────────────
 
 export function useDashboard(id: string) {
-  const { getUsers, signer } = useUsersContractService();
-  const { getTaskCounter, getTask, getTaskSubmit } = useTaskContractService();
-
+  // New blockchain hooks that return data from smart contracts
+  const usersData = useUsersContract(id);
+  
   const [user, setUser] = useState<DashboardUser | null>(null);
   const [rawTasks, setRawTasks] = useState<MergedTask[]>([]);
-  const [walletAddress, setWalletAddress] = useState<
-    `0x${string}` | undefined
-  >();
+  const [walletAddress, setWalletAddress] = useState<`0x${string}` | undefined>(id as `0x${string}`);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // ── FIX 1: Store every external function in a ref so they never appear
-  //    in useCallback/useEffect dependency arrays. The hook functions from
-  //    useUsersContractService / useTaskContractService get a new reference
-  //    on every render; putting them in deps would recreate `load` every
-  //    render, which triggers the effect every render → infinite blink loop.
-  const getUsersRef = useRef(getUsers);
-  const getTaskCounterRef = useRef(getTaskCounter);
-  const getTaskRef = useRef(getTask);
-  const getTaskSubmitRef = useRef(getTaskSubmit);
-  const signerRef = useRef(signer);
-  const idRef = useRef(id);
-
-  // Keep refs current on every render (cheap, no re-render side-effect)
-  getUsersRef.current = getUsers;
-  getTaskCounterRef.current = getTaskCounter;
-  getTaskRef.current = getTask;
-  getTaskSubmitRef.current = getTaskSubmit;
-  signerRef.current = signer;
-  idRef.current = id;
-
-  // Guards
-  const loadingRef = useRef(false);
-
-  // ── FIX 2: Track previous signer value so we can detect the exact
-  //    null → value transition and avoid double-loads on every re-render.
-  const prevSignerRef = useRef<typeof signer>(null);
-
   const { data: balanceData } = useBalance({ address: walletAddress });
 
-  // ── fetchChainTasks has NO deps because it only uses refs
-  const fetchChainTasks = useCallback(async (address: string) => {
-    const counterRes = await getTaskCounterRef.current();
-    if (!counterRes.success) return [];
-
-    const count = Number(counterRes.data);
-    const matched: any[] = [];
-    const addr = address.toLowerCase();
-
-    for (let i = 1; i <= count; i++) {
-      const taskRes = await getTaskRef.current(i);
-      if (!taskRes.success || !taskRes.data.exists) continue;
-
-      const task = taskRes.data;
-      const creator = (task.creator ?? "").toLowerCase();
-      const member = (task.member ?? "").toLowerCase();
-
-      if (creator !== addr && member !== addr) continue;
-
-      const submitRes = await getTaskSubmitRef.current(i);
-      matched.push({
-        ...task,
-        submit: submitRes.success ? submitRes.data : null,
-      });
-    }
-
-    return matched;
-  }, []); // stable — no deps needed, uses refs above
-
-  // ── load also has NO deps on external functions (only stable fetchChainTasks)
+  // Load tasks and build dashboard data
   const load = useCallback(async () => {
-    if (loadingRef.current) return;
-    loadingRef.current = true;
-
     try {
       setLoading(true);
       setError(null);
 
-      // Read from refs so we always have the latest values without
-      // adding them to the dependency array
-      const currentSigner = signerRef.current;
-      const currentId = idRef.current;
+      // Use the on-chain data from the hook
+      const onChainData = usersData.user;
 
-      if (!currentSigner) {
-        await new Promise<void>((resolve) => setTimeout(resolve, 500));
-      }
+      // Fetch off-chain data
+      const offChainData = await getUserById(id);
 
-      const [onChainResult, offChainData] = await Promise.all([
-        getUsersRef.current(),
-        getUserById(currentId),
-      ]);
-
-      if (!onChainResult?.success || !offChainData) {
+      if (!offChainData) {
         throw new Error("Failed to fetch user data");
       }
 
-      let addr = "";
-      if (currentSigner) {
-        try {
-          addr = await currentSigner.getAddress();
-        } catch {
-          addr = "";
-        }
-      }
+      // Map dashboard user with blockchain data
+      setWalletAddress(id as `0x${string}`);
+      setUser(mapDashboardUser(id, onChainData, offChainData));
 
-      setWalletAddress(addr as `0x${string}`);
-      setUser(mapDashboardUser(addr, onChainResult.data, offChainData));
-
-      if (addr) {
-        const [apiTasks, chainTasks] = await Promise.all([
-          fetchApiTasks(),
-          fetchChainTasks(addr),
-        ]);
-
-        const merged: MergedTask[] = [];
-        for (const chainTask of chainTasks) {
-          const apiTask = apiTasks.find(
-            (item) => Number(item.id) === Number(chainTask.taskId),
-          );
-          if (!apiTask) continue;
-
-          const taskId =
-            apiTask.id ||
-            apiTask._id ||
-            `task-${Math.random().toString(36).substr(2, 9)}`;
-
-          merged.push({
-            ...apiTask,
+      // Fetch API tasks
+      const apiTasks = await fetchApiTasks();
+      setRawTasks(
+        apiTasks.map((task) => {
+          const taskId = task.id || task._id || `task-${Math.random().toString(36).substr(2, 9)}`;
+          return {
+            ...task,
             id: taskId as string,
-            onchain: chainTask,
-            submit: chainTask.submit,
-          });
-        }
-
-        setRawTasks(merged);
-      } else {
-        const apiTasks = await fetchApiTasks();
-        setRawTasks(
-          apiTasks.map((task) => {
-            const taskId =
-              task.id ||
-              task._id ||
-              `task-${Math.random().toString(36).substr(2, 9)}`;
-            return {
-              ...task,
-              id: taskId as string,
-              onchain: { exists: false },
-              submit: null,
-            };
-          }),
-        );
-      }
+            onchain: { exists: false },
+            submit: null,
+          };
+        }),
+      );
     } catch (err: any) {
       console.error("Dashboard load error:", err);
       setError(err.message ?? "Unknown error");
     } finally {
       setLoading(false);
-      loadingRef.current = false;
     }
-  }, [fetchChainTasks]); // fetchChainTasks is stable (empty deps), so load is stable too
+  }, [id, usersData.user]);
 
-  // ── FIX 3: Only `id` in deps — `load` is now stable so this runs exactly
-  //    once on mount and again only when `id` changes. Previously, including
-  //    `load` here caused a fire on every render because `load` changed every
-  //    render (due to the unstable getUsers / getTask* refs in its deps).
+  // Load on mount and when id changes
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
-  // ── FIX 4: Only trigger a re-load when signer transitions null → value
-  //    (i.e., wallet just connected). Previously this fired on every render
-  //    where `signer` was truthy, and the `loadingRef.current = false` line
-  //    before `load()` actively defeated the concurrent-load guard.
-  useEffect(() => {
-    const prev = prevSignerRef.current;
-    prevSignerRef.current = signer;
-
-    // Only reload on the exact null→signer moment, not on every render
-    if (signer && prev === null && !loadingRef.current) {
-      load();
-    }
-  }, [signer, load]);
 
   // ── Derived data (unchanged) ───────────────────────────────────────────────
 

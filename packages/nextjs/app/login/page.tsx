@@ -120,6 +120,9 @@ export default function TeamChainLoginPage() {
     }
   }, [disconnect]);
 
+    useEffect(() => {
+      localStorage.clear();
+    }, []);
   // -------------------------------------------------------------------------
   // 2. Clear GitHub OAuth session on page refresh
   //    (if already authenticated and not just after a login redirect)

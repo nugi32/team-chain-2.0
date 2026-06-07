@@ -4,41 +4,45 @@ import {
   handleCreateAccount,
   type CreateAccountPayload,
 } from "@/utils/lib/express/mutations/users";
-import { useUsersContractService } from "@/utils/lib/smartContractWrapper/user/User";
+import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
+import { decodeSmartContractError } from "@/utils/lib/helper/smartCotntractErrDecoder";
 
 export function useCreateAccount() {
-  const { Register } = useUsersContractService();
+  const { form, actions } = useUsersContract();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createAccount = async (
-    data: CreateAccountPayload,
-    address: string
-  ) => {
+  const createAccount = async (data: CreateAccountPayload, address: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      await Register(data.github);
+      // Smart contract registration
+      console.log("[createAccount] Starting Register transaction for:", data.github);
+      
+      // Set the form values
+      form.setRegisterGitHubURL(data.github);
+      form.setRegisterUser(address);
+      
+      // Call the action handler
+      await actions.handleRegister();
+      console.log("[createAccount] Register transaction succeeded");
 
       const jwt = await getValidJwt(address);
+      const accountId = await handleCreateAccount(data, jwt, address);
 
-      const result = await handleCreateAccount(data, jwt, address);
+      if (!accountId) throw new Error("Database did not return id");
 
-      if (!result) {
-        throw new Error("Database did not return id");
-      }
-
-      return result;
+      return accountId;
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Unexpected error occurred";
-
-      setError(message);
-      throw new Error(message);
+      console.error("[createAccount] Error caught:", err);
+      
+      const decodedError = decodeSmartContractError(err);
+      console.error("[createAccount] Decoded error:", decodedError);
+      
+      setError(decodedError);
+      throw new Error(decodedError);
     } finally {
       setLoading(false);
     }

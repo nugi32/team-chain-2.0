@@ -49,10 +49,10 @@ contract UsersContract is
 
     modifier ctcCall() {
         if(
-            msg.sender != addressRegistry.__taskComponentsAddr().cancelModule ||
-            msg.sender != addressRegistry.__taskComponentsAddr().joinModule ||
-            msg.sender != addressRegistry.__taskComponentsAddr().submisionModule ||
-            msg.sender != addressRegistry.__taskComponentsAddr().taskLifecycleModule ||
+            msg.sender != addressRegistry.__taskComponentsAddr().cancelModule &&
+            msg.sender != addressRegistry.__taskComponentsAddr().joinModule &&
+            msg.sender != addressRegistry.__taskComponentsAddr().submisionModule &&
+            msg.sender != addressRegistry.__taskComponentsAddr().taskLifecycleModule &&
             msg.sender != addressRegistry.__taskComponentsAddr().taskControler
         ) revert userError("UnauthorizedCaller");
         _;
