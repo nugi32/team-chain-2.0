@@ -34,6 +34,8 @@ contract AddressRegistry is
     address public __usersContract;
     address payable public __walletContract;
     address public __dataContract;
+    
+    bool private __secondInitializationCalled;
 
     // Reserved storage space for future upgrades
     uint256[50] private ___gap;
@@ -44,8 +46,14 @@ contract AddressRegistry is
 
     error AddressRegistryErr(string errName);
 
-        modifier onlyOwner {
+    modifier onlyOwner {
         __onlyOwner(__accessControlContract);
+        _;
+    }
+
+    modifier onlyOnce {
+        if (__secondInitializationCalled) revert AddressRegistryErr("SecondInitializationAlreadyCalled");
+        __secondInitializationCalled = true;
         _;
     }
 
