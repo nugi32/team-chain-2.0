@@ -32,7 +32,7 @@ const fetchWithTimeout = async (url, options = {}, timeout = 5000) => {
 // GET all tasks
 export const getTasks = async (req, res) => {
   try {
-    const response = await fetchWithTimeout(`${API_BASE_URL}`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks`);
     if (!response.ok) {
       const errorText = await response.text();
       console.error(errorText);
@@ -50,7 +50,7 @@ export const getTasks = async (req, res) => {
 export const getTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await fetchWithTimeout(`${API_BASE_URL}/${id}`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks/${id}`);
     if (!response.ok) {
       if (response.status === 404) {
         return res.status(404).json({ message: "Task not found" });
@@ -82,7 +82,7 @@ export const createTask = async (req, res) => {
       owner: req.user.address.toLowerCase(),
     };
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks`, {
       method: "POST",
       body: JSON.stringify(taskData),
     });
@@ -110,7 +110,7 @@ export const updateTask = async (req, res) => {
     // Prevent owner from being updated
     delete updateData.owner;
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/${id}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks/${id}`, {
       method: "PUT",
       body: JSON.stringify(updateData),
     });
@@ -136,7 +136,7 @@ export const updateTask = async (req, res) => {
 export const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await fetchWithTimeout(`${API_BASE_URL}/${id}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks/${id}`, {
       method: "DELETE",
     });
 

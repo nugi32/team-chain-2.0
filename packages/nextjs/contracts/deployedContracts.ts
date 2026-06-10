@@ -5,9 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  31337: {
+  11155111: {
     AccessControl: {
-      address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+      address: "0x97DE3E75EB974600B50e9326ccF19D1a6F3f4637",
       abi: [
         {
           anonymous: false,
@@ -361,10 +361,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 29,
+      deployedOnBlock: 11021767,
     },
     AccessControl_Implementation: {
-      address: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+      address: "0xa063810333BA72982013473135A1ccf1b78598a7",
       abi: [
         {
           inputs: [
@@ -662,10 +662,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 28,
+      deployedOnBlock: 11021766,
     },
     AccessControl_Proxy: {
-      address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+      address: "0x97DE3E75EB974600B50e9326ccF19D1a6F3f4637",
       abi: [
         {
           inputs: [
@@ -738,10 +738,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 29,
+      deployedOnBlock: 11021767,
     },
     AddressRegistry: {
-      address: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
+      address: "0xC0BFe9710CBF43e5E9F7A5373E3980A90bAf0b5d",
       abi: [
         {
           anonymous: false,
@@ -1318,10 +1318,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 31,
+      deployedOnBlock: 11021769,
     },
     AddressRegistry_Implementation: {
-      address: "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
+      address: "0xf2C18707BA00C2492a494096241b51323d5451b1",
       abi: [
         {
           inputs: [
@@ -1842,10 +1842,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 30,
+      deployedOnBlock: 11021768,
     },
     AddressRegistry_Proxy: {
-      address: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
+      address: "0xC0BFe9710CBF43e5E9F7A5373E3980A90bAf0b5d",
       abi: [
         {
           inputs: [
@@ -1918,10 +1918,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 31,
+      deployedOnBlock: 11021769,
     },
     CancellationLogic: {
-      address: "0xf5059a5D33d5853360D16C683c16e67980206f36",
+      address: "0x6bEA0FA8A10d8F2614462138f4B51B790738d222",
       abi: [
         {
           inputs: [
@@ -2036,10 +2036,10 @@ const deployedContracts = {
         __triggerDeadline:
           "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
       },
-      deployedOnBlock: 42,
+      deployedOnBlock: 11021780,
     },
     dataContract: {
-      address: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
+      address: "0x47a7d4eada5AeE676AaEea84CC5fFe5D63fB49E9",
       abi: [
         {
           inputs: [
@@ -3148,10 +3148,10 @@ const deployedContracts = {
       inheritedFunctions: {
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
       },
-      deployedOnBlock: 38,
+      deployedOnBlock: 11021776,
     },
     JoinRequestLogic: {
-      address: "0x851356ae760d987E095750cCeb3bC6014560891C",
+      address: "0xb54f7ae3B985E3DCB18AD41cee041b3be2Ca87ff",
       abi: [
         {
           inputs: [
@@ -3311,10 +3311,10 @@ const deployedContracts = {
         __withdrawJoinRequest:
           "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
       },
-      deployedOnBlock: 41,
+      deployedOnBlock: 11021779,
     },
     SubmissionLogic: {
-      address: "0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8",
+      address: "0x54c07F60cF316dB08A49C40EBfF8367eCf9fde57",
       abi: [
         {
           inputs: [
@@ -3494,10 +3494,10 @@ const deployedContracts = {
         __requestSubmitTask:
           "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
       },
-      deployedOnBlock: 40,
+      deployedOnBlock: 11021778,
     },
     System_wallet: {
-      address: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
+      address: "0x2868021c7DCD86cb1eD77b5D71D1628224a5062d",
       abi: [
         {
           anonymous: false,
@@ -3945,10 +3945,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 37,
+      deployedOnBlock: 11021775,
     },
     System_wallet_Implementation: {
-      address: "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
+      address: "0x64Cf2100ace6C472671072001B0087C1300b239A",
       abi: [
         {
           inputs: [
@@ -4348,10 +4348,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 36,
+      deployedOnBlock: 11021774,
     },
     System_wallet_Proxy: {
-      address: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
+      address: "0x2868021c7DCD86cb1eD77b5D71D1628224a5062d",
       abi: [
         {
           inputs: [
@@ -4424,10 +4424,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 37,
+      deployedOnBlock: 11021775,
     },
     TaskController: {
-      address: "0x998abeb3E57409262aE5b751f60747921B33613E",
+      address: "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
       abi: [
         {
           anonymous: false,
@@ -5195,10 +5195,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 44,
+      deployedOnBlock: 11021782,
     },
     TaskController_Implementation: {
-      address: "0x95401dc811bb5740090279Ba06cfA8fcF6113778",
+      address: "0x237F76e50eF2DAEBaAE79F014F107DB85f78CAFB",
       abi: [
         {
           inputs: [
@@ -5918,10 +5918,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 43,
+      deployedOnBlock: 11021781,
     },
     TaskController_Proxy: {
-      address: "0x998abeb3E57409262aE5b751f60747921B33613E",
+      address: "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
       abi: [
         {
           inputs: [
@@ -5994,10 +5994,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 44,
+      deployedOnBlock: 11021782,
     },
     taskData: {
-      address: "0xc5a5C42992dECbae36851359345FE25997F5C42d",
+      address: "0xDC3bF2CEF81C24df12C491bFF647104bC7e5D182",
       abi: [
         {
           anonymous: false,
@@ -7693,10 +7693,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 33,
+      deployedOnBlock: 11021771,
     },
     taskData_Implementation: {
-      address: "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
+      address: "0x8081b7bCE3077082FcB5a8eD08E19D8707858c96",
       abi: [
         {
           inputs: [
@@ -9344,10 +9344,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 32,
+      deployedOnBlock: 11021770,
     },
     taskData_Proxy: {
-      address: "0xc5a5C42992dECbae36851359345FE25997F5C42d",
+      address: "0xDC3bF2CEF81C24df12C491bFF647104bC7e5D182",
       abi: [
         {
           inputs: [
@@ -9420,10 +9420,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 33,
+      deployedOnBlock: 11021771,
     },
     TaskLifecycleLogic: {
-      address: "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
+      address: "0xDEFd9cC9Cff6f14a25300A837D506929f17990A8",
       abi: [
         {
           inputs: [
@@ -9686,10 +9686,10 @@ const deployedContracts = {
         __openRegistration:
           "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
       },
-      deployedOnBlock: 39,
+      deployedOnBlock: 11021777,
     },
     UsersContract: {
-      address: "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
+      address: "0x27789f30Da57bB4209249487dF77FD154EDE1f48",
       abi: [
         {
           anonymous: false,
@@ -10451,10 +10451,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 35,
+      deployedOnBlock: 11021773,
     },
     UsersContract_Implementation: {
-      address: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
+      address: "0xBBcdd2e55F14470470A683178d156497D4071D74",
       abi: [
         {
           inputs: [
@@ -11160,10 +11160,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 34,
+      deployedOnBlock: 11021772,
     },
     UsersContract_Proxy: {
-      address: "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
+      address: "0x27789f30Da57bB4209249487dF77FD154EDE1f48",
       abi: [
         {
           inputs: [
@@ -11236,7 +11236,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 35,
+      deployedOnBlock: 11021773,
     },
   },
 } as const;

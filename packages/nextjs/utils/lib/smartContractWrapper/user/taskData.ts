@@ -12,6 +12,16 @@ export const useTaskData = (taskId?: number, options?: { user?: string; index?: 
     args: [taskId !== undefined ? BigInt(taskId) : undefined]
   });
 
+  const { data: taskCounter, isLoading: isTaskCounterLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "taskCounter"
+  });
+
+  const { data: feeCollected, isLoading: isFeeCollectedLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "feeCollected"
+  });
+
   const { data: taskStatus, isLoading: isTaskStatusLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskStatus",
@@ -109,6 +119,8 @@ export const useTaskData = (taskId?: number, options?: { user?: string; index?: 
   return {
     data: {
       task,
+      taskCounter,
+      feeCollected,
       taskStatus,
       taskParticipants,
       taskFinancials,
@@ -129,6 +141,8 @@ export const useTaskData = (taskId?: number, options?: { user?: string; index?: 
 
     loading: {
       task: isTaskLoading,
+      taskCounter: isTaskCounterLoading,
+      feeCollected: isFeeCollectedLoading,
       taskStatus: isTaskStatusLoading,
       taskParticipants: isTaskParticipantsLoading,
       taskFinancials: isTaskFinancialsLoading,

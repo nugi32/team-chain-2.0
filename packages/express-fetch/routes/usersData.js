@@ -16,8 +16,16 @@ const createLimiter = rateLimit({
   legacyHeaders: false,
 })
 
-const taskOwnershipCheck = ownershipMiddleware(async (req) => {
-  return await Task.findById(req.params.id)
+// ✅ Express-fetch is a proxy layer, so we fetch user from backend to check ownership
+const userOwnershipCheck = ownershipMiddleware(async (req) => {
+  const API_BASE_URL = process.env.API_URL || "http://localhost:8000";
+  const response = await fetch(`${API_BASE_URL}/users/${req.params.id}`, {
+    headers: {
+      Authorization: req.headers.authorization || "",
+    },
+  });
+  if (!response.ok) return null;
+  return await response.json();
 })
 
 
@@ -39,7 +47,7 @@ router.post(
 router.put(
   "/:id",
   authMiddleware,
-  taskOwnershipCheck,
+  userOwnershipCheck,
   updateUser
 )
 
@@ -48,8 +56,8 @@ router.put(
 router.delete(
   "/:id",
   authMiddleware,
-  taskOwnershipCheck
-  , deleteUser
+  userOwnershipCheck,
+  deleteUser
 )
 
 export default router

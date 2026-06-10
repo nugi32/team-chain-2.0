@@ -87,6 +87,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error registering user", e);
+      throw e;
     }
   };
 
@@ -98,6 +99,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error unregistering user", e);
+      throw e;
     }
   };
 
@@ -109,6 +111,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error withdrawing funds", e);
+      throw e;
     }
   };
 
@@ -120,6 +123,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error withdrawing all funds", e);
+      throw e;
     }
   };
 
@@ -131,6 +135,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error changing address registry", e);
+      throw e;
     }
   };
 
@@ -141,6 +146,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error pausing contract", e);
+      throw e;
     }
   };
 
@@ -151,6 +157,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error unpausing contract", e);
+      throw e;
     }
   };
 

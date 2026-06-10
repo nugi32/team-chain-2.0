@@ -1,138 +1,346 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { Camera, Upload, Trash2, X, User } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Camera, Upload, Trash2, X, User, Plus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import SectionHeading from "./SectionHeading";
 import Field from "./Field";
 import Input from "./Input";
 import Textarea from "./Textarea";
 import SaveBar from "./SaveBar";
+import { getUserById } from "@/utils/lib/express/queries/users";
+import { type Role, UpdateAccountPayload } from "@/utils/lib/express/mutations/users";
+import { useUpdateProfile } from "@/utils/lib/updateProfile";
+import { useParams } from "next/navigation";
+import { useAccount } from "wagmi";
+import { notification } from "~~/utils/scaffold-eth";
+
+// ── Role helpers ───────────────────────────────────────────────────────────────
+const ROLE_OPTIONS: { value: Role; label: string }[] = [
+  { value: "developer", label: "Developer" },
+  { value: "designer", label: "Designer" },
+  { value: "project_manager", label: "Project Manager" },
+];
+
+// Backend returns "Developer" / "Project Manager" — map back to Role keys
+const ROLE_REVERSE_MAP: Record<string, Role> = {
+  "Developer": "developer",
+  "Designer": "designer",
+  "Project Manager": "project_manager",
+};
 
 export default function ProfileSection() {
-  const [avatar, setAvatar] = useState<string | null>(null);
-  const [username, setUsername] = useState("jdoe_eth");
-  const [displayName, setDisplayName] = useState("John Doe");
-  const [bio, setBio] = useState("Smart contract developer & DAO contributor. Building on-chain collaboration tools.");
-  const [location, setLocation] = useState("San Francisco, CA");
-  const [website, setWebsite] = useState("https://johndoe.dev");
-  const [github, setGithub] = useState("jdoe");
-  const [twitter, setTwitter] = useState("jdoe_eth");
-  const [skills, setSkills] = useState(["Solidity", "React", "Ethers.js", "Hardhat"]);
+  const { address, isConnected } = useAccount();
+  const { handleUpdateProfile } = useUpdateProfile();
+  const searchParams = useSearchParams();
+  const params = useParams<{ id: string }>();
+
+  // Resolve user ID: URL ?id= takes priority, then localStorage
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const id =
+      searchParams.get("id") ||
+      localStorage.getItem("userId") ||
+      params.id ||
+      "";
+
+    setUserId(id);
+  }, [searchParams, params.id]);
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  const [loading, setLoading] = useState(true);
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+  const [role, setRole] = useState<Role>("developer");
+  const [github, setGithub] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+
+  const [descHeader, setDescHeader] = useState("");
+  const [descSummary, setDescSummary] = useState("");
+  const [descPoints, setDescPoints] = useState<string[]>([]);
+  const [descFooter, setDescFooter] = useState("");
+
+  const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState("");
+
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // ── Fetch user on mount ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!userId) { setLoading(false); return; }
+
+    (async () => {
+      try {
+        const user = await getUserById(userId);
+        setProfilePicture(user.profilePicture || null);
+        setName(user.name || "");
+        setEmail(user.email || "");
+        setWalletAddress(user.walletAddress || "");
+        setRole(ROLE_REVERSE_MAP[user.role] ?? "developer");
+        setGithub(user.github || "");
+        setLinkedin(user.linkedin || "");
+        setDescHeader(user.description?.header || "");
+        setDescSummary(user.description?.summary || "");
+        setDescPoints(user.description?.points ?? []);
+        setDescFooter(user.description?.footer || "");
+        setSkills(user.skills ?? []);
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [userId]);
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
   const mutate = (fn: () => void) => { fn(); setDirty(true); };
 
   const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setAvatar(url);
+    setAvatarFile(file);
+    setProfilePicture(URL.createObjectURL(file));
     setDirty(true);
   };
 
   const addSkill = () => {
     const s = skillInput.trim();
     if (!s || skills.includes(s)) return;
-    mutate(() => setSkills((p) => [...p, s]));
+    mutate(() => setSkills((prev) => [...prev, s]));
     setSkillInput("");
   };
 
+  const removeSkill = (s: string) =>
+    mutate(() => setSkills((prev) => prev.filter((x) => x !== s)));
+
+  const addPoint = () =>
+    mutate(() => setDescPoints((prev) => [...prev, ""]));
+
+  const updatePoint = (i: number, value: string) =>
+    mutate(() => setDescPoints((prev) => prev.map((x, j) => (j === i ? value : x))));
+
+  const removePoint = (i: number) =>
+    mutate(() => setDescPoints((prev) => prev.filter((_, j) => j !== i)));
+
+  // ── Save — delegates to handleUpdateAccount ────────────────────────────────
   const save = async () => {
+     if (!isConnected || !address) {
+            notification.error("Please connect your wallet first.");
+            setSaving(false);
+            return;
+          }
+    if (!userId) return;
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setSaving(false);
-    setDirty(false);
+    try {
+      // Convert a newly picked File to base64 so it can go through the JSON mutation
+      let avatarValue: string | undefined;
+      if (avatarFile) {
+        avatarValue = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(avatarFile);
+        });
+      } else if (profilePicture === null) {
+        avatarValue = ""; // empty string signals removal to the backend
+      }
+
+const payload: UpdateAccountPayload = {
+  name,
+  role,
+  linkedin,
+  github,
+  email,
+  ...(avatarValue !== undefined && { avatar: avatarValue }),
+  description: {
+    header: descHeader,
+    summary: descSummary,
+    points: descPoints,
+    footer: descFooter,
+  },
+  skills,
+};
+
+await handleUpdateProfile(
+  userId,
+  walletAddress,
+  payload,
+);
+
+      setAvatarFile(null);
+      setDirty(false);
+    } catch (err) {
+      console.error("Failed to save profile:", err);
+    } finally {
+      setSaving(false);
+    }
   };
+
+  // ── Loading / no-ID guards ─────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-6 h-6 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  if (!userId) {
+    return (
+      <p className="text-xs text-gray-500 py-10 text-center">
+        No user ID found in URL or local storage.
+      </p>
+    );
+  }
+
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <div>
       <SectionHeading icon={<User className="w-3.5 h-3.5" />} label="Profile" />
 
-      {/* Avatar */}
+      {/* ── Avatar ─────────────────────────────────────────────────────────── */}
       <div className="flex items-start gap-5 mb-8 pb-8 border-b border-gray-800">
         <div className="relative group flex-shrink-0">
           <div className="w-20 h-20 rounded-2xl border-2 border-gray-800 overflow-hidden bg-gray-900 flex items-center justify-center">
-            {avatar ? (
-              <img src={avatar} alt="avatar" className="w-full h-full object-cover" />
+            {profilePicture ? (
+              <img src={profilePicture} alt="avatar" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-2xl font-bold text-indigo-300">JD</span>
+              <span className="text-2xl font-bold text-indigo-300">{initials || "?"}</span>
             )}
           </div>
           <button
-            onClick={() => fileRef.current?.click()}
             className="absolute inset-0 rounded-2xl bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <Camera className="w-5 h-5 text-white" />
           </button>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
         </div>
+
         <div className="flex-1">
-          <p className="text-xs font-medium text-gray-300 mb-1">Profile picture</p>
-          <p className="text-[11px] text-gray-600 leading-relaxed mb-3">
-            Recommended: 400×400px. JPG, PNG, or GIF. Max 2MB.
-          </p>
           <div className="flex gap-2">
-            <button
-              onClick={() => fileRef.current?.click()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-800 bg-gray-900 hover:border-gray-700 text-xs text-gray-400 hover:text-white transition-colors"
-            >
-              <Upload className="w-3 h-3" /> Upload
-            </button>
-            {avatar && (
-              <button
-                onClick={() => { setAvatar(null); setDirty(true); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-800 bg-gray-900 hover:border-red-500/40 text-xs text-gray-600 hover:text-red-400 transition-colors"
-              >
-                <Trash2 className="w-3 h-3" /> Remove
-              </button>
-            )}
+
           </div>
         </div>
       </div>
 
-      {/* Basic info */}
+      {/* ── Basic info ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-        <Field label="Username" hint="Unique identifier on-chain. Changing costs a small gas fee.">
-          <Input value={username} onChange={(v) => mutate(() => setUsername(v))} prefix="@" maxLength={30} />
+        <Field label="Name">
+          <Input value={name} onChange={(v) => mutate(() => setName(v))} maxLength={80} />
         </Field>
-        <Field label="Display name">
-          <Input value={displayName} onChange={(v) => mutate(() => setDisplayName(v))} maxLength={50} />
+        <Field label="Email">
+          <Input value={email} onChange={(v) => mutate(() => setEmail(v))} placeholder="you@example.com" />
         </Field>
-      </div>
 
-      <div className="mb-5">
-        <Field label="Bio" hint="Visible on your public profile and task applications.">
-          <Textarea
-            value={bio}
-            onChange={(v) => mutate(() => setBio(v))}
-            placeholder="Tell teams about yourself…"
-            rows={3}
-            maxLength={280}
+        <Field label="Role" hint="Your role in the project or DAO.">
+          <select
+            value={role}
+            onChange={(e) => mutate(() => setRole(e.target.value as Role))}
+            className="w-full rounded-xl border border-gray-800 bg-gray-900 focus:border-indigo-500/50 px-3 py-2.5 text-xs text-gray-200 outline-none transition-colors"
+          >
+            {ROLE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <Field label="Wallet address" hint="Connected via your wallet — read-only.">
+          <input
+            value={walletAddress}
+            readOnly
+            className="w-full rounded-xl border border-gray-800 bg-gray-900 px-3 py-2.5 text-xs text-gray-500 font-mono cursor-not-allowed select-all outline-none"
           />
         </Field>
       </div>
 
+      {/* ── Social links ───────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 pb-8 border-b border-gray-800">
-        <Field label="Location">
-          <Input value={location} onChange={(v) => mutate(() => setLocation(v))} placeholder="City, Country" />
-        </Field>
-        <Field label="Website">
-          <Input value={website} onChange={(v) => mutate(() => setWebsite(v))} placeholder="https://…" />
-        </Field>
-        <Field label="Github">
+        <Field label="GitHub">
           <Input value={github} onChange={(v) => mutate(() => setGithub(v))} prefix="github.com/" />
         </Field>
-        <Field label="Twitter / X">
-          <Input value={twitter} onChange={(v) => mutate(() => setTwitter(v))} prefix="@" />
+        <Field label="LinkedIn">
+          <Input value={linkedin} onChange={(v) => mutate(() => setLinkedin(v))} prefix="linkedin.com/in/" />
         </Field>
       </div>
 
-      {/* Skills */}
+      {/* ── Description ────────────────────────────────────────────────────── */}
+      <div className="mb-8 pb-8 border-b border-gray-800 space-y-5">
+        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">Description</p>
+
+        <Field label="Header" hint="Short headline shown at the top of your profile.">
+          <Input
+            value={descHeader}
+            onChange={(v) => mutate(() => setDescHeader(v))}
+            maxLength={80}
+            placeholder="e.g. Full-stack Web3 Developer"
+          />
+        </Field>
+
+        <Field label="Summary" hint="A paragraph summarising your background and goals.">
+          <Textarea
+            value={descSummary}
+            onChange={(v) => mutate(() => setDescSummary(v))}
+            placeholder="Tell teams about yourself…"
+            rows={3}
+            maxLength={500}
+          />
+        </Field>
+
+        <Field label="Highlights" hint="Key achievements or focus areas — each shown as a bullet.">
+          <div className="space-y-2">
+            {descPoints.map((point, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  value={point}
+                  onChange={(e) => updatePoint(i, e.target.value)}
+                  className="flex-1 rounded-xl border border-gray-800 bg-gray-900 focus:border-indigo-500/50 px-3 py-2.5 text-xs text-gray-200 placeholder:text-gray-600 outline-none transition-colors"
+                  placeholder={`Highlight ${i + 1}`}
+                />
+                <button
+                  onClick={() => removePoint(i)}
+                  className="text-gray-600 hover:text-red-400 transition-colors flex-shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={addPoint}
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-dashed border-gray-700 text-xs text-gray-500 hover:text-indigo-400 hover:border-indigo-500/40 transition-colors"
+            >
+              <Plus className="w-3 h-3" /> Add highlight
+            </button>
+          </div>
+        </Field>
+
+        <Field label="Footer" hint="Closing line or call-to-action on your profile.">
+          <Input
+            value={descFooter}
+            onChange={(v) => mutate(() => setDescFooter(v))}
+            maxLength={120}
+            placeholder="e.g. Open to new collaborations."
+          />
+        </Field>
+      </div>
+
+      {/* ── Skills ─────────────────────────────────────────────────────────── */}
       <div className="mb-2">
-        <Field label="Skills" hint="Added to your on-chain profile and used for task matching.">
+        <Field label="Skills" hint="Used for task matching and shown on your public profile.">
           <div className="flex gap-2">
             <input
               value={skillInput}
@@ -148,22 +356,25 @@ export default function ProfileSection() {
               Add
             </button>
           </div>
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            {skills.map((s) => (
-              <span
-                key={s}
-                className="flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-[11px] text-gray-300"
-              >
-                {s}
-                <button
-                  onClick={() => mutate(() => setSkills((p) => p.filter((x) => x !== s)))}
-                  className="text-gray-600 hover:text-red-400 transition-colors"
+
+          {skills.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {skills.map((s) => (
+                <span
+                  key={s}
+                  className="flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-[11px] text-gray-300"
                 >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            ))}
-          </div>
+                  {s}
+                  <button
+                    onClick={() => removeSkill(s)}
+                    className="text-gray-600 hover:text-red-400 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
         </Field>
       </div>
 

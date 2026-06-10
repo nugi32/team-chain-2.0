@@ -86,6 +86,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error creating task", e);
+            throw e;
         }
     };
 
@@ -104,6 +105,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error deleting task", e);
+            throw e;
         }
     };
 
@@ -123,6 +125,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error activating task", e);
+            throw e;
         }
     };
 
@@ -141,6 +144,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error opening registration", e);
+            throw e;
         }
     };
 
@@ -159,6 +163,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error closing registration", e);
+            throw e;
         }
     };
 
@@ -178,6 +183,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error requesting join task", e);
+            throw e;
         }
     };
 
@@ -196,6 +202,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error withdrawing join request", e);
+            throw e;
         }
     };
 
@@ -214,6 +221,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error approving join request", e);
+            throw e;
         }
     };
 
@@ -232,6 +240,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error rejecting join request", e);
+            throw e;
         }
     };
 
@@ -250,6 +259,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error submitting task", e);
+            throw e;
         }
     };
 
@@ -268,6 +278,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error resubmitting task", e);
+            throw e;
         }
     };
 
@@ -286,6 +297,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error requesting revision", e);
+            throw e;
         }
     };
 
@@ -304,6 +316,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error approving task", e);
+            throw e;
         }
     };
 
@@ -322,6 +335,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error cancelling by me", e);
+            throw e;
         }
     };
 
@@ -340,6 +354,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error triggering deadline", e);
+            throw e;
         }
     };
 
@@ -357,6 +372,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error withdrawing to system wallet", e);
+            throw e;
         }
     };
 
@@ -375,6 +391,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error changing registry address", e);
+            throw e;
         }
     };
 
@@ -393,6 +410,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error pausing", e);
+            throw e;
         }
     };
 
@@ -411,6 +429,7 @@ export const useTaskController = () => {
             );
         } catch (e) {
             console.error("Error unpausing", e);
+            throw e;
         }
     };
 

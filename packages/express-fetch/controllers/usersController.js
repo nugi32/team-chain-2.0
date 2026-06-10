@@ -27,7 +27,7 @@ const fetchWithTimeout = async (url, options = {}, timeout = 15000) => {
 // GET semua user (public endpoint - no auth required)
 export const getAllUsers = async (_req, res) => {
   try {
-    const response = await fetchWithTimeout(`${API_BASE_URL}`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/users`);
     if (!response.ok) {
       const errorText = await response.text();
       console.error(errorText);
@@ -51,7 +51,7 @@ export const getUserById = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/${id}`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/users/${id}`);
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -100,7 +100,7 @@ export const createUser = async (req, res) => {
       owner: value.walletAddress,
     };
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/users`, {
       method: "POST",
       body: JSON.stringify(userData),
       headers: {
@@ -140,7 +140,11 @@ export const updateUser = async (req, res) => {
     const updateData = { ...req.body };
     delete updateData.owner;
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/${id}`, {
+    console.log(`[updateUser] Forwarding PUT to ${API_BASE_URL}/users/${id}`);
+    console.log(`[updateUser] Request body:`, JSON.stringify(updateData, null, 2));
+    console.log(`[updateUser] Authorization header:`, req.headers.authorization);
+
+    const response = await fetchWithTimeout(`${API_BASE_URL}/users/${id}`, {
       method: "PUT",
       body: JSON.stringify(updateData),
       headers: {
@@ -149,18 +153,20 @@ export const updateUser = async (req, res) => {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[updateUser] Backend returned ${response.status}:`, errorText);
+      
       if (response.status === 404) {
         return res.status(404).json({ error: "User not found" });
       }
-      const errorText = await response.text();
-      console.error(errorText);
-      return res.status(response.status).json({ error: "Failed to update user" });
+      return res.status(response.status).json({ error: "Failed to update user", details: errorText });
     }
 
     const result = await response.json();
+    console.log(`[updateUser] Success:`, result);
     res.json(result);
   } catch (err) {
-    console.error(err);
+    console.error(`[updateUser] Error:`, err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -174,7 +180,7 @@ export const deleteUser = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/${id}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/users/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: req.headers.authorization,

@@ -20,11 +20,12 @@ import { handleFetchUserHeader } from "@/utils/lib/header";
 
 import Image from "next/image";
 import defaultProfile from "@/public/defaultProfile.jpg";
+import { useParams } from "next/navigation";
 
 /* ─────────────────────────────────────
    TYPES & DATA
 ────────────────────────────────────── */
-type NotifType = "deadline" | "review" | "invite" | "dispute";
+type NotifType = "deadline" | "review" | "invite" | "dispute" | "welcome" | "announcement" | "info" | "update";
 
 interface Notification {
   id: number;
@@ -36,23 +37,56 @@ interface Notification {
 }
 
 const INITIAL_NOTIFICATIONS: Notification[] = [
-  { id: 1, type: "deadline", msg: "DAO Governance Module overdue",             time: "Just now", urgent: true,  read: false },
-  { id: 2, type: "review",   msg: "2 approvals pending on Cross-Chain Oracle", time: "4h ago",   urgent: false, read: false },
-  { id: 3, type: "invite",   msg: "Invited to join ZK Rollup SDK",             time: "1d ago",   urgent: false, read: false },
-  { id: 4, type: "dispute",  msg: "L2 Bridge dispute awaiting arbitration",    time: "2d ago",   urgent: true,  read: false },
+  {
+    id: 1,
+    type: "welcome",
+    msg: "Welcome to Team Chain — the future of on-chain freelancing.",
+    time: "Just now",
+    urgent: false,
+    read: false,
+  },
+  {
+    id: 2,
+    type: "announcement",
+    msg: "Team Chain is currently operating on Testnet for public testing.",
+    time: "Just now",
+    urgent: true,
+    read: false,
+  },
+  {
+    id: 3,
+    type: "info",
+    msg: "All transactions and project activities use testnet assets only.",
+    time: "1h ago",
+    urgent: false,
+    read: false,
+  },
+  {
+    id: 4,
+    type: "update",
+    msg: "Explore projects, collaborate with teams, and test platform features.",
+    time: "4h ago",
+    urgent: false,
+    read: false,
+  },
 ];
 
+
 const NOTIF_META: Record<NotifType, { icon: React.ReactNode; color: string }> = {
-  deadline: { icon: <Clock         className="w-3.5 h-3.5" />, color: "text-red-400    bg-red-500/10"    },
-  review:   { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-amber-400  bg-amber-500/10"  },
-  invite:   { icon: <UserCheck     className="w-3.5 h-3.5" />, color: "text-indigo-400 bg-indigo-500/10" },
-  dispute:  { icon: <AlertTriangle className="w-3.5 h-3.5" />, color: "text-orange-400 bg-orange-500/10" },
+  deadline: { icon: <Clock className="w-3.5 h-3.5" />, color: "text-red-400    bg-red-500/10" },
+  review: { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-amber-400  bg-amber-500/10" },
+  invite: { icon: <UserCheck className="w-3.5 h-3.5" />, color: "text-indigo-400 bg-indigo-500/10" },
+  dispute: { icon: <AlertTriangle className="w-3.5 h-3.5" />, color: "text-orange-400 bg-orange-500/10" },
+  welcome: { icon: <User className="w-3.5 h-3.5" />, color: "text-green-400 bg-green-500/10" },
+  announcement: { icon: <LayoutDashboard className="w-3.5 h-3.5" />, color: "text-blue-400 bg-blue-500/10" },
+  info: { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-cyan-400 bg-cyan-500/10" },
+  update: { icon: <Settings className="w-3.5 h-3.5" />, color: "text-purple-400 bg-purple-500/10" },
 };
 
 const NAV_LINKS = [
-  { label: "Dashboard",    href: "/dashboard",   requiresUserId: true },
-  { label: "Explore",      href: "/explore"                           },
-  { label: "How It Works", href: "/howItWorks"                        },
+  { label: "Dashboard", href: "/dashboard", requiresUserId: true },
+  { label: "Explore", href: "/explore" },
+  { label: "How It Works", href: "/howItWorks" },
 ] as const;
 
 /* ─────────────────────────────────────
@@ -186,11 +220,6 @@ function ProfileDropdown({
   };
 
   const menuItems: MenuItem[] = [
-    {
-      icon: <User className="w-3.5 h-3.5" />,
-      label: "View Profile",
-      href: `/profile/${userId}`,
-    },
     {
       icon: <LayoutDashboard className="w-3.5 h-3.5" />,
       label: "Dashboard",
@@ -349,23 +378,24 @@ export const Header = () => {
   const isLocalNetwork = targetNetwork.id === hardhat.id;
   const pathname = usePathname();
   const router = useRouter();
+  const params = useParams();
 
-  const [notifOpen,  setNotifOpen]  = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);   // ← new
   const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
 
-  const notifRef   = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);          // ← new
 
   const [profilePicture, setProfilePicture] = useState<string>("");
-  const [userName,       setUserName]       = useState<string>("");
-  const [userEmail,      setUserEmail]      = useState<string>("");  // ← new
-  const [userGithub,     setUserGithub]     = useState<string>("");  // ← new
-  const [userId,         setUserId]         = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");  // ← new
+  const [userGithub, setUserGithub] = useState<string>("");  // ← new
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
-    const id = localStorage.getItem("userId");
+    const id = localStorage.getItem("userId") || params.id as string;
     if (!id) { console.warn("cannot get user id from localStorage"); return; }
     setUserId(id);
 
@@ -425,8 +455,8 @@ export const Header = () => {
 
   /* Close other panels when one opens */
   const openProfile = () => { setProfileOpen((p) => !p); setNotifOpen(false); setMobileOpen(false); };
-  const openNotif   = () => { setNotifOpen((p)  => !p); setProfileOpen(false); setMobileOpen(false); };
-  const openMobile  = () => { setMobileOpen((p) => !p); setNotifOpen(false); setProfileOpen(false); };
+  const openNotif = () => { setNotifOpen((p) => !p); setProfileOpen(false); setMobileOpen(false); };
+  const openMobile = () => { setMobileOpen((p) => !p); setNotifOpen(false); setProfileOpen(false); };
 
   return (
     <header className="relative border-b border-gray-800 bg-gray-950/80 backdrop-blur-md sticky top-0 z-40">
@@ -438,9 +468,9 @@ export const Header = () => {
             <GitBranch className="w-4 h-4 text-white" />
           </div>
           <span className="font-bold text-sm tracking-tight text-white">Team Chain</span>
-          <div className="hidden sm:flex items-center gap-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-[10px] text-indigo-300 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-            Mainnet
+          <div className="hidden sm:flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] text-amber-300 font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            Testnet
           </div>
         </Link>
 

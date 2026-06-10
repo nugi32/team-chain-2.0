@@ -1,13 +1,60 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { AlertTriangle, LogOut, Trash2 } from "lucide-react";
 import SectionHeading from "./SectionHeading";
 import ConfirmModal from "./ConfirmModal";
 
+import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
+import { useDangerSection } from "@/utils/lib/dangerSection";
+import { useAccount } from "wagmi";
+import { notification } from "~~/utils/scaffold-eth";
+import { useParams } from "next/navigation";
+
 export default function DangerSection() {
   const [modal, setModal] = useState<null | "deactivate" | "delete" | "logout">(null);
+
+  const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : (params.id ?? "");
+
+  const { address, isConnected } = useAccount();
+
+  const { handleDeleteAccount, setUserId } = useDangerSection();
+  const { actions, form } = useUsersContract();
+
+  const [processDelete, setProcessDelete] = useState(false);
+
+  useEffect(() => {
+    const handleDelete = async () => {
+      if (!isConnected || !address) {
+        notification.error("Please connect your wallet first.");
+        setProcessDelete(false);
+        return;
+      }
+
+      try {
+        form.setUnregisterUser(address);
+        setUserId(id);
+
+        //await actions.handleUnregister();
+        await handleDeleteAccount(address);
+        notification.success("Account deleted successfully.");
+        // Redirect or clear local storage as needed
+        localStorage.clear();
+        window.location.href = "/";
+      } catch (error) {
+        notification.error("Failed to delete account.");
+        console.error(error);
+      } finally {
+        setProcessDelete(false);
+      }
+    };
+
+    if (processDelete) {
+      handleDelete();
+    }
+  }, [processDelete]);
 
   return (
     <div>
@@ -66,7 +113,7 @@ export default function DangerSection() {
             desc="You'll need to reconnect your wallet to access your account again."
             cta="Sign out"
             ctaClass="bg-gray-700 hover:bg-gray-600"
-            onConfirm={() => setModal(null)}
+            onConfirm={() => { localStorage.clear(); setModal(null); }}
             onClose={() => setModal(null)}
           />
         )}/*
@@ -86,7 +133,7 @@ export default function DangerSection() {
             desc="This cannot be undone. Your profile, reputation score, and off-chain data will be erased. On-chain activity remains on the blockchain."
             cta="Delete forever"
             ctaClass="bg-red-600 hover:bg-red-500"
-            onConfirm={() => setModal(null)}
+            onConfirm={() => { setProcessDelete(true); setModal(null); }}
             onClose={() => setModal(null)}
           />
         )}

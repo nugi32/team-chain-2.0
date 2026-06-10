@@ -18,6 +18,7 @@ interface User {
         footer: string,
     },
     owner: string,
+    skills: string[],
 }
 
 export async function getAllUsers() {

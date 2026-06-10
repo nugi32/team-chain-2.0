@@ -3,7 +3,6 @@ import { useBalance } from "wagmi";
 import axios from "axios";
 import { getUserById } from "@/utils/lib/express/queries/users";
 import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
-import { useTaskData } from "@/utils/lib/smartContractWrapper/user/taskData";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";

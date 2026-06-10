@@ -1,0 +1,1184 @@
+{
+  "address": "0xBBcdd2e55F14470470A683178d156497D4071D74",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "AddressEmptyCode",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "implementation",
+          "type": "address"
+        }
+      ],
+      "name": "ERC1967InvalidImplementation",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC1967NonPayable",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EnforcedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ExpectedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FailedCall",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitialization",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotInitializing",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "UUPSUnauthorizedCallContext",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "slot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "UUPSUnsupportedProxiableUUID",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "name": "addressUtilsEror",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "errName",
+          "type": "string"
+        }
+      ],
+      "name": "userError",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "implementation",
+          "type": "address"
+        }
+      ],
+      "name": "Upgraded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "eventName",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
+        }
+      ],
+      "name": "userEvent",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_githubURL",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "Register",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "UPGRADE_INTERFACE_VERSION",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "Unregister",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "Users",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "totalTasksCreated",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalTasksCompleted",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalTasksFailed",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reputation",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isRegistered",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "exists",
+          "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "GitProfile",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "__addUserBalance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__cancelByMeRep",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newAddressRegistry",
+          "type": "address"
+        }
+      ],
+      "name": "__changeAddressRegistry",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_creator",
+          "type": "address"
+        }
+      ],
+      "name": "__deadlineHitRep",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__getTotalTasksCompleted",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__getTotalTasksCreated",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__getTotalTasksFailed",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__getUserBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__getUserGitProfile",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__getUserReputation",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__isRegistered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__penaltyIsBiggerThanReputation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_creator",
+          "type": "address"
+        }
+      ],
+      "name": "__revisionRep",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "__takeUserBalance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_creator",
+          "type": "address"
+        }
+      ],
+      "name": "__taskAcceptRep",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_creator",
+          "type": "address"
+        }
+      ],
+      "name": "__taskCompleteCounter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "__taskCreateCounter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_creator",
+          "type": "address"
+        }
+      ],
+      "name": "__taskFailCounter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_addressRegistry",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "proxiableUUID",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newImplementation",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "upgradeToAndCall",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "usedGitURL",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "withdrawAllUserFund",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawUserFund",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x8269921713b7b372d59190718dcd6ecdd745262bc32779d4e923c3be8f718165",
+  "receipt": {
+    "to": null,
+    "from": "0x18406636bCEeB717FEE50f4E0D6D7a9a7E3f189C",
+    "contractAddress": "0xBBcdd2e55F14470470A683178d156497D4071D74",
+    "transactionIndex": 121,
+    "gasUsed": "2977994",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x68ab9be8ed5682dd5f931cd4ce17657db622fdf060f4ce245c4c014385c78d90",
+    "transactionHash": "0x8269921713b7b372d59190718dcd6ecdd745262bc32779d4e923c3be8f718165",
+    "logs": [],
+    "blockNumber": 11021772,
+    "cumulativeGasUsed": "14882887",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "99238df218874cec1141bb43762755a6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.22+commit.4fc1097e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"EnforcedPause\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ExpectedPause\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"message\",\"type\":\"string\"}],\"name\":\"addressUtilsEror\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"errName\",\"type\":\"string\"}],\"name\":\"userError\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"eventName\",\"type\":\"string\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"userAddress\",\"type\":\"address\"}],\"name\":\"userEvent\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_githubURL\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"Register\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"Unregister\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"Users\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"totalTasksCreated\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalTasksCompleted\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalTasksFailed\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reputation\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isRegistered\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"exists\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"GitProfile\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"__addUserBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__cancelByMeRep\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newAddressRegistry\",\"type\":\"address\"}],\"name\":\"__changeAddressRegistry\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_creator\",\"type\":\"address\"}],\"name\":\"__deadlineHitRep\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__getTotalTasksCompleted\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__getTotalTasksCreated\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__getTotalTasksFailed\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__getUserBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__getUserGitProfile\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__getUserReputation\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__isRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__penaltyIsBiggerThanReputation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_creator\",\"type\":\"address\"}],\"name\":\"__revisionRep\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"__takeUserBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_creator\",\"type\":\"address\"}],\"name\":\"__taskAcceptRep\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_creator\",\"type\":\"address\"}],\"name\":\"__taskCompleteCounter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"__taskCreateCounter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_creator\",\"type\":\"address\"}],\"name\":\"__taskFailCounter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_addressRegistry\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"usedGitURL\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"withdrawAllUserFund\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"withdrawUserFund\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"AddressEmptyCode(address)\":[{\"details\":\"There's no code at `target` (it is not a contract).\"}],\"ERC1967InvalidImplementation(address)\":[{\"details\":\"The `implementation` of the proxy is invalid.\"}],\"ERC1967NonPayable()\":[{\"details\":\"An upgrade function sees `msg.value > 0` that may be lost.\"}],\"EnforcedPause()\":[{\"details\":\"The operation failed because the contract is paused.\"}],\"ExpectedPause()\":[{\"details\":\"The operation failed because the contract is not paused.\"}],\"FailedCall()\":[{\"details\":\"A call to an address target failed. The target may have reverted.\"}],\"InvalidInitialization()\":[{\"details\":\"The contract is already initialized.\"}],\"NotInitializing()\":[{\"details\":\"The contract is not initializing.\"}],\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}],\"UUPSUnauthorizedCallContext()\":[{\"details\":\"The call is from an unauthorized context.\"}],\"UUPSUnsupportedProxiableUUID(bytes32)\":[{\"details\":\"The storage `slot` is unsupported as a UUID.\"}]},\"events\":{\"Initialized(uint64)\":{\"details\":\"Triggered when the contract has been initialized or reinitialized.\"},\"Paused(address)\":{\"details\":\"Emitted when the pause is triggered by `account`.\"},\"Unpaused(address)\":{\"details\":\"Emitted when the pause is lifted by `account`.\"},\"Upgraded(address)\":{\"details\":\"Emitted when the implementation is upgraded.\"}},\"kind\":\"dev\",\"methods\":{\"Register(string,address)\":{\"details\":\"Creates a new user profile with initial reputation and counters\",\"params\":{\"_githubURL\":\"User's GitHub profile URL\",\"_user\":\"Address of the user to register\"}},\"Unregister(address)\":{\"details\":\"Removes user from protocol and clears their data\",\"params\":{\"_user\":\"Address of the user to unregister\"},\"returns\":{\"_0\":\"confirmation Confirmation message\"}},\"__addUserBalance(address,uint256)\":{\"params\":{\"_amount\":\"Amount to add\",\"_user\":\"Address of the user\"}},\"__cancelByMeRep(address)\":{\"params\":{\"_user\":\"Address of the user\"}},\"__changeAddressRegistry(address)\":{\"params\":{\"_newAddressRegistry\":\"New AddressRegistry address\"}},\"__deadlineHitRep(address,address)\":{\"params\":{\"_creator\":\"Address of the creator\",\"_user\":\"Address of the member\"}},\"__getTotalTasksCompleted(address)\":{\"params\":{\"_user\":\"Address of the user\"},\"returns\":{\"_0\":\"uint256 Total tasks completed\"}},\"__getTotalTasksCreated(address)\":{\"params\":{\"_user\":\"Address of the user\"},\"returns\":{\"_0\":\"uint256 Total tasks created\"}},\"__getTotalTasksFailed(address)\":{\"params\":{\"_user\":\"Address of the user\"},\"returns\":{\"_0\":\"uint256 Total tasks failed\"}},\"__getUserBalance(address)\":{\"params\":{\"_user\":\"Address of the user\"},\"returns\":{\"_0\":\"uint256 User balance\"}},\"__getUserGitProfile(address)\":{\"params\":{\"_user\":\"Address of the user\"},\"returns\":{\"_0\":\"string memory GitHub URL\"}},\"__getUserReputation(address)\":{\"params\":{\"_user\":\"Address of the user\"},\"returns\":{\"_0\":\"uint256 Reputation score\"}},\"__isRegistered(address)\":{\"params\":{\"_user\":\"Address of the user\"},\"returns\":{\"_0\":\"bool Registration status\"}},\"__revisionRep(address,address)\":{\"params\":{\"_creator\":\"Address of the creator\",\"_user\":\"Address of the member\"}},\"__takeUserBalance(address,uint256)\":{\"params\":{\"_amount\":\"Amount to remove\",\"_user\":\"Address of the user\"}},\"__taskAcceptRep(address,address)\":{\"params\":{\"_creator\":\"Address of the creator\",\"_user\":\"Address of the member\"}},\"__taskCompleteCounter(address,address)\":{\"params\":{\"_creator\":\"Address of the creator\",\"_user\":\"Address of the member\"}},\"__taskCreateCounter(address)\":{\"params\":{\"_user\":\"Address of the user\"}},\"__taskFailCounter(address,address)\":{\"params\":{\"_creator\":\"Address of the creator\",\"_user\":\"Address of the member\"}},\"initialize(address)\":{\"params\":{\"_addressRegistry\":\"Address of the AddressRegistry contract\"}},\"paused()\":{\"details\":\"Returns true if the contract is paused, and false otherwise.\"},\"proxiableUUID()\":{\"details\":\"Implementation of the ERC-1822 {proxiableUUID} function. This returns the storage slot used by the implementation. It is used to validate the implementation's compatibility when performing an upgrade. IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.\"},\"upgradeToAndCall(address,bytes)\":{\"custom:oz-upgrades-unsafe-allow-reachable\":\"delegatecall\",\"details\":\"Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call encoded in `data`. Calls {_authorizeUpgrade}. Emits an {Upgraded} event.\"},\"withdrawAllUserFund(address)\":{\"params\":{\"_user\":\"Address of the user\"}},\"withdrawUserFund(address,uint256)\":{\"params\":{\"_amount\":\"Amount to withdraw\",\"_user\":\"Address of the user\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"Register(string,address)\":{\"notice\":\"Registers a new user in the protocol\"},\"Unregister(address)\":{\"notice\":\"Unregisters a user and deletes their profile data\"},\"__addUserBalance(address,uint256)\":{\"notice\":\"Adds funds to user's balance\"},\"__cancelByMeRep(address)\":{\"notice\":\"Deducts cancellation penalty from user's reputation\"},\"__changeAddressRegistry(address)\":{\"notice\":\"Updates the AddressRegistry contract address\"},\"__deadlineHitRep(address,address)\":{\"notice\":\"Deducts deadline hit penalties from both user and creator's reputation\"},\"__getTotalTasksCompleted(address)\":{\"notice\":\"Gets total tasks completed by user\"},\"__getTotalTasksCreated(address)\":{\"notice\":\"Gets total tasks created by user\"},\"__getTotalTasksFailed(address)\":{\"notice\":\"Gets total tasks failed by user\"},\"__getUserBalance(address)\":{\"notice\":\"Gets user's balance\"},\"__getUserGitProfile(address)\":{\"notice\":\"Gets user's GitHub profile URL\"},\"__getUserReputation(address)\":{\"notice\":\"Gets user's reputation score\"},\"__isRegistered(address)\":{\"notice\":\"Checks if user is registered\"},\"__revisionRep(address,address)\":{\"notice\":\"Deducts revision penalty from both user and creator's reputation\"},\"__takeUserBalance(address,uint256)\":{\"notice\":\"Removes funds from user's balance\"},\"__taskAcceptRep(address,address)\":{\"notice\":\"Adds task acceptance rewards to both user and creator's reputation\"},\"__taskCompleteCounter(address,address)\":{\"notice\":\"Increments task completion counters for both user and creator\"},\"__taskCreateCounter(address)\":{\"notice\":\"Increments user's task created counter\"},\"__taskFailCounter(address,address)\":{\"notice\":\"Increments task failure counters for both user and creator\"},\"initialize(address)\":{\"notice\":\"Initializes the UsersContract\"},\"pause()\":{\"notice\":\"Pauses the contract\"},\"unpause()\":{\"notice\":\"Unpauses the contract\"},\"withdrawAllUserFund(address)\":{\"notice\":\"Withdraws all funds from user's balance\"},\"withdrawUserFund(address,uint256)\":{\"notice\":\"Withdraws a specific amount from user's balance\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/User/user.sol\":\"UsersContract\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.20;\\n\\nimport {Initializable} from \\\"@openzeppelin/contracts/proxy/utils/Initializable.sol\\\";\\n\",\"keccak256\":\"0x30d125b8417684dbfea3e8d57284b353a86b22077237b4aaf098c0b54b153e16\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.22;\\n\\nimport {UUPSUpgradeable} from \\\"@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol\\\";\\n\",\"keccak256\":\"0x4918e374e9ce84e9b196486bafbd46851d5e72ab315e31f0b1d7c443dcfea5bf\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\nimport {Initializable} from \\\"@openzeppelin/contracts/proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract ContextUpgradeable is Initializable {\\n    function __Context_init() internal onlyInitializing {\\n    }\\n\\n    function __Context_init_unchained() internal onlyInitializing {\\n    }\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0xad316bdc3ee64a0e29773256245045dc57b92660799ff14f668f7c0da9456a9d\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.3.0) (utils/Pausable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {ContextUpgradeable} from \\\"../utils/ContextUpgradeable.sol\\\";\\nimport {Initializable} from \\\"@openzeppelin/contracts/proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Contract module which allows children to implement an emergency stop\\n * mechanism that can be triggered by an authorized account.\\n *\\n * This module is used through inheritance. It will make available the\\n * modifiers `whenNotPaused` and `whenPaused`, which can be applied to\\n * the functions of your contract. Note that they will not be pausable by\\n * simply including this module, only once the modifiers are put in place.\\n */\\nabstract contract PausableUpgradeable is Initializable, ContextUpgradeable {\\n    /// @custom:storage-location erc7201:openzeppelin.storage.Pausable\\n    struct PausableStorage {\\n        bool _paused;\\n    }\\n\\n    // keccak256(abi.encode(uint256(keccak256(\\\"openzeppelin.storage.Pausable\\\")) - 1)) & ~bytes32(uint256(0xff))\\n    bytes32 private constant PausableStorageLocation = 0xcd5ed15c6e187e77e9aee88184c21f4f2182ab5827cb3b7e07fbedcd63f03300;\\n\\n    function _getPausableStorage() private pure returns (PausableStorage storage $) {\\n        assembly {\\n            $.slot := PausableStorageLocation\\n        }\\n    }\\n\\n    /**\\n     * @dev Emitted when the pause is triggered by `account`.\\n     */\\n    event Paused(address account);\\n\\n    /**\\n     * @dev Emitted when the pause is lifted by `account`.\\n     */\\n    event Unpaused(address account);\\n\\n    /**\\n     * @dev The operation failed because the contract is paused.\\n     */\\n    error EnforcedPause();\\n\\n    /**\\n     * @dev The operation failed because the contract is not paused.\\n     */\\n    error ExpectedPause();\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is not paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    modifier whenNotPaused() {\\n        _requireNotPaused();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    modifier whenPaused() {\\n        _requirePaused();\\n        _;\\n    }\\n\\n    function __Pausable_init() internal onlyInitializing {\\n    }\\n\\n    function __Pausable_init_unchained() internal onlyInitializing {\\n    }\\n    /**\\n     * @dev Returns true if the contract is paused, and false otherwise.\\n     */\\n    function paused() public view virtual returns (bool) {\\n        PausableStorage storage $ = _getPausableStorage();\\n        return $._paused;\\n    }\\n\\n    /**\\n     * @dev Throws if the contract is paused.\\n     */\\n    function _requireNotPaused() internal view virtual {\\n        if (paused()) {\\n            revert EnforcedPause();\\n        }\\n    }\\n\\n    /**\\n     * @dev Throws if the contract is not paused.\\n     */\\n    function _requirePaused() internal view virtual {\\n        if (!paused()) {\\n            revert ExpectedPause();\\n        }\\n    }\\n\\n    /**\\n     * @dev Triggers stopped state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    function _pause() internal virtual whenNotPaused {\\n        PausableStorage storage $ = _getPausableStorage();\\n        $._paused = true;\\n        emit Paused(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns to normal state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    function _unpause() internal virtual whenPaused {\\n        PausableStorage storage $ = _getPausableStorage();\\n        $._paused = false;\\n        emit Unpaused(_msgSender());\\n    }\\n}\\n\",\"keccak256\":\"0x1149f6c3445a564f5b9cd27c2dc85c6bcaed254c67cb57a416bc7ca1f667ad1f\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/IERC1967.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.4.0) (interfaces/IERC1967.sol)\\n\\npragma solidity >=0.4.11;\\n\\n/**\\n * @dev ERC-1967: Proxy Storage Slots. This interface contains the events defined in the ERC.\\n */\\ninterface IERC1967 {\\n    /**\\n     * @dev Emitted when the implementation is upgraded.\\n     */\\n    event Upgraded(address indexed implementation);\\n\\n    /**\\n     * @dev Emitted when the admin account has changed.\\n     */\\n    event AdminChanged(address previousAdmin, address newAdmin);\\n\\n    /**\\n     * @dev Emitted when the beacon is changed.\\n     */\\n    event BeaconUpgraded(address indexed beacon);\\n}\\n\",\"keccak256\":\"0xbf2aefe54b76d7f7bcd4f6da1080b7b1662611937d870b880db584d09cea56b5\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/draft-IERC1822.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.4.0) (interfaces/draft-IERC1822.sol)\\n\\npragma solidity >=0.4.16;\\n\\n/**\\n * @dev ERC-1822: Universal Upgradeable Proxy Standard (UUPS) documents a method for upgradeability through a simplified\\n * proxy whose upgrades are fully controlled by the current implementation.\\n */\\ninterface IERC1822Proxiable {\\n    /**\\n     * @dev Returns the storage slot that the proxiable contract assumes is being used to store the implementation\\n     * address.\\n     *\\n     * IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks\\n     * bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this\\n     * function revert if invoked through a proxy.\\n     */\\n    function proxiableUUID() external view returns (bytes32);\\n}\\n\",\"keccak256\":\"0x82f757819bf2429a0d4db141b99a4bbe5039e4ef86dfb94e2e6d40577ed5b28b\",\"license\":\"MIT\"},\"@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.6.0) (proxy/ERC1967/ERC1967Utils.sol)\\n\\npragma solidity ^0.8.21;\\n\\nimport {IBeacon} from \\\"../beacon/IBeacon.sol\\\";\\nimport {IERC1967} from \\\"../../interfaces/IERC1967.sol\\\";\\nimport {Address} from \\\"../../utils/Address.sol\\\";\\nimport {StorageSlot} from \\\"../../utils/StorageSlot.sol\\\";\\n\\n/**\\n * @dev This library provides getters and event emitting update functions for\\n * https://eips.ethereum.org/EIPS/eip-1967[ERC-1967] slots.\\n */\\nlibrary ERC1967Utils {\\n    /**\\n     * @dev Storage slot with the address of the current implementation.\\n     * This is the keccak-256 hash of \\\"eip1967.proxy.implementation\\\" subtracted by 1.\\n     */\\n    // solhint-disable-next-line private-vars-leading-underscore\\n    bytes32 internal constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;\\n\\n    /**\\n     * @dev The `implementation` of the proxy is invalid.\\n     */\\n    error ERC1967InvalidImplementation(address implementation);\\n\\n    /**\\n     * @dev The `admin` of the proxy is invalid.\\n     */\\n    error ERC1967InvalidAdmin(address admin);\\n\\n    /**\\n     * @dev The `beacon` of the proxy is invalid.\\n     */\\n    error ERC1967InvalidBeacon(address beacon);\\n\\n    /**\\n     * @dev An upgrade function sees `msg.value > 0` that may be lost.\\n     */\\n    error ERC1967NonPayable();\\n\\n    /**\\n     * @dev Returns the current implementation address.\\n     */\\n    function getImplementation() internal view returns (address) {\\n        return StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value;\\n    }\\n\\n    /**\\n     * @dev Stores a new address in the ERC-1967 implementation slot.\\n     */\\n    function _setImplementation(address newImplementation) private {\\n        if (newImplementation.code.length == 0) {\\n            revert ERC1967InvalidImplementation(newImplementation);\\n        }\\n        StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value = newImplementation;\\n    }\\n\\n    /**\\n     * @dev Performs implementation upgrade with additional setup call if data is nonempty.\\n     * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected\\n     * to avoid stuck value in the contract.\\n     *\\n     * Emits an {IERC1967-Upgraded} event.\\n     */\\n    function upgradeToAndCall(address newImplementation, bytes memory data) internal {\\n        _setImplementation(newImplementation);\\n        emit IERC1967.Upgraded(newImplementation);\\n\\n        if (data.length > 0) {\\n            Address.functionDelegateCall(newImplementation, data);\\n        } else {\\n            _checkNonPayable();\\n        }\\n    }\\n\\n    /**\\n     * @dev Storage slot with the admin of the contract.\\n     * This is the keccak-256 hash of \\\"eip1967.proxy.admin\\\" subtracted by 1.\\n     */\\n    // solhint-disable-next-line private-vars-leading-underscore\\n    bytes32 internal constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;\\n\\n    /**\\n     * @dev Returns the current admin.\\n     *\\n     * TIP: To get this value clients can read directly from the storage slot shown below (specified by ERC-1967) using\\n     * the https://ethereum.org/developers/docs/apis/json-rpc/#eth_getstorageat[`eth_getStorageAt`] RPC call.\\n     * `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`\\n     */\\n    function getAdmin() internal view returns (address) {\\n        return StorageSlot.getAddressSlot(ADMIN_SLOT).value;\\n    }\\n\\n    /**\\n     * @dev Stores a new address in the ERC-1967 admin slot.\\n     */\\n    function _setAdmin(address newAdmin) private {\\n        if (newAdmin == address(0)) {\\n            revert ERC1967InvalidAdmin(address(0));\\n        }\\n        StorageSlot.getAddressSlot(ADMIN_SLOT).value = newAdmin;\\n    }\\n\\n    /**\\n     * @dev Changes the admin of the proxy.\\n     *\\n     * Emits an {IERC1967-AdminChanged} event.\\n     */\\n    function changeAdmin(address newAdmin) internal {\\n        emit IERC1967.AdminChanged(getAdmin(), newAdmin);\\n        _setAdmin(newAdmin);\\n    }\\n\\n    /**\\n     * @dev The storage slot of the UpgradeableBeacon contract which defines the implementation for this proxy.\\n     * This is the keccak-256 hash of \\\"eip1967.proxy.beacon\\\" subtracted by 1.\\n     */\\n    // solhint-disable-next-line private-vars-leading-underscore\\n    bytes32 internal constant BEACON_SLOT = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;\\n\\n    /**\\n     * @dev Returns the current beacon.\\n     */\\n    function getBeacon() internal view returns (address) {\\n        return StorageSlot.getAddressSlot(BEACON_SLOT).value;\\n    }\\n\\n    /**\\n     * @dev Stores a new beacon in the ERC-1967 beacon slot.\\n     */\\n    function _setBeacon(address newBeacon) private {\\n        if (newBeacon.code.length == 0) {\\n            revert ERC1967InvalidBeacon(newBeacon);\\n        }\\n\\n        StorageSlot.getAddressSlot(BEACON_SLOT).value = newBeacon;\\n\\n        address beaconImplementation = IBeacon(newBeacon).implementation();\\n        if (beaconImplementation.code.length == 0) {\\n            revert ERC1967InvalidImplementation(beaconImplementation);\\n        }\\n    }\\n\\n    /**\\n     * @dev Change the beacon and trigger a setup call if data is nonempty.\\n     * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected\\n     * to avoid stuck value in the contract.\\n     *\\n     * Emits an {IERC1967-BeaconUpgraded} event.\\n     *\\n     * CAUTION: Invoking this function has no effect on an instance of {BeaconProxy} since v5, since\\n     * it uses an immutable beacon without looking at the value of the ERC-1967 beacon slot for\\n     * efficiency.\\n     */\\n    function upgradeBeaconToAndCall(address newBeacon, bytes memory data) internal {\\n        _setBeacon(newBeacon);\\n        emit IERC1967.BeaconUpgraded(newBeacon);\\n\\n        if (data.length > 0) {\\n            Address.functionDelegateCall(IBeacon(newBeacon).implementation(), data);\\n        } else {\\n            _checkNonPayable();\\n        }\\n    }\\n\\n    /**\\n     * @dev Reverts if `msg.value` is not zero. It can be used to avoid `msg.value` stuck in the contract\\n     * if an upgrade doesn't perform an initialization call.\\n     */\\n    function _checkNonPayable() private {\\n        if (msg.value > 0) {\\n            revert ERC1967NonPayable();\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x3d8b816f00b4cabe9a9fb7e84908ef785d6e5b0ef988bcd3c52fe811b4559686\",\"license\":\"MIT\"},\"@openzeppelin/contracts/proxy/beacon/IBeacon.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.4.0) (proxy/beacon/IBeacon.sol)\\n\\npragma solidity >=0.4.16;\\n\\n/**\\n * @dev This is the interface that {BeaconProxy} expects of its beacon.\\n */\\ninterface IBeacon {\\n    /**\\n     * @dev Must return an address that can be used as a delegate call target.\\n     *\\n     * {UpgradeableBeacon} will check that this address is a contract.\\n     */\\n    function implementation() external view returns (address);\\n}\\n\",\"keccak256\":\"0x20462ddb2665e9521372c76b001d0ce196e59dbbd989de9af5576cad0bd5628b\",\"license\":\"MIT\"},\"@openzeppelin/contracts/proxy/utils/Initializable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.3.0) (proxy/utils/Initializable.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed\\n * behind a proxy. Since proxied contracts do not make use of a constructor, it's common to move constructor logic to an\\n * external initializer function, usually called `initialize`. It then becomes necessary to protect this initializer\\n * function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.\\n *\\n * The initialization functions use a version number. Once a version number is used, it is consumed and cannot be\\n * reused. This mechanism prevents re-execution of each \\\"step\\\" but allows the creation of new initialization steps in\\n * case an upgrade adds a module that needs to be initialized.\\n *\\n * For example:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```solidity\\n * contract MyToken is ERC20Upgradeable {\\n *     function initialize() initializer public {\\n *         __ERC20_init(\\\"MyToken\\\", \\\"MTK\\\");\\n *     }\\n * }\\n *\\n * contract MyTokenV2 is MyToken, ERC20PermitUpgradeable {\\n *     function initializeV2() reinitializer(2) public {\\n *         __ERC20Permit_init(\\\"MyToken\\\");\\n *     }\\n * }\\n * ```\\n *\\n * TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as\\n * possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.\\n *\\n * CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure\\n * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.\\n *\\n * [CAUTION]\\n * ====\\n * Avoid leaving a contract uninitialized.\\n *\\n * An uninitialized contract can be taken over by an attacker. This applies to both a proxy and its implementation\\n * contract, which may impact the proxy. To prevent the implementation contract from being used, you should invoke\\n * the {_disableInitializers} function in the constructor to automatically lock it when it is deployed:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * /// @custom:oz-upgrades-unsafe-allow constructor\\n * constructor() {\\n *     _disableInitializers();\\n * }\\n * ```\\n * ====\\n */\\nabstract contract Initializable {\\n    /**\\n     * @dev Storage of the initializable contract.\\n     *\\n     * It's implemented on a custom ERC-7201 namespace to reduce the risk of storage collisions\\n     * when using with upgradeable contracts.\\n     *\\n     * @custom:storage-location erc7201:openzeppelin.storage.Initializable\\n     */\\n    struct InitializableStorage {\\n        /**\\n         * @dev Indicates that the contract has been initialized.\\n         */\\n        uint64 _initialized;\\n        /**\\n         * @dev Indicates that the contract is in the process of being initialized.\\n         */\\n        bool _initializing;\\n    }\\n\\n    // keccak256(abi.encode(uint256(keccak256(\\\"openzeppelin.storage.Initializable\\\")) - 1)) & ~bytes32(uint256(0xff))\\n    bytes32 private constant INITIALIZABLE_STORAGE = 0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00;\\n\\n    /**\\n     * @dev The contract is already initialized.\\n     */\\n    error InvalidInitialization();\\n\\n    /**\\n     * @dev The contract is not initializing.\\n     */\\n    error NotInitializing();\\n\\n    /**\\n     * @dev Triggered when the contract has been initialized or reinitialized.\\n     */\\n    event Initialized(uint64 version);\\n\\n    /**\\n     * @dev A modifier that defines a protected initializer function that can be invoked at most once. In its scope,\\n     * `onlyInitializing` functions can be used to initialize parent contracts.\\n     *\\n     * Similar to `reinitializer(1)`, except that in the context of a constructor an `initializer` may be invoked any\\n     * number of times. This behavior in the constructor can be useful during testing and is not expected to be used in\\n     * production.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier initializer() {\\n        // solhint-disable-next-line var-name-mixedcase\\n        InitializableStorage storage $ = _getInitializableStorage();\\n\\n        // Cache values to avoid duplicated sloads\\n        bool isTopLevelCall = !$._initializing;\\n        uint64 initialized = $._initialized;\\n\\n        // Allowed calls:\\n        // - initialSetup: the contract is not in the initializing state and no previous version was\\n        //                 initialized\\n        // - construction: the contract is initialized at version 1 (no reinitialization) and the\\n        //                 current contract is just being deployed\\n        bool initialSetup = initialized == 0 && isTopLevelCall;\\n        bool construction = initialized == 1 && address(this).code.length == 0;\\n\\n        if (!initialSetup && !construction) {\\n            revert InvalidInitialization();\\n        }\\n        $._initialized = 1;\\n        if (isTopLevelCall) {\\n            $._initializing = true;\\n        }\\n        _;\\n        if (isTopLevelCall) {\\n            $._initializing = false;\\n            emit Initialized(1);\\n        }\\n    }\\n\\n    /**\\n     * @dev A modifier that defines a protected reinitializer function that can be invoked at most once, and only if the\\n     * contract hasn't been initialized to a greater version before. In its scope, `onlyInitializing` functions can be\\n     * used to initialize parent contracts.\\n     *\\n     * A reinitializer may be used after the original initialization step. This is essential to configure modules that\\n     * are added through upgrades and that require initialization.\\n     *\\n     * When `version` is 1, this modifier is similar to `initializer`, except that functions marked with `reinitializer`\\n     * cannot be nested. If one is invoked in the context of another, execution will revert.\\n     *\\n     * Note that versions can jump in increments greater than 1; this implies that if multiple reinitializers coexist in\\n     * a contract, executing them in the right order is up to the developer or operator.\\n     *\\n     * WARNING: Setting the version to 2**64 - 1 will prevent any future reinitialization.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier reinitializer(uint64 version) {\\n        // solhint-disable-next-line var-name-mixedcase\\n        InitializableStorage storage $ = _getInitializableStorage();\\n\\n        if ($._initializing || $._initialized >= version) {\\n            revert InvalidInitialization();\\n        }\\n        $._initialized = version;\\n        $._initializing = true;\\n        _;\\n        $._initializing = false;\\n        emit Initialized(version);\\n    }\\n\\n    /**\\n     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the\\n     * {initializer} and {reinitializer} modifiers, directly or indirectly.\\n     */\\n    modifier onlyInitializing() {\\n        _checkInitializing();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Reverts if the contract is not in an initializing state. See {onlyInitializing}.\\n     */\\n    function _checkInitializing() internal view virtual {\\n        if (!_isInitializing()) {\\n            revert NotInitializing();\\n        }\\n    }\\n\\n    /**\\n     * @dev Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.\\n     * Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized\\n     * to any version. It is recommended to use this to lock implementation contracts that are designed to be called\\n     * through proxies.\\n     *\\n     * Emits an {Initialized} event the first time it is successfully executed.\\n     */\\n    function _disableInitializers() internal virtual {\\n        // solhint-disable-next-line var-name-mixedcase\\n        InitializableStorage storage $ = _getInitializableStorage();\\n\\n        if ($._initializing) {\\n            revert InvalidInitialization();\\n        }\\n        if ($._initialized != type(uint64).max) {\\n            $._initialized = type(uint64).max;\\n            emit Initialized(type(uint64).max);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the highest version that has been initialized. See {reinitializer}.\\n     */\\n    function _getInitializedVersion() internal view returns (uint64) {\\n        return _getInitializableStorage()._initialized;\\n    }\\n\\n    /**\\n     * @dev Returns `true` if the contract is currently initializing. See {onlyInitializing}.\\n     */\\n    function _isInitializing() internal view returns (bool) {\\n        return _getInitializableStorage()._initializing;\\n    }\\n\\n    /**\\n     * @dev Pointer to storage slot. Allows integrators to override it with a custom storage location.\\n     *\\n     * NOTE: Consider following the ERC-7201 formula to derive storage locations.\\n     */\\n    function _initializableStorageSlot() internal pure virtual returns (bytes32) {\\n        return INITIALIZABLE_STORAGE;\\n    }\\n\\n    /**\\n     * @dev Returns a pointer to the storage namespace.\\n     */\\n    // solhint-disable-next-line var-name-mixedcase\\n    function _getInitializableStorage() private pure returns (InitializableStorage storage $) {\\n        bytes32 slot = _initializableStorageSlot();\\n        assembly {\\n            $.slot := slot\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xdb4d24ee2c087c391d587cd17adfe5b3f9d93b3110b1388c2ab6c7c0ad1dcd05\",\"license\":\"MIT\"},\"@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.5.0) (proxy/utils/UUPSUpgradeable.sol)\\n\\npragma solidity ^0.8.22;\\n\\nimport {IERC1822Proxiable} from \\\"../../interfaces/draft-IERC1822.sol\\\";\\nimport {ERC1967Utils} from \\\"../ERC1967/ERC1967Utils.sol\\\";\\n\\n/**\\n * @dev An upgradeability mechanism designed for UUPS proxies. The functions included here can perform an upgrade of an\\n * {ERC1967Proxy}, when this contract is set as the implementation behind such a proxy.\\n *\\n * A security mechanism ensures that an upgrade does not turn off upgradeability accidentally, although this risk is\\n * reinstated if the upgrade retains upgradeability but removes the security mechanism, e.g. by replacing\\n * `UUPSUpgradeable` with a custom implementation of upgrades.\\n *\\n * The {_authorizeUpgrade} function must be overridden to include access restriction to the upgrade mechanism.\\n *\\n * @custom:stateless\\n */\\nabstract contract UUPSUpgradeable is IERC1822Proxiable {\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    address private immutable __self = address(this);\\n\\n    /**\\n     * @dev The version of the upgrade interface of the contract. If this getter is missing, both `upgradeTo(address)`\\n     * and `upgradeToAndCall(address,bytes)` are present, and `upgradeTo` must be used if no function should be called,\\n     * while `upgradeToAndCall` will invoke the `receive` function if the second argument is the empty byte string.\\n     * If the getter returns `\\\"5.0.0\\\"`, only `upgradeToAndCall(address,bytes)` is present, and the second argument must\\n     * be the empty byte string if no function should be called, making it impossible to invoke the `receive` function\\n     * during an upgrade.\\n     */\\n    string public constant UPGRADE_INTERFACE_VERSION = \\\"5.0.0\\\";\\n\\n    /**\\n     * @dev The call is from an unauthorized context.\\n     */\\n    error UUPSUnauthorizedCallContext();\\n\\n    /**\\n     * @dev The storage `slot` is unsupported as a UUID.\\n     */\\n    error UUPSUnsupportedProxiableUUID(bytes32 slot);\\n\\n    /**\\n     * @dev Check that the execution is being performed through a delegatecall call and that the execution context is\\n     * a proxy contract with an implementation (as defined in ERC-1967) pointing to self. This should only be the case\\n     * for UUPS and transparent proxies that are using the current contract as their implementation. Execution of a\\n     * function through ERC-1167 minimal proxies (clones) would not normally pass this test, but is not guaranteed to\\n     * fail.\\n     */\\n    modifier onlyProxy() {\\n        _checkProxy();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Check that the execution is not being performed through a delegate call. This allows a function to be\\n     * callable on the implementing contract but not through proxies.\\n     */\\n    modifier notDelegated() {\\n        _checkNotDelegated();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Implementation of the ERC-1822 {proxiableUUID} function. This returns the storage slot used by the\\n     * implementation. It is used to validate the implementation's compatibility when performing an upgrade.\\n     *\\n     * IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks\\n     * bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this\\n     * function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.\\n     */\\n    function proxiableUUID() external view notDelegated returns (bytes32) {\\n        return ERC1967Utils.IMPLEMENTATION_SLOT;\\n    }\\n\\n    /**\\n     * @dev Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call\\n     * encoded in `data`.\\n     *\\n     * Calls {_authorizeUpgrade}.\\n     *\\n     * Emits an {Upgraded} event.\\n     *\\n     * @custom:oz-upgrades-unsafe-allow-reachable delegatecall\\n     */\\n    function upgradeToAndCall(address newImplementation, bytes memory data) public payable virtual onlyProxy {\\n        _authorizeUpgrade(newImplementation);\\n        _upgradeToAndCallUUPS(newImplementation, data);\\n    }\\n\\n    /**\\n     * @dev Reverts if the execution is not performed via delegatecall or the execution\\n     * context is not of a proxy with an ERC-1967 compliant implementation pointing to self.\\n     */\\n    function _checkProxy() internal view virtual {\\n        if (\\n            address(this) == __self || // Must be called through delegatecall\\n            ERC1967Utils.getImplementation() != __self // Must be called through an active proxy\\n        ) {\\n            revert UUPSUnauthorizedCallContext();\\n        }\\n    }\\n\\n    /**\\n     * @dev Reverts if the execution is performed via delegatecall.\\n     * See {notDelegated}.\\n     */\\n    function _checkNotDelegated() internal view virtual {\\n        if (address(this) != __self) {\\n            // Must not be called through delegatecall\\n            revert UUPSUnauthorizedCallContext();\\n        }\\n    }\\n\\n    /**\\n     * @dev Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by\\n     * {upgradeToAndCall}.\\n     *\\n     * Normally, this function will use an xref:access.adoc[access control] modifier such as {Ownable-onlyOwner}.\\n     *\\n     * ```solidity\\n     * function _authorizeUpgrade(address) internal onlyOwner {}\\n     * ```\\n     */\\n    function _authorizeUpgrade(address newImplementation) internal virtual;\\n\\n    /**\\n     * @dev Performs an implementation upgrade with a security check for UUPS proxies, and additional setup call.\\n     *\\n     * As a security check, {proxiableUUID} is invoked in the new implementation, and the return value\\n     * is expected to be the implementation slot in ERC-1967.\\n     *\\n     * Emits an {IERC1967-Upgraded} event.\\n     */\\n    function _upgradeToAndCallUUPS(address newImplementation, bytes memory data) private {\\n        try IERC1822Proxiable(newImplementation).proxiableUUID() returns (bytes32 slot) {\\n            if (slot != ERC1967Utils.IMPLEMENTATION_SLOT) {\\n                revert UUPSUnsupportedProxiableUUID(slot);\\n            }\\n            ERC1967Utils.upgradeToAndCall(newImplementation, data);\\n        } catch {\\n            // The implementation is not UUPS\\n            revert ERC1967Utils.ERC1967InvalidImplementation(newImplementation);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x1a26353563a2c63b4120ea0b94727253eeff84fe2241d42c1452308b9080e66a\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Address.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.5.0) (utils/Address.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Errors} from \\\"./Errors.sol\\\";\\nimport {LowLevelCall} from \\\"./LowLevelCall.sol\\\";\\n\\n/**\\n * @dev Collection of functions related to the address type\\n */\\nlibrary Address {\\n    /**\\n     * @dev There's no code at `target` (it is not a contract).\\n     */\\n    error AddressEmptyCode(address target);\\n\\n    /**\\n     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to\\n     * `recipient`, forwarding all available gas and reverting on errors.\\n     *\\n     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost\\n     * of certain opcodes, possibly making contracts go over the 2300 gas limit\\n     * imposed by `transfer`, making them unable to receive funds via\\n     * `transfer`. {sendValue} removes this limitation.\\n     *\\n     * https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/[Learn more].\\n     *\\n     * IMPORTANT: because control is transferred to `recipient`, care must be\\n     * taken to not create reentrancy vulnerabilities. Consider using\\n     * {ReentrancyGuard} or the\\n     * https://solidity.readthedocs.io/en/v0.8.20/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].\\n     */\\n    function sendValue(address payable recipient, uint256 amount) internal {\\n        if (address(this).balance < amount) {\\n            revert Errors.InsufficientBalance(address(this).balance, amount);\\n        }\\n        if (LowLevelCall.callNoReturn(recipient, amount, \\\"\\\")) {\\n            // call successful, nothing to do\\n            return;\\n        } else if (LowLevelCall.returnDataSize() > 0) {\\n            LowLevelCall.bubbleRevert();\\n        } else {\\n            revert Errors.FailedCall();\\n        }\\n    }\\n\\n    /**\\n     * @dev Performs a Solidity function call using a low level `call`. A\\n     * plain `call` is an unsafe replacement for a function call: use this\\n     * function instead.\\n     *\\n     * If `target` reverts with a revert reason or custom error, it is bubbled\\n     * up by this function (like regular Solidity function calls). However, if\\n     * the call reverted with no returned reason, this function reverts with a\\n     * {Errors.FailedCall} error.\\n     *\\n     * Returns the raw returned data. To convert to the expected return value,\\n     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].\\n     *\\n     * Requirements:\\n     *\\n     * - `target` must be a contract.\\n     * - calling `target` with `data` must not revert.\\n     */\\n    function functionCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but also transferring `value` wei to `target`.\\n     *\\n     * Requirements:\\n     *\\n     * - the calling contract must have an ETH balance of at least `value`.\\n     * - the called Solidity function must be `payable`.\\n     */\\n    function functionCallWithValue(address target, bytes memory data, uint256 value) internal returns (bytes memory) {\\n        if (address(this).balance < value) {\\n            revert Errors.InsufficientBalance(address(this).balance, value);\\n        }\\n        bool success = LowLevelCall.callNoReturn(target, value, data);\\n        if (success && (LowLevelCall.returnDataSize() > 0 || target.code.length > 0)) {\\n            return LowLevelCall.returnData();\\n        } else if (success) {\\n            revert AddressEmptyCode(target);\\n        } else if (LowLevelCall.returnDataSize() > 0) {\\n            LowLevelCall.bubbleRevert();\\n        } else {\\n            revert Errors.FailedCall();\\n        }\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a static call.\\n     */\\n    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {\\n        bool success = LowLevelCall.staticcallNoReturn(target, data);\\n        if (success && (LowLevelCall.returnDataSize() > 0 || target.code.length > 0)) {\\n            return LowLevelCall.returnData();\\n        } else if (success) {\\n            revert AddressEmptyCode(target);\\n        } else if (LowLevelCall.returnDataSize() > 0) {\\n            LowLevelCall.bubbleRevert();\\n        } else {\\n            revert Errors.FailedCall();\\n        }\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a delegate call.\\n     */\\n    function functionDelegateCall(address target, bytes memory data) internal returns (bytes memory) {\\n        bool success = LowLevelCall.delegatecallNoReturn(target, data);\\n        if (success && (LowLevelCall.returnDataSize() > 0 || target.code.length > 0)) {\\n            return LowLevelCall.returnData();\\n        } else if (success) {\\n            revert AddressEmptyCode(target);\\n        } else if (LowLevelCall.returnDataSize() > 0) {\\n            LowLevelCall.bubbleRevert();\\n        } else {\\n            revert Errors.FailedCall();\\n        }\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call to smart-contract was successful, and reverts if the target\\n     * was not a contract or bubbling up the revert reason (falling back to {Errors.FailedCall}) in case\\n     * of an unsuccessful call.\\n     *\\n     * NOTE: This function is DEPRECATED and may be removed in the next major release.\\n     */\\n    function verifyCallResultFromTarget(\\n        address target,\\n        bool success,\\n        bytes memory returndata\\n    ) internal view returns (bytes memory) {\\n        // only check if target is a contract if the call was successful and the return data is empty\\n        // otherwise we already know that it was a contract\\n        if (success && (returndata.length > 0 || target.code.length > 0)) {\\n            return returndata;\\n        } else if (success) {\\n            revert AddressEmptyCode(target);\\n        } else if (returndata.length > 0) {\\n            LowLevelCall.bubbleRevert(returndata);\\n        } else {\\n            revert Errors.FailedCall();\\n        }\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call was successful, and reverts if it wasn't, either by bubbling the\\n     * revert reason or with a default {Errors.FailedCall} error.\\n     */\\n    function verifyCallResult(bool success, bytes memory returndata) internal pure returns (bytes memory) {\\n        if (success) {\\n            return returndata;\\n        } else if (returndata.length > 0) {\\n            LowLevelCall.bubbleRevert(returndata);\\n        } else {\\n            revert Errors.FailedCall();\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x0fa9e0d3a859900b5a46f70a03c73adf259603d5e05027a37fe0b45529d85346\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Errors.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (utils/Errors.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Collection of common custom errors used in multiple contracts\\n *\\n * IMPORTANT: Backwards compatibility is not guaranteed in future versions of the library.\\n * It is recommended to avoid relying on the error API for critical functionality.\\n *\\n * _Available since v5.1._\\n */\\nlibrary Errors {\\n    /**\\n     * @dev The ETH balance of the account is not enough to perform the operation.\\n     */\\n    error InsufficientBalance(uint256 balance, uint256 needed);\\n\\n    /**\\n     * @dev A call to an address target failed. The target may have reverted.\\n     */\\n    error FailedCall();\\n\\n    /**\\n     * @dev The deployment failed.\\n     */\\n    error FailedDeployment();\\n\\n    /**\\n     * @dev A necessary precompile is missing.\\n     */\\n    error MissingPrecompile(address);\\n}\\n\",\"keccak256\":\"0x6afa713bfd42cf0f7656efa91201007ac465e42049d7de1d50753a373648c123\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/LowLevelCall.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.6.0) (utils/LowLevelCall.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Library of low level call functions that implement different calling strategies to deal with the return data.\\n *\\n * WARNING: Using this library requires an advanced understanding of Solidity and how the EVM works. It is recommended\\n * to use the {Address} library instead.\\n */\\nlibrary LowLevelCall {\\n    /// @dev Performs a Solidity function call using a low level `call` and ignoring the return data.\\n    function callNoReturn(address target, bytes memory data) internal returns (bool success) {\\n        return callNoReturn(target, 0, data);\\n    }\\n\\n    /// @dev Same as {callNoReturn-address-bytes}, but allows specifying the value to be sent in the call.\\n    function callNoReturn(address target, uint256 value, bytes memory data) internal returns (bool success) {\\n        assembly (\\\"memory-safe\\\") {\\n            success := call(gas(), target, value, add(data, 0x20), mload(data), 0x00, 0x00)\\n        }\\n    }\\n\\n    /// @dev Performs a Solidity function call using a low level `call` and returns the first 64 bytes of the result\\n    /// in the scratch space of memory. Useful for functions that return a tuple with two single-word values.\\n    ///\\n    /// WARNING: Do not assume that the results are zero if `success` is false. Memory can be already allocated\\n    /// and this function doesn't zero it out.\\n    function callReturn64Bytes(\\n        address target,\\n        bytes memory data\\n    ) internal returns (bool success, bytes32 result1, bytes32 result2) {\\n        return callReturn64Bytes(target, 0, data);\\n    }\\n\\n    /// @dev Same as {callReturn64Bytes-address-bytes}, but allows specifying the value to be sent in the call.\\n    function callReturn64Bytes(\\n        address target,\\n        uint256 value,\\n        bytes memory data\\n    ) internal returns (bool success, bytes32 result1, bytes32 result2) {\\n        assembly (\\\"memory-safe\\\") {\\n            success := call(gas(), target, value, add(data, 0x20), mload(data), 0x00, 0x40)\\n            result1 := mload(0x00)\\n            result2 := mload(0x20)\\n        }\\n    }\\n\\n    /// @dev Performs a Solidity function call using a low level `staticcall` and ignoring the return data.\\n    function staticcallNoReturn(address target, bytes memory data) internal view returns (bool success) {\\n        assembly (\\\"memory-safe\\\") {\\n            success := staticcall(gas(), target, add(data, 0x20), mload(data), 0x00, 0x00)\\n        }\\n    }\\n\\n    /// @dev Performs a Solidity function call using a low level `staticcall` and returns the first 64 bytes of the result\\n    /// in the scratch space of memory. Useful for functions that return a tuple with two single-word values.\\n    ///\\n    /// WARNING: Do not assume that the results are zero if `success` is false. Memory can be already allocated\\n    /// and this function doesn't zero it out.\\n    function staticcallReturn64Bytes(\\n        address target,\\n        bytes memory data\\n    ) internal view returns (bool success, bytes32 result1, bytes32 result2) {\\n        assembly (\\\"memory-safe\\\") {\\n            success := staticcall(gas(), target, add(data, 0x20), mload(data), 0x00, 0x40)\\n            result1 := mload(0x00)\\n            result2 := mload(0x20)\\n        }\\n    }\\n\\n    /// @dev Performs a Solidity function call using a low level `delegatecall` and ignoring the return data.\\n    function delegatecallNoReturn(address target, bytes memory data) internal returns (bool success) {\\n        assembly (\\\"memory-safe\\\") {\\n            success := delegatecall(gas(), target, add(data, 0x20), mload(data), 0x00, 0x00)\\n        }\\n    }\\n\\n    /// @dev Performs a Solidity function call using a low level `delegatecall` and returns the first 64 bytes of the result\\n    /// in the scratch space of memory. Useful for functions that return a tuple with two single-word values.\\n    ///\\n    /// WARNING: Do not assume that the results are zero if `success` is false. Memory can be already allocated\\n    /// and this function doesn't zero it out.\\n    function delegatecallReturn64Bytes(\\n        address target,\\n        bytes memory data\\n    ) internal returns (bool success, bytes32 result1, bytes32 result2) {\\n        assembly (\\\"memory-safe\\\") {\\n            success := delegatecall(gas(), target, add(data, 0x20), mload(data), 0x00, 0x40)\\n            result1 := mload(0x00)\\n            result2 := mload(0x20)\\n        }\\n    }\\n\\n    /// @dev Returns the size of the return data buffer.\\n    function returnDataSize() internal pure returns (uint256 size) {\\n        assembly (\\\"memory-safe\\\") {\\n            size := returndatasize()\\n        }\\n    }\\n\\n    /// @dev Returns a buffer containing the return data from the last call.\\n    function returnData() internal pure returns (bytes memory result) {\\n        assembly (\\\"memory-safe\\\") {\\n            result := mload(0x40)\\n            mstore(result, returndatasize())\\n            returndatacopy(add(result, 0x20), 0x00, returndatasize())\\n            mstore(0x40, add(result, add(0x20, returndatasize())))\\n        }\\n    }\\n\\n    /// @dev Revert with the return data from the last call.\\n    function bubbleRevert() internal pure {\\n        assembly (\\\"memory-safe\\\") {\\n            let fmp := mload(0x40)\\n            returndatacopy(fmp, 0x00, returndatasize())\\n            revert(fmp, returndatasize())\\n        }\\n    }\\n\\n    function bubbleRevert(bytes memory returndata) internal pure {\\n        assembly (\\\"memory-safe\\\") {\\n            revert(add(returndata, 0x20), mload(returndata))\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x6ba3db1346fc75a832aa6cd075e12f6f1fa172fa2122a020f324c319fe5be75e\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/StorageSlot.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (utils/StorageSlot.sol)\\n// This file was procedurally generated from scripts/generate/templates/StorageSlot.js.\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Library for reading and writing primitive types to specific storage slots.\\n *\\n * Storage slots are often used to avoid storage conflict when dealing with upgradeable contracts.\\n * This library helps with reading and writing to such slots without the need for inline assembly.\\n *\\n * The functions in this library return Slot structs that contain a `value` member that can be used to read or write.\\n *\\n * Example usage to set ERC-1967 implementation slot:\\n * ```solidity\\n * contract ERC1967 {\\n *     // Define the slot. Alternatively, use the SlotDerivation library to derive the slot.\\n *     bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;\\n *\\n *     function _getImplementation() internal view returns (address) {\\n *         return StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value;\\n *     }\\n *\\n *     function _setImplementation(address newImplementation) internal {\\n *         require(newImplementation.code.length > 0);\\n *         StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value = newImplementation;\\n *     }\\n * }\\n * ```\\n *\\n * TIP: Consider using this library along with {SlotDerivation}.\\n */\\nlibrary StorageSlot {\\n    struct AddressSlot {\\n        address value;\\n    }\\n\\n    struct BooleanSlot {\\n        bool value;\\n    }\\n\\n    struct Bytes32Slot {\\n        bytes32 value;\\n    }\\n\\n    struct Uint256Slot {\\n        uint256 value;\\n    }\\n\\n    struct Int256Slot {\\n        int256 value;\\n    }\\n\\n    struct StringSlot {\\n        string value;\\n    }\\n\\n    struct BytesSlot {\\n        bytes value;\\n    }\\n\\n    /**\\n     * @dev Returns an `AddressSlot` with member `value` located at `slot`.\\n     */\\n    function getAddressSlot(bytes32 slot) internal pure returns (AddressSlot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns a `BooleanSlot` with member `value` located at `slot`.\\n     */\\n    function getBooleanSlot(bytes32 slot) internal pure returns (BooleanSlot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns a `Bytes32Slot` with member `value` located at `slot`.\\n     */\\n    function getBytes32Slot(bytes32 slot) internal pure returns (Bytes32Slot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns a `Uint256Slot` with member `value` located at `slot`.\\n     */\\n    function getUint256Slot(bytes32 slot) internal pure returns (Uint256Slot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns a `Int256Slot` with member `value` located at `slot`.\\n     */\\n    function getInt256Slot(bytes32 slot) internal pure returns (Int256Slot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns a `StringSlot` with member `value` located at `slot`.\\n     */\\n    function getStringSlot(bytes32 slot) internal pure returns (StringSlot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns an `StringSlot` representation of the string storage pointer `store`.\\n     */\\n    function getStringSlot(string storage store) internal pure returns (StringSlot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := store.slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns a `BytesSlot` with member `value` located at `slot`.\\n     */\\n    function getBytesSlot(bytes32 slot) internal pure returns (BytesSlot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns an `BytesSlot` representation of the bytes storage pointer `store`.\\n     */\\n    function getBytesSlot(bytes storage store) internal pure returns (BytesSlot storage r) {\\n        assembly (\\\"memory-safe\\\") {\\n            r.slot := store.slot\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97\",\"license\":\"MIT\"},\"contracts/Pipe/AccesControlPipes.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.20;\\r\\n\\r\\nimport \\\"../system/interfaces/IAccessControl.sol\\\";\\r\\n\\r\\n/// @title AccessControl (Upgradeable)\\r\\n/// @notice Abstract contract providing access checks using a shared EmployeeAssignment contract.\\r\\nabstract contract MainAccesControlPipes {\\r\\n\\r\\n    // ===========================\\r\\n    // Internal Access Functions\\r\\n    // ===========================\\r\\n\\r\\n    /// @notice Checks that caller is NOT an employee and NOT the owner\\r\\n    function __onlyUser(address accessControlAddress) internal view {\\r\\n        require(\\r\\n            !IAccessControl(accessControlAddress).hasRole(msg.sender),\\r\\n            \\\"Is employee\\\"\\r\\n        );\\r\\n        require(\\r\\n            msg.sender != IAccessControl(accessControlAddress).owner(),\\r\\n            \\\"Caller is owner\\\"\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /// @notice Checks that caller IS the owner\\r\\n    function __onlyOwner(address accessControlAddress) internal view {\\r\\n        require(\\r\\n            msg.sender == IAccessControl(accessControlAddress).owner(),\\r\\n            \\\"Not owner\\\"\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /// @notice Checks that caller IS an employee\\r\\n    function __onlyEmployes(address accessControlAddress) internal view {\\r\\n        require(\\r\\n            IAccessControl(accessControlAddress).hasRole(msg.sender),\\r\\n            \\\"Not employee\\\"\\r\\n        );\\r\\n    }\\r\\n}\",\"keccak256\":\"0x6c5420c5941e774d16ae77a31f37bdcbde426ba6cca5261ef938a1eecb8caf8a\",\"license\":\"MIT\"},\"contracts/User/user.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.20;\\r\\n\\r\\nimport \\\"../system/utils/addressUtils.sol\\\";\\r\\nimport \\\"../system/utils/ReentrancyGuard.sol\\\";\\r\\nimport \\\"../Pipe/AccesControlPipes.sol\\\";\\r\\nimport \\\"../system/interfaces/IDataContract.sol\\\";\\r\\nimport \\\"../system/interfaces/IAddressRegistry.sol\\\";\\r\\n\\r\\nimport \\\"@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol\\\";\\r\\nimport \\\"@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol\\\";\\r\\nimport \\\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\\\";\\r\\n\\r\\ncontract UsersContract is \\r\\n    AddressUtils, \\r\\n    Initializable, \\r\\n    UUPSUpgradeable, \\r\\n    PausableUpgradeable,\\r\\n    MainAccesControlPipes, \\r\\n    SystemReentrancyGuard \\r\\n{\\r\\n    // State Variables\\r\\n    IAddressRegistry private addressRegistry;\\r\\n\\r\\n    /**\\r\\n     * @notice User profile structure with reputation and activity tracking\\r\\n     * @dev Stores all relevant information about a protocol user\\r\\n     */\\r\\n    struct User {\\r\\n        uint256 totalTasksCreated;    // Total tasks created by user\\r\\n        uint256 totalTasksCompleted;  // Total tasks successfully completed\\r\\n        uint256 totalTasksFailed;     // Total tasks failed or cancelled\\r\\n        uint256 reputation;           // Reputation score (affects project valuation)\\r\\n        uint256 balance;              // User's fund balance in the protocol\\r\\n        bool isRegistered;            // Registration status\\r\\n        bool exists;                  // Existence flag for user profile\\r\\n        string GitProfile;            // User's GitHub profile URL\\r\\n    }\\r\\n//\\r\\n    // Mappings\\r\\n    mapping(address => User) public Users;\\r\\n    mapping(bytes32 => bool) public usedGitURL;\\r\\n\\r\\n    // Events\\r\\n    event userEvent(string eventName, address indexed userAddress);\\r\\n\\r\\n    // Errors\\r\\n    error userError(string errName);\\r\\n\\r\\n    modifier ctcCall() {\\r\\n        if(\\r\\n            msg.sender != addressRegistry.__taskComponentsAddr().cancelModule &&\\r\\n            msg.sender != addressRegistry.__taskComponentsAddr().joinModule &&\\r\\n            msg.sender != addressRegistry.__taskComponentsAddr().submisionModule &&\\r\\n            msg.sender != addressRegistry.__taskComponentsAddr().taskLifecycleModule &&\\r\\n            msg.sender != addressRegistry.__taskComponentsAddr().taskControler\\r\\n        ) revert userError(\\\"UnauthorizedCaller\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier onlyOwner {\\r\\n        __onlyOwner(addressRegistry.__accessControlContract());\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier onlyUser() {\\r\\n        __onlyUser(addressRegistry.__accessControlContract());  \\r\\n        _;\\r\\n    }\\r\\n\\r\\n\\r\\n    /**\\r\\n     * @notice Initializes the UsersContract\\r\\n     * @param _addressRegistry Address of the AddressRegistry contract\\r\\n     */\\r\\n    function initialize(address _addressRegistry) external initializer {\\r\\n        if (_addressRegistry == address(0)) revert userError(\\\"ZeroAddress\\\");\\r\\n        \\r\\n        addressRegistry = IAddressRegistry(_addressRegistry);\\r\\n        \\r\\n        __ReentrancyGuard_init();\\r\\n        __Pausable_init();\\r\\n        \\r\\n        emit userEvent(\\\"contract_initialized\\\", _addressRegistry);\\r\\n    }\\r\\n//\\r\\n    /**\\r\\n     * @notice Registers a new user in the protocol\\r\\n     * @param _githubURL User's GitHub profile URL\\r\\n     * @param _user Address of the user to register\\r\\n     * @dev Creates a new user profile with initial reputation and counters\\r\\n     */\\r\\n    function Register(\\r\\n        string calldata _githubURL, \\r\\n        address _user\\r\\n    ) external onlyUser callerZeroAddr {\\r\\n\\r\\n        User storage u = Users[_user];\\r\\n\\r\\n        if(Users[_user].exists && Users[_user].isRegistered == false) {\\r\\n            u.isRegistered = true;\\r\\n            emit userEvent(\\\"UserRestoredData\\\", _user);\\r\\n        } else {\\r\\n        if (u.isRegistered) revert userError(\\\"AlreadyRegistered\\\");\\r\\n        \\r\\n        bytes32 gitHash = keccak256(abi.encodePacked(_githubURL));\\r\\n        if (usedGitURL[gitHash]) revert userError(\\\"GitProfileAlreadyUsed\\\");\\r\\n\\r\\n        // Initialize user profile\\r\\n        u.reputation = 0;\\r\\n        u.totalTasksCompleted = 0;\\r\\n        u.totalTasksFailed = 0;\\r\\n        u.balance = 0;\\r\\n        u.isRegistered = true;\\r\\n        u.GitProfile = _githubURL;\\r\\n        u.exists = true;\\r\\n        \\r\\n        usedGitURL[gitHash] = true;\\r\\n\\r\\n        emit userEvent(\\\"UserRegistered\\\", _user);\\r\\n        }\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Unregisters a user and deletes their profile data\\r\\n     * @param _user Address of the user to unregister\\r\\n     * @return confirmation Confirmation message\\r\\n     * @dev Removes user from protocol and clears their data\\r\\n     */\\r\\n    function Unregister(address _user)\\r\\n        external\\r\\n        onlyUser\\r\\n        callerZeroAddr\\r\\n        returns (string memory)\\r\\n    {\\r\\n        if (!__isRegistered(_user)) revert userError(\\\"UserNotRegistered\\\");\\r\\n        \\r\\n        Users[_user].isRegistered = false;\\r\\n        \\r\\n        emit userEvent(\\\"UserUnregistered\\\", _user);\\r\\n        \\r\\n        return \\\"Unregister Successfully\\\";\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Withdraws a specific amount from user's balance\\r\\n     * @param _user Address of the user\\r\\n     * @param _amount Amount to withdraw\\r\\n     */\\r\\n    function withdrawUserFund(\\r\\n        address _user, \\r\\n        uint256 _amount\\r\\n    ) external nonReentrant callerZeroAddr onlyUser {\\r\\n        User storage u = Users[_user];\\r\\n        \\r\\n        if (u.balance < _amount) revert userError(\\\"InsufficientFunds\\\");\\r\\n        \\r\\n        u.balance -= _amount;\\r\\n        (bool success, ) = payable(_user).call{value: _amount}(\\\"\\\");\\r\\n        if (!success) revert userError(\\\"TransferFailed\\\");\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Withdraws all funds from user's balance\\r\\n     * @param _user Address of the user\\r\\n     */\\r\\n    function withdrawAllUserFund(\\r\\n        address _user\\r\\n    ) external nonReentrant callerZeroAddr onlyUser {\\r\\n        User storage u = Users[_user];\\r\\n        uint256 _amount = u.balance;\\r\\n        \\r\\n        if (_amount == 0) revert userError(\\\"InsufficientFunds\\\");\\r\\n        \\r\\n        u.balance = 0;\\r\\n        (bool success, ) = payable(_user).call{value: _amount}(\\\"\\\");\\r\\n        if (!success) revert userError(\\\"TransferFailed\\\");\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Updates the AddressRegistry contract address\\r\\n     * @param _newAddressRegistry New AddressRegistry address\\r\\n     */\\r\\n    function __changeAddressRegistry(address _newAddressRegistry) \\r\\n        external \\r\\n        onlyOwner\\r\\n    {\\r\\n        if (_newAddressRegistry == address(0)) revert userError(\\\"ZeroAddress\\\");\\r\\n        \\r\\n        addressRegistry = IAddressRegistry(_newAddressRegistry);\\r\\n        \\r\\n        emit userEvent(\\\"address_registry_changed\\\", _newAddressRegistry);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Pauses the contract\\r\\n     */\\r\\n    function pause() external onlyOwner {\\r\\n        _pause();\\r\\n        emit userEvent(\\\"contract_paused\\\", msg.sender);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Unpauses the contract\\r\\n     */\\r\\n    function unpause() external onlyOwner {\\r\\n        _unpause();\\r\\n        emit userEvent(\\\"contract_unpaused\\\", msg.sender);\\r\\n    }\\r\\n\\r\\n    /* =======================\\r\\n        UUPS AUTH\\r\\n    ======================= */\\r\\n\\r\\n    /**\\r\\n     * @dev Authorizes contract upgrade\\r\\n     * @param newImplementation Address of the new implementation\\r\\n     */\\r\\n    function _authorizeUpgrade(\\r\\n        address newImplementation\\r\\n    ) internal view override onlyOwner {}\\r\\n\\r\\n    /* =======================\\r\\n        USER FIELD GETTERS\\r\\n    ======================= */\\r\\n\\r\\n    /**\\r\\n     * @notice Gets total tasks created by user\\r\\n     * @param _user Address of the user\\r\\n     * @return uint256 Total tasks created\\r\\n     */\\r\\n    function __getTotalTasksCreated(address _user) external view returns (uint256) {\\r\\n        return Users[_user].totalTasksCreated;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Gets total tasks completed by user\\r\\n     * @param _user Address of the user\\r\\n     * @return uint256 Total tasks completed\\r\\n     */\\r\\n    function __getTotalTasksCompleted(address _user) external view returns (uint256) {\\r\\n        return Users[_user].totalTasksCompleted;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Gets total tasks failed by user\\r\\n     * @param _user Address of the user\\r\\n     * @return uint256 Total tasks failed\\r\\n     */\\r\\n    function __getTotalTasksFailed(address _user) external view returns (uint256) {\\r\\n        return Users[_user].totalTasksFailed;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Gets user's reputation score\\r\\n     * @param _user Address of the user\\r\\n     * @return uint256 Reputation score\\r\\n     */\\r\\n    function __getUserReputation(address _user) external view returns (uint256) {\\r\\n        return Users[_user].reputation;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Gets user's balance\\r\\n     * @param _user Address of the user\\r\\n     * @return uint256 User balance\\r\\n     */\\r\\n    function __getUserBalance(address _user) external view returns (uint256) {\\r\\n        return Users[_user].balance;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Checks if user is registered\\r\\n     * @param _user Address of the user\\r\\n     * @return bool Registration status\\r\\n     */\\r\\n    function __isRegistered(address _user) public view returns (bool) {\\r\\n        return Users[_user].isRegistered;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Gets user's GitHub profile URL\\r\\n     * @param _user Address of the user\\r\\n     * @return string memory GitHub URL\\r\\n     */\\r\\n    function __getUserGitProfile(address _user) external view returns (string memory) {\\r\\n        return Users[_user].GitProfile;\\r\\n    }\\r\\n\\r\\n    /* =======================\\r\\n        SETTER FUNCTIONS\\r\\n    ======================= */\\r\\n\\r\\n    /**\\r\\n     * @notice Increments user's task created counter\\r\\n     * @param _user Address of the user\\r\\n     */\\r\\n    function __taskCreateCounter(address _user) external ctcCall {\\r\\n        Users[_user].totalTasksCreated++;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Increments task completion counters for both user and creator\\r\\n     * @param _user Address of the member\\r\\n     * @param _creator Address of the creator\\r\\n     */\\r\\n    function __taskCompleteCounter(address _user, address _creator) external ctcCall {\\r\\n        Users[_user].totalTasksCompleted++;\\r\\n        Users[_creator].totalTasksCompleted++;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Increments task failure counters for both user and creator\\r\\n     * @param _user Address of the member\\r\\n     * @param _creator Address of the creator\\r\\n     */\\r\\n    function __taskFailCounter(address _user, address _creator) external ctcCall {\\r\\n        Users[_user].totalTasksFailed++;\\r\\n        Users[_creator].totalTasksFailed++;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Adds funds to user's balance\\r\\n     * @param _user Address of the user\\r\\n     * @param _amount Amount to add\\r\\n     */\\r\\n    function __addUserBalance(address _user, uint256 _amount) external ctcCall {\\r\\n        Users[_user].balance += _amount;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Removes funds from user's balance\\r\\n     * @param _user Address of the user\\r\\n     * @param _amount Amount to remove\\r\\n     */\\r\\n    function __takeUserBalance(address _user, uint256 _amount) external ctcCall {\\r\\n        if (Users[_user].balance < _amount) revert userError(\\\"InsufficientBalance\\\");\\r\\n        Users[_user].balance -= _amount;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Deducts cancellation penalty from user's reputation\\r\\n     * @param _user Address of the user\\r\\n     */\\r\\n    function __cancelByMeRep(address _user) external ctcCall {\\r\\n        Users[_user].reputation -= IDataContract(addressRegistry.__dataContract()).__getCancelByMe();\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Deducts revision penalty from both user and creator's reputation\\r\\n     * @param _user Address of the member\\r\\n     * @param _creator Address of the creator\\r\\n     */\\r\\n    function __revisionRep(address _user, address _creator) external ctcCall {\\r\\n        uint256 penalty = IDataContract(addressRegistry.__dataContract()).__getRevisionPenalty();\\r\\n        \\r\\n        Users[_user].reputation -= penalty;\\r\\n        Users[_creator].reputation -= penalty;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Adds task acceptance rewards to both user and creator's reputation\\r\\n     * @param _user Address of the member\\r\\n     * @param _creator Address of the creator\\r\\n     */\\r\\n    function __taskAcceptRep(address _user, address _creator) external ctcCall {\\r\\n        IDataContract dataContract = IDataContract(addressRegistry.__dataContract());\\r\\n        \\r\\n        Users[_user].reputation += dataContract.__getTaskAcceptMember();\\r\\n        Users[_creator].reputation += dataContract.__getTaskAcceptCreator();\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Deducts deadline hit penalties from both user and creator's reputation\\r\\n     * @param _user Address of the member\\r\\n     * @param _creator Address of the creator\\r\\n     */\\r\\n    function __deadlineHitRep(address _user, address _creator) external ctcCall{\\r\\n        IDataContract dataContract = IDataContract(addressRegistry.__dataContract());\\r\\n        \\r\\n        Users[_user].reputation -= dataContract.__getDeadlineHitMember();\\r\\n        Users[_creator].reputation -= dataContract.__getDeadlineHitCreator();\\r\\n    }\\r\\n\\r\\n    function __penaltyIsBiggerThanReputation(address _user) external ctcCall {\\r\\n        Users[_user].reputation = 0;\\r\\n    }\\r\\n}\",\"keccak256\":\"0xf90278bcb226589507b8d669c430018dd561957d8c50cb60522f3017475f39fa\",\"license\":\"MIT\"},\"contracts/system/interfaces/IAccessControl.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.20;\\r\\n\\r\\n/// @title Access Control Helper for Upgradeable Contracts\\r\\n/// @notice Provides standardized ownership and employee access modifiers based on a central EmployeeAssignment contract.\\r\\n/// @dev This contract is intended to be inherited by other upgradeable contracts.\\r\\n/// It relies on an external `IEmployeeAssignment` contract to determine ownership and roles.\\r\\ninterface IAccessControl {\\r\\n    /// @notice Returns the address of the contract owner.\\r\\n    function owner() external view returns (address);\\r\\n\\r\\n    /// @notice Checks if an account has a specific role.\\r\\n    /// @param account The address of the account to check.\\r\\n    /// @return bool True if the account has the given role, false otherwise.\\r\\n    function hasRole(address account) external view returns (bool);\\r\\n}\\r\\n\",\"keccak256\":\"0x057cf8bccf49040ed70306962a712fc1e2a8077d964bbb8ce4ac85ff11435cff\",\"license\":\"MIT\"},\"contracts/system/interfaces/IAddressRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.0;\\r\\n\\r\\n/// @title IAddressRegistry\\r\\n/// @notice Interface for reading stored contract addresses\\r\\ninterface IAddressRegistry {\\r\\n\\r\\n    struct taskComponents {\\r\\n        address dataContract;\\r\\n        address cancelModule;\\r\\n        address joinModule;\\r\\n        address submisionModule;\\r\\n        address taskLifecycleModule;\\r\\n        address taskControler;\\r\\n    }\\r\\n\\r\\n    /// @return The AccessControl contract address\\r\\n    function __accessControlContract() external view returns (address);\\r\\n\\r\\n    /// @return The Users contract address\\r\\n    function __usersContract() external view returns (address);\\r\\n\\r\\n    /// @return The Main contract address\\r\\n    function __mainContract() external view returns (address);\\r\\n\\r\\n    /// @return The Wallet contract address\\r\\n    function __walletContract() external view returns (address payable);\\r\\n\\r\\n    /// @return The Data contract address\\r\\n    function __dataContract() external view returns (address);\\r\\n\\r\\n    /// @return The TaskData contract address\\r\\n    function __taskDataContract() external view returns (address);\\r\\n\\r\\n    /// @return The TaskData contract caller address\\r\\n    function __taskDataContractCaller() external view returns (address);\\r\\n\\r\\n    /// @return The TaskComponents struct containing all task-related module addresses\\r\\n    function __taskComponentsAddr() external view returns (taskComponents memory);\\r\\n}\\r\\n\",\"keccak256\":\"0x834605949e0ea44f4e4acc576cdd10d067e55ebd913ef6be98887f57cc9bc951\",\"license\":\"MIT\"},\"contracts/system/interfaces/IDataContract.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.20;\\r\\n\\r\\ninterface IDataContract {\\r\\n    // -------------------------------------------------------------\\r\\n    // 1. Stake Utils Getters\\r\\n    // -------------------------------------------------------------\\r\\n\\r\\n    function __getMemberStakeFromRewardPercentage() external view returns (uint128);\\r\\n    function __getCreatorStakeFromProjectValuePercentage() external view returns (uint128);\\r\\n\\r\\n    // -------------------------------------------------------------\\r\\n    // 2. Component Weight Percentage Getters\\r\\n    // -------------------------------------------------------------\\r\\n\\r\\n    function __getRewardScore() external view returns (uint64);\\r\\n    function __getReputationScore() external view returns (uint64);\\r\\n    function __getDeadlineScore() external view returns (uint64);\\r\\n    function __getRevisionScore() external view returns (uint64);\\r\\n\\r\\n    // -------------------------------------------------------------\\r\\n    // 3. Reputation Point Getters\\r\\n    // -------------------------------------------------------------\\r\\n\\r\\n    function __getCancelByMe() external view returns (uint64);\\r\\n    function __getRevisionPenalty() external view returns (uint64);\\r\\n    function __getTaskAcceptCreator() external view returns (uint32);\\r\\n    function __getTaskAcceptMember() external view returns (uint32);\\r\\n    function __getDeadlineHitCreator() external view returns (uint32);\\r\\n    function __getDeadlineHitMember() external view returns (uint32);\\r\\n\\r\\n    // -------------------------------------------------------------\\r\\n    // 4. State Variable Getters\\r\\n    // -------------------------------------------------------------\\r\\n\\r\\n    function __getMaxStake() external view returns (uint256);\\r\\n    function __getMaxReward() external view returns (uint256);\\r\\n    function __getMinRevisionTimeInHour() external view returns (uint64);\\r\\n    function __getNegPenalty() external view returns (uint64);\\r\\n    function __getFeePercentage() external view returns (uint64);\\r\\n    function __getMaxRevision() external view returns (uint64);\\r\\n\\r\\n    // -------------------------------------------------------------\\r\\n    // 5. Project Category Getters\\r\\n    // -------------------------------------------------------------\\r\\n\\r\\n    function __getCategoryLow() external view returns (uint256);\\r\\n    function __getCategoryMiddleLow() external view returns (uint256);\\r\\n    function __getCategoryMiddle() external view returns (uint256);\\r\\n    function __getCategoryMiddleHigh() external view returns (uint256);\\r\\n    function __getCategoryHigh() external view returns (uint256);\\r\\n    function __getCategoryUltraHigh() external view returns (uint256);\\r\\n}\",\"keccak256\":\"0xa57e27a9df9739f1772723d95608bd253d7eee92363460ba832489e7ca8d13d6\",\"license\":\"MIT\"},\"contracts/system/utils/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n// OpenZeppelin Contracts (last updated v5.1.0) (utils/ReentrancyGuard.sol)\\r\\n\\r\\npragma solidity ^0.8.20;\\r\\nimport {Initializable} from \\\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\\\";\\r\\n\\r\\n/**\\r\\n * @dev Contract module that helps prevent reentrant calls to a function.\\r\\n *\\r\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\r\\n * available, which can be applied to functions to make sure there are no nested\\r\\n * (reentrant) calls to them.\\r\\n *\\r\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\r\\n * `nonReentrant` may not call one another. This can be worked around by making\\r\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\r\\n * points to them.\\r\\n *\\r\\n * TIP: If EIP-1153 (transient storage) is available on the chain you're deploying at,\\r\\n * consider using {ReentrancyGuardTransient} instead.\\r\\n *\\r\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\r\\n * to protect against it, check out our blog post\\r\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\r\\n */\\r\\nabstract contract SystemReentrancyGuard is Initializable {\\r\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\r\\n    // word because each write operation emits an extra SLOAD to first read the\\r\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\r\\n    // back. This is the compiler's defense against contract upgrades and\\r\\n    // pointer aliasing, and it cannot be disabled.\\r\\n\\r\\n    // The values being non-zero value makes deployment a bit more expensive,\\r\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\r\\n    // amount. Since refunds are capped to a percentage of the total\\r\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\r\\n    // increase the likelihood of the full refund coming into effect.\\r\\n    uint256 private constant NOT_ENTERED = 1;\\r\\n    uint256 private constant ENTERED = 2;\\r\\n\\r\\n    /// @custom:storage-location erc7201:openzeppelin.storage.ReentrancyGuard\\r\\n    struct ReentrancyGuardStorage {\\r\\n        uint256 _status;\\r\\n    }\\r\\n\\r\\n    // keccak256(abi.encode(uint256(keccak256(\\\"openzeppelin.storage.ReentrancyGuard\\\")) - 1)) & ~bytes32(uint256(0xff))\\r\\n    bytes32 private constant ReentrancyGuardStorageLocation = 0x9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f00;\\r\\n\\r\\n    function _getReentrancyGuardStorage() private pure returns (ReentrancyGuardStorage storage $) {\\r\\n        assembly {\\r\\n            $.slot := ReentrancyGuardStorageLocation\\r\\n        }\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Unauthorized reentrant call.\\r\\n     */\\r\\n    error ReentrancyGuardReentrantCall();\\r\\n\\r\\n    function __ReentrancyGuard_init() internal onlyInitializing {\\r\\n        __ReentrancyGuard_init_unchained();\\r\\n    }\\r\\n\\r\\n    function __ReentrancyGuard_init_unchained() internal onlyInitializing {\\r\\n        ReentrancyGuardStorage storage $ = _getReentrancyGuardStorage();\\r\\n        $._status = NOT_ENTERED;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\r\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\r\\n     * function is not supported. It is possible to prevent this from happening\\r\\n     * by making the `nonReentrant` function external, and making it call a\\r\\n     * `private` function that does the actual work.\\r\\n     */\\r\\n    modifier nonReentrant() {\\r\\n        _nonReentrantBefore();\\r\\n        _;\\r\\n        _nonReentrantAfter();\\r\\n    }\\r\\n\\r\\n    function _nonReentrantBefore() private {\\r\\n        ReentrancyGuardStorage storage $ = _getReentrancyGuardStorage();\\r\\n        // On the first call to nonReentrant, _status will be NOT_ENTERED\\r\\n        if ($._status == ENTERED) {\\r\\n            revert ReentrancyGuardReentrantCall();\\r\\n        }\\r\\n\\r\\n        // Any calls to nonReentrant after this point will fail\\r\\n        $._status = ENTERED;\\r\\n    }\\r\\n\\r\\n    function _nonReentrantAfter() private {\\r\\n        ReentrancyGuardStorage storage $ = _getReentrancyGuardStorage();\\r\\n        // By storing the original value once again, a refund is triggered (see\\r\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\r\\n        $._status = NOT_ENTERED;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\r\\n     * `nonReentrant` function in the call stack.\\r\\n     */\\r\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\r\\n        ReentrancyGuardStorage storage $ = _getReentrancyGuardStorage();\\r\\n        return $._status == ENTERED;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xffcaedaa130b432c58cde1faaa67a07dbfa9582902481b25eb1c84a986b0120d\",\"license\":\"MIT\"},\"contracts/system/utils/addressUtils.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.20;\\r\\n\\r\\nabstract contract AddressUtils {\\r\\n\\r\\n    error addressUtilsEror(string message);\\r\\n\\r\\n    modifier callerZeroAddr() {\\r\\n        if (msg.sender == address(0)) revert addressUtilsEror(\\\"Caller cannot be zero address\\\");\\r\\n        _;\\r\\n    }\\r\\n}\",\"keccak256\":\"0x5bc97e3da7a500397600386e88955091e3eef4ea4f3bb6e40a1001daff44543a\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60a0806040523461002a57306080526134d99081610030823960805181818161217c01526125420152f35b600080fdfe608060408181526004918236101561001657600080fd5b600092833560e01c9182631a9a872314612c57575081633e49fb7e146128875781633f4ba83a146127525781634f1ef286146124c65781634f27f8bc146121e057816352d1902d1461216757816359d5238114611f595781635c975abb14611f165781635dfd6e9714611c12578163601b3ae514611be7578163603d454d14611bbf5781636ade6b9f14611b6d5781636fa8bc5114611a53578163716d30ad146118715781637c24803f146118355781637f6fc165146118085781638456cb59146116cd5781638e9821491461153d57816399b956a01461149a5781639c558b2014611243578163ad3cb1cc146111fa578163b70da740146110c3578163c140af7414611088578163c1db82d914610d26578163c2d0831414610b40578163c416eafc1461083b578163c4d66de814610646578163c706b8cc14610440578163c8f75acf146101f557508063c9c4dccc146101b45763cccfd0011461017a57600080fd5b346101b05760203660031901126101b05760209181906001600160a01b036101a0612dee565b1681526001845220549051908152f35b5080fd5b50346101b05760203660031901126101b05760209160ff9060059083906001600160a01b036101e1612dee565b168152600186522001541690519015158152f35b8383346101b057806003193601126101b05761020f612dee565b92610218612e09565b8354835163966f3e2d60e01b8082526001600160a01b03949260c0929086169083818681855afa9081156103845787916020918b91610423575b5001511633141591826103d9575b8261038e575b82610339575b826102cf575b505090506102b1575081600194951685528360205283838620016102968154613150565b9055168352816020528220016102ac8154613150565b905580f35b8351637762f89560e01b81529081906102cb908201613087565b0390fd5b839192508488518094819382525afa91821561032f579160a09186938992610302575b5050015116331415808880610272565b6103219250803d10610328575b6103198183612e91565b810190612ffa565b89806102f2565b503d61030f565b86513d89823e3d90fd5b9150865182815283818681855afa9081156103845787916080918b91610367575b500151163314159161026c565b61037e9150863d8811610328576103198183612e91565b8c61035a565b88513d8b823e3d90fd5b9150865182815283818681855afa9081156103845787916060918b916103bc575b5001511633141591610266565b6103d39150863d8811610328576103198183612e91565b8c6103af565b9150865182815283818681855afa90811561038457879189918b91610406575b5001511633141591610260565b61041d9150863d8811610328576103198183612e91565b8c6103f9565b61043a9150863d8811610328576103198183612e91565b8c610252565b8383346101b057806003193601126101b05761045a612dee565b92610463612e09565b8354835163966f3e2d60e01b8082526001600160a01b03949260c0929086169083818681855afa9081156103845787916020918b91610629575b5001511633141591826105df575b82610594575b82610549575b826104f9575b505090506102b157508160029495168552600160205283838620016104e28154613150565b905516835260016020528220016102ac8154613150565b839192508488518094819382525afa91821561032f579160a0918693899261052c575b50500151163314158088806104bd565b6105429250803d10610328576103198183612e91565b898061051c565b9150865182815283818681855afa9081156103845787916080918b91610577575b50015116331415916104b7565b61058e9150863d8811610328576103198183612e91565b8c61056a565b9150865182815283818681855afa9081156103845787916060918b916105c2575b50015116331415916104b1565b6105d99150863d8811610328576103198183612e91565b8c6105b5565b9150865182815283818681855afa90811561038457879189918b9161060c575b50015116331415916104ab565b6106239150863d8811610328576103198183612e91565b8c6105ff565b6106409150863d8811610328576103198183612e91565b8c61049d565b90503461083757602036600319011261083757610661612dee565b7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a009182549160ff83861c16159267ffffffffffffffff81168015908161082f575b6001149081610825575b15908161081c575b5061080c5767ffffffffffffffff1981166001178555836107ed575b506001600160a01b03169081156107b2575084546001600160a01b031916811785556106fa6133ae565b6107026133ae565b60017f9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f005561072e6133ae565b6000805160206134848339815191526060855160208152601460208201527318dbdb9d1c9858dd17da5b9a5d1a585b1a5e995960621b87820152a2610771578280f35b805468ff00000000000000001916905551600181527fc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d290602090a138808280f35b6102cb908551918291637762f89560e01b8352820160609060208152600b60208201526a5a65726f4164647265737360a81b60408201520190565b68ffffffffffffffffff191668010000000000000001178455386106d0565b855163f92ee8a960e01b81528390fd5b905015386106b4565b303b1591506106ac565b8591506106a2565b8280fd5b9190503461083757602080600319360112610b3c57610858612dee565b8454835163966f3e2d60e01b8082526001600160a01b03969287169160c09081818681875afa908115610a8057899188918c91610b1f575b500151163314159182610ad5575b82610a8a575b82610a35575b826109dc575b50506109c45783829186519384809263012ef5e160e01b82525afa9182156109ba57918491879493899261097a575b50865163cf95838b60e01b81529788928391165afa948515610970578695610927575b5092600167ffffffffffffffff936003936102ac9616885252852001921682546130d4565b6102ac949195508360039361095c60019367ffffffffffffffff973d8511610969575b6109548183612e91565b8101906130b4565b9793965093509350610902565b503d61094a565b84513d88823e3d90fd5b92839195508092503d83116109b3575b6109948183612e91565b810103126109af5785926109a88592612fae565b90386108df565b8680fd5b503d61098a565b85513d89823e3d90fd5b8451637762f89560e01b8152806102cb818501613087565b909150865190815281818581865afa918215610a2b579160a09189938b92610a0e575b505001511633141538806108b0565b610a249250803d10610328576103198183612e91565b38806109ff565b87513d8b823e3d90fd5b9150865182815281818681875afa908115610a805789916080918c91610a63575b50015116331415916108aa565b610a7a9150843d8611610328576103198183612e91565b38610a56565b88513d8c823e3d90fd5b9150865182815281818681875afa908115610a805789916060918c91610ab8575b50015116331415916108a4565b610acf9150843d8611610328576103198183612e91565b38610aab565b9150865182815281818681875afa908115610a8057899189918c91610b02575b500151163314159161089e565b610b199150843d8611610328576103198183612e91565b38610af5565b610b369150843d8611610328576103198183612e91565b38610890565b8380fd5b90503461083757602036600319011261083757610b5b612dee565b8354835163966f3e2d60e01b8082526001600160a01b03949290919085169060c09081818681865afa9081156103845787916020918b91610d09575b500151163314159283610cb7575b83610c6c575b83610c21575b83610bd3575b5050506102b15750168252600160205281206102ac8154613150565b819293508488518095819382525afa801561032f57859260a0928992610c04575b5050015116331415388080610bb7565b610c1a9250803d10610328576103198183612e91565b3880610bf4565b9250865183815281818681865afa9081156103845787916080918b91610c4f575b5001511633141592610bb1565b610c669150843d8611610328576103198183612e91565b38610c42565b9250865183815281818681865afa9081156103845787916060918b91610c9a575b5001511633141592610bab565b610cb19150843d8611610328576103198183612e91565b38610c8d565b925086518381528782828781875afa8015610cff5788928b91610ce2575b5001511633141592610ba5565b610cf99150843d8611610328576103198183612e91565b38610cd5565b81513d8c823e3d90fd5b610d209150843d8611610328576103198183612e91565b38610b97565b905034610837578160031936011261083757610d40612dee565b610d48612e09565b8454845163966f3e2d60e01b80825292959290916001600160a01b03919082169060c080858981865afa948515610f75578a95611069575b508360208096015116331415918261101f575b82610fd4575b82610f7f575b82610f26575b5050610f0e5782869185519283809263012ef5e160e01b82525afa908115610f04579082918991610ec8575b50168351630d164b1d60e41b815283818881855afa908115610ebe57908492918a91610ea1575b508363ffffffff97168a5260018352610e1a876003888d2001921682546130d4565b90558451633b8664cd60e11b815296879182905afa948515610e97578795610e5a575b50600392916001916102ac969716885252852001921682546130d4565b6102ac955091600191610e8560039594833d8511610e90575b610e7d8183612e91565b8101906130f7565b965091509192610e3d565b503d610e73565b83513d89823e3d90fd5b610eb89150833d8511610e9057610e7d8183612e91565b38610df8565b85513d8b823e3d90fd5b809250848092503d8311610efd575b610ee18183612e91565b81010312610ef957610ef38291612fae565b38610dd1565b8780fd5b503d610ed7565b84513d8a823e3d90fd5b8351637762f89560e01b8152806102cb818901613087565b909150855190815281818981865afa918215610f75579160a09185938c92610f58575b50500151163314153880610da5565b610f6e9250803d10610328576103198183612e91565b3880610f49565b86513d8c823e3d90fd5b9150855182815281818a81875afa908115610fca5785916080918d91610fad575b5001511633141591610d9f565b610fc49150843d8611610328576103198183612e91565b38610fa0565b87513d8d823e3d90fd5b9150855182815281818a81875afa908115610fca5785916060918d91611002575b5001511633141591610d99565b6110199150843d8611610328576103198183612e91565b38610ff5565b9150855182815281818a81875afa908115610fca57859188918d9161104c575b5001511633141591610d93565b6110639150843d8611610328576103198183612e91565b3861103f565b816110819296503d8711610328576103198183612e91565b9338610d80565b5050346101b05760203660031901126101b05760209160019082906001600160a01b036110b3612dee565b1681528285522001549051908152f35b919050346108375760209081600319360112610b3c576110e1612dee565b8454825163354daab560e21b815290916001600160a01b0391858188818688165afa80156111f05788906111ba575b61111a91506132b8565b1693841561117f5750917f616464726573735f72656769737472795f6368616e676564000000000000000060609285600080516020613484833981519152956bffffffffffffffffffffffff60a01b161787556018815193808552840152820152a280f35b6102cb908351918291637762f89560e01b8352820160609060208152600b60208201526a5a65726f4164647265737360a81b60408201520190565b508581813d83116111e9575b6111d08183612e91565b81010312610ef9576111e461111a91612fae565b611110565b503d6111c6565b85513d8a823e3d90fd5b5050346101b057816003193601126101b057805161123f9161121b82612e5f565b60058252640352e302e360dc1b602083015251918291602083526020830190612e1f565b0390f35b90503461083757816003193601126108375761125d612dee565b8354835163966f3e2d60e01b80825260243595936001600160a01b0393909260c0929185169083818981855afa9081156113de5786916020918c9161147d575b500151163314159182611433575b826113e8575b82611393575b82611343575b5050905061132b5716808552600160205283838387200154106112f15784526001602052832001805490916102ac916130d4565b8151637762f89560e01b81526020818501526013602482015272496e73756666696369656e7442616c616e636560681b6044820152606490fd5b8251637762f89560e01b8152806102cb818701613087565b839192508787518094819382525afa9182156111f0579160a09185938a92611376575b50500151163314158038806112bd565b61138c9250803d10610328576103198183612e91565b3880611366565b9150855182815283818981855afa9081156113de5786916080918c916113c1575b50015116331415916112b7565b6113d89150863d8811610328576103198183612e91565b386113b4565b87513d8c823e3d90fd5b9150855182815283818981855afa9081156113de5786916060918c91611416575b50015116331415916112b1565b61142d9150863d8811610328576103198183612e91565b38611409565b9150855182815283818981855afa9081156113de57869188918c91611460575b50015116331415916112ab565b6114779150863d8811610328576103198183612e91565b38611453565b6114949150863d8811610328576103198183612e91565b3861129d565b9050823461153a57602036600319011261153a5761123f9083906001600160a01b036114c4612dee565b16815260016020522091825460ff600185015494600281015493600382015490820154906114f9600660058501549401612f09565b958951998a99610100978b5260208b015289015260608801526080870152818116151560a087015260081c16151560c08501528060e0850152830190612e1f565b80fd5b9190503461083757602080600319360112610b3c5761155a612dee565b61156261336c565b33156116b5578454835163354daab560e21b8152916001600160a01b0391849084908890829086165afa9283156109ba57879361167a575b506115a660019361315f565b169182865252828285200190815491821561163a578580938193828094555af16115ce613120565b50156115fc578260017f9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f005580f35b6102cb925051918291637762f89560e01b8352820160609060208152600e60208201526d151c985b9cd9995c91985a5b195960921b60408201520190565b8351637762f89560e01b8152602081870181815260119181019190915270496e73756666696369656e7446756e647360781b604082015281906060010390fd5b92508383813d83116116ae575b6116918183612e91565b810103126109af576115a66116a7600194612fae565b935061159a565b503d611687565b825163de75e09160e01b8152806102cb818701612fc2565b919050346108375782600319360112610837578254815163354daab560e21b81526020939184908290849082906001600160a01b03165afa80156117fe5785906117c4575b61171c91506132b8565b7fcd5ed15c6e187e77e9aee88184c21f4f2182ab5827cb3b7e07fbedcd63f033009081549060ff82166117b657509060016e18dbdb9d1c9858dd17dc185d5cd959608a1b939260ff19161790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258838251338152a1600f81519380855284015282015260008051602061348483398151915260603392a280f35b835163d93c066560e01b8152fd5b508381813d83116117f7575b6117da8183612e91565b810103126117f3576117ee61171c91612fae565b611712565b8480fd5b503d6117d0565b83513d87823e3d90fd5b905034610837576020366003190112610837578160209360ff923581526002855220541690519015158152f35b5050346101b05760203660031901126101b05760209160039082906001600160a01b03611860612dee565b168152600185522001549051908152f35b9190503461083757806003193601126108375761188c612dee565b8354825163966f3e2d60e01b8082526001600160a01b03939260c0929085169083818981855afa908115610a2b5786916020918b91611a36575b5001511633141591826119ec575b826119a1575b82611956575b82611906575b5050905061132b5716835260016020528220016102ac6024358254613113565b839192508787518094819382525afa9182156109ba579160a09185938992611939575b50500151163314158038806118e6565b61194f9250803d10610328576103198183612e91565b3880611929565b9150855182815283818981855afa908115610a2b5786916080918b91611984575b50015116331415916118e0565b61199b9150863d8811610328576103198183612e91565b38611977565b9150855182815283818981855afa908115610a2b5786916060918b916119cf575b50015116331415916118da565b6119e69150863d8811610328576103198183612e91565b386119c2565b9150855182815283818981855afa908115610a2b57869188918b91611a19575b50015116331415916118d4565b611a309150863d8811610328576103198183612e91565b38611a0c565b611a4d9150863d8811610328576103198183612e91565b386118c6565b91905034610837578060031936011261083757611a6e612dee565b60243590611a7a61336c565b33156116b5578454835163354daab560e21b81526001600160a01b03929160209082908890829087165afa80156109ba578790611b32575b611abc915061315f565b16808552600160205283838620018054838110611af25783879493859493611ae6869586956130d4565b90555af16115ce613120565b8451637762f89560e01b8152602081880181815260119181019190915270496e73756666696369656e7446756e647360781b604082015281906060010390fd5b506020813d602011611b65575b81611b4c60209383612e91565b810103126109af57611b60611abc91612fae565b611ab2565b3d9150611b3f565b5050346101b05760203660031901126101b05761123f91611bac9060069083906001600160a01b03611b9d612dee565b16815260016020522001612f09565b9051918291602083526020830190612e1f565b9050346108375760203660031901126108375760209282906001600160a01b03611860612dee565b5050346101b05760203660031901126101b05760209160029082906001600160a01b03611860612dee565b905034610837578160031936011261083757611c2c612dee565b611c34612e09565b8454845163966f3e2d60e01b80825292959290916001600160a01b03919082169060c080858981865afa948515610f75578a95611ef7575b5083602080960151163314159182611ead575b82611e62575b82611e17575b82611dc8575b5050610f0e5782869185519283809263012ef5e160e01b82525afa908115610f04579082918991611d90575b5016835163c7d3f62f60e01b815283818881855afa908115610ebe57908492918a91611d73575b508363ffffffff97168a5260018352611d06876003888d200192168254613113565b9055845163b30e0be360e01b815296879182905afa948515610e97578795611d46575b50600392916001916102ac96971688525285200192168254613113565b6102ac955091600191611d6860039594833d8511610e9057610e7d8183612e91565b965091509192611d29565b611d8a9150833d8511610e9057610e7d8183612e91565b38611ce4565b809250848092503d8311611dc1575b611da98183612e91565b81010312610ef957611dbb8291612fae565b38611cbd565b503d611d9f565b909150855190815281818981865afa918215610f75579160a09185938c92611dfa575b50500151163314153880611c91565b611e109250803d10610328576103198183612e91565b3880611deb565b9150855182815281818a81875afa908115610fca5785916080918d91611e45575b5001511633141591611c8b565b611e5c9150843d8611610328576103198183612e91565b38611e38565b9150855182815281818a81875afa908115610fca5785916060918d91611e90575b5001511633141591611c85565b611ea79150843d8611610328576103198183612e91565b38611e83565b9150855182815281818a81875afa908115610fca57859188918d91611eda575b5001511633141591611c7f565b611ef19150843d8611610328576103198183612e91565b38611ecd565b81611f0f9296503d8711610328576103198183612e91565b9338611c6c565b5050346101b057816003193601126101b05760209060ff7fcd5ed15c6e187e77e9aee88184c21f4f2182ab5827cb3b7e07fbedcd63f03300541690519015158152f35b839150346101b05760203660031901126101b057611f75612dee565b8254845163966f3e2d60e01b8082526001600160a01b03949260c0929086169083818681855afa9081156120ab5787916020918a9161214a575b500151163314159182612100575b826120b5575b82612060575b82612006575b50509050611fec5750168152600160205290812060030181905580f35b8451637762f89560e01b81529081906102cb908201613087565b839192508489518094819382525afa918215612056579160a09186938892612039575b5050015116331415808780611fcf565b61204f9250803d10610328576103198183612e91565b8880612029565b87513d88823e3d90fd5b9150875182815283818681855afa9081156120ab5787916080918a9161208e575b5001511633141591611fc9565b6120a59150863d8811610328576103198183612e91565b8b612081565b89513d8a823e3d90fd5b9150875182815283818681855afa9081156120ab5787916060918a916120e3575b5001511633141591611fc3565b6120fa9150863d8811610328576103198183612e91565b8b6120d6565b9150875182815283818681855afa9081156120ab5787918a918a9161212d575b5001511633141591611fbd565b6121449150863d8811610328576103198183612e91565b8b612120565b6121619150863d8811610328576103198183612e91565b8b611faf565b82843461153a578060031936011261153a57507f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031630036121d357602090517f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc8152f35b5163703e46dd60e11b8152fd5b919050346108375780600319360112610837576121fb612dee565b91612204612e09565b8454835163966f3e2d60e01b80825290936001600160a01b03939290919084169060c080878581865afa968715610a80578a976124a7575b508560208098015116331415918261245d575b82612412575b826123bd575b8261236e575b50506123565784829187519384809263012ef5e160e01b82525afa91821561234c5791859185938a92612310575b508751637221ba7960e11b81529384928391165afa9081156109ba57926001928167ffffffffffffffff600397946102ac99978c916122f3575b50169816895283835285858a20016122e28982546130d4565b9055168752528420019182546130d4565b61230a9150863d8811610969576109548183612e91565b386122c9565b92839194508092503d8311612345575b61232a8183612e91565b81010312610ef957839161233e8692612fae565b903861228f565b503d612320565b86513d8a823e3d90fd5b8551637762f89560e01b8152806102cb818501613087565b909150875190815281818581865afa918215610a80579160a09187938c926123a0575b50500151163314153880612261565b6123b69250803d10610328576103198183612e91565b3880612391565b9150875182815281818681875afa9081156124085787916080918d916123eb575b500151163314159161225b565b6124029150843d8611610328576103198183612e91565b386123de565b89513d8d823e3d90fd5b9150875182815281818681875afa9081156124085787916060918d91612440575b5001511633141591612255565b6124579150843d8611610328576103198183612e91565b38612433565b9150875182815281818681875afa9081156124085787918a918d9161248a575b500151163314159161224f565b6124a19150843d8611610328576103198183612e91565b3861247d565b816124bf9298503d8911610328576103198183612e91565b953861223c565b91809150600319360112610837576124dc612dee565b9060249384359267ffffffffffffffff84116101b057366023850112156101b057838501359061250b82612eb3565b9161251885519384612e91565b808352602095368983830101116117f3578185928a89930183870137840101526001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116308114908115612724575b506127145786868286541687519283809263354daab560e21b82525afa801561270a5785906126d4575b6125a291506132b8565b84516352d1902d60e01b815290821695808289818a5afa91829186936126a4575b50506125de57505050505191634c9c8ce360e01b8352820152fd5b9093919492967f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc9182810361268f5750843b1561267b575080546001600160a01b0319168317905551907fbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b8680a2825115612662575061265e92506133ef565b5080f35b9150503461266f57505080f35b63b398979f60e01b8152fd5b8251634c9c8ce360e01b8152808801859052fd5b8351632a87526960e21b815280890191909152fd5b9080929350813d83116126cd575b6126bc8183612e91565b810103126117f357519038806125c3565b503d6126b2565b508681813d8311612703575b6126ea8183612e91565b810103126117f3576126fe6125a291612fae565b612598565b503d6126e0565b86513d87823e3d90fd5b845163703e46dd60e11b81528790fd5b9050817f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc541614153861256e565b8383346101b057816003193601126101b0578154815163354daab560e21b81526020929183908290879082906001600160a01b03165afa801561287d578490612847575b6127a091506132b8565b7fcd5ed15c6e187e77e9aee88184c21f4f2182ab5827cb3b7e07fbedcd63f03300805460ff81161561283757907018dbdb9d1c9858dd17dd5b9c185d5cd959607a1b929160ff191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa838251338152a1601181519380855284015282015260008051602061348483398151915260603392a280f35b8251638dfc202b60e01b81528690fd5b508281813d8311612876575b61285d8183612e91565b81010312610b3c576128716127a091612fae565b612796565b503d612853565b82513d86823e3d90fd5b90503461083757816003193601126108375780359167ffffffffffffffff8084116117f357366023850112156117f357838301359081116117f35760249036828287010111612c53576128d8612e09565b8654845163354daab560e21b8152602096926001600160a01b0392909190889082908690829087165afa80156113de578a90612c19575b612919915061315f565b3315612c0157169586885260019283875285892094600586019586549460ff8660081c1680612bf6575b156129925750505050505060609260008051602061348483398151915294926f55736572526573746f7265644461746160801b9260ff198254161790556010815193808552840152820152a280f35b60ff86989616612bbf579089959493929160ff8a8e600282518b81019089898c0183376129cd8d828c81018783820152038084520182612e91565b5190209a8b835252205416612b8457908c600692816003840155818a8401558160028401558201558760ff19809a161786550192612a0b8454612ecf565b601f8111612b3c575b508b908c601f8511600114612aaa57936000805160206134848339815191529b9996936d155cd95c949959da5cdd195c995960921b999693829360609d9a9793612a9d575b505050600019600383901b1c191690851b1790555b61010061ff001982541617905589526002855282892091825416179055600e815193808552840152820152a280f35b0101359050388080612a59565b929091601f1985168685528c8520945b818110612b255750938996936d155cd95c949959da5cdd195c995960921b9a9387936000805160206134848339815191529f9d9a979860609f9c9910612b09575b50505050811b019055612a6e565b60001960f88660031b161c199201013516905538808080612afb565b8483018401358655948a0194918d01918d01612aba565b848d528a8d20601f850160051c8101918c8610612b7a575b601f0160051c019088908e5b838210612b6f57505050612a14565b81550188908e612b60565b9091508190612b54565b8951637762f89560e01b81529081018b90526015818401527411da5d141c9bd99a5b19505b1c9958591e555cd959605a1b6044820152606490fd5b8851637762f89560e01b81529081018a905260118184015270105b1c9958591e549959da5cdd195c9959607a1b6044820152606490fd5b5060ff861615612943565b855163de75e09160e01b8152806102cb818601612fc2565b508781813d8311612c4c575b612c2f8183612e91565b81010312612c4857612c4361291991612fae565b61290f565b8980fd5b503d612c25565b8580fd5b9150833461153a57602092836003193601126101b057612c75612dee565b825463354daab560e21b83526001600160a01b039290869082908790829087165afa8015612de4578490612dae575b612cae915061315f565b3315612d965716918282526001845260ff600586842001541615612d5e57508381836005935260018552200160ff198154169055600080516020613484833981519152606084518481526010858201526f155cd95c955b9c9959da5cdd195c995960821b86820152a261123f825192612d2684612e5f565b601784527f556e7265676973746572205375636365737366756c6c790000000000000000008385015251928284938452830190612e1f565b8451637762f89560e01b81529081018490526011602482015270155cd95c939bdd149959da5cdd195c9959607a1b6044820152606490fd5b855163de75e09160e01b8152806102cb818701612fc2565b508581813d8311612ddd575b612dc48183612e91565b81010312610b3c57612dd8612cae91612fae565b612ca4565b503d612dba565b87513d86823e3d90fd5b600435906001600160a01b0382168203612e0457565b600080fd5b602435906001600160a01b0382168203612e0457565b919082519283825260005b848110612e4b575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201612e2a565b6040810190811067ffffffffffffffff821117612e7b57604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff821117612e7b57604052565b67ffffffffffffffff8111612e7b57601f01601f191660200190565b90600182811c92168015612eff575b6020831014612ee957565b634e487b7160e01b600052602260045260246000fd5b91607f1691612ede565b90604051918260008254612f1c81612ecf565b90818452602094600191600181169081600014612f8c5750600114612f4d575b505050612f4b92500383612e91565b565b600090815285812095935091905b818310612f74575050612f4b9350820101388080612f3c565b85548884018501529485019487945091830191612f5b565b92505050612f4b94925060ff191682840152151560051b820101388080612f3c565b51906001600160a01b0382168203612e0457565b60609060208152601d60208201527f43616c6c65722063616e6e6f74206265207a65726f206164647265737300000060408201520190565b908160c0910312612e04576040519060c0820182811067ffffffffffffffff821117612e7b5761307f9160a09160405261303381612fae565b845261304160208201612fae565b602085015261305260408201612fae565b604085015261306360608201612fae565b606085015261307460808201612fae565b608085015201612fae565b60a082015290565b6060906020815260126020820152712ab730baba3437b934bd32b221b0b63632b960711b60408201520190565b90816020910312612e04575167ffffffffffffffff81168103612e045790565b919082039182116130e157565b634e487b7160e01b600052601160045260246000fd5b90816020910312612e04575163ffffffff81168103612e045790565b919082018092116130e157565b3d1561314b573d9061313182612eb3565b9161313f6040519384612e91565b82523d6000602084013e565b606090565b60001981146130e15760010190565b60408051633f784de560e11b81523360048201526020926001600160a01b0391908216908481602481855afa9081156132ad57600091613277575b506132455783600491845192838092638da5cb5b60e01b82525afa90811561323a57600091613205575b501633146131d0575050565b60649250519062461bcd60e51b82526004820152600f60248201526e21b0b63632b91034b99037bbb732b960891b6044820152fd5b90508381813d8311613233575b61321c8183612e91565b81010312612e045761322d90612fae565b386131c4565b503d613212565b83513d6000823e3d90fd5b825162461bcd60e51b815260048101859052600b60248201526a497320656d706c6f79656560a81b6044820152606490fd5b8581813d83116132a6575b61328c8183612e91565b810103126101b0575190811515820361153a57503861319a565b503d613282565b84513d6000823e3d90fd5b604051638da5cb5b60e01b81526001600160a01b03916020908290600490829086165afa90811561336057600091613326575b501633036132f557565b60405162461bcd60e51b81526020600482015260096024820152682737ba1037bbb732b960b91b6044820152606490fd5b90506020813d602011613358575b8161334160209383612e91565b81010312612e045761335290612fae565b386132eb565b3d9150613334565b6040513d6000823e3d90fd5b7f9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f00600281541461339c5760029055565b604051633ee5aeb560e01b8152600490fd5b60ff7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a005460401c16156133dd57565b604051631afcd79f60e31b8152600490fd5b9060008091602081519101845af48080613470575b156134255750506040513d81523d6000602083013e60203d82010160405290565b1561344c57604051639996b31560e01b81526001600160a01b039091166004820152602490fd5b3d1561345e576040513d6000823e3d90fd5b60405163d6bda27560e01b8152600490fd5b503d1515806134045750813b151561340456fef6ed18f10c4a6ef9e510952c67dacc2e07ee8a63cd7e9033ef5bb226f847e5a4a26469706673582212202005e2d36059c1b5e0bce1df174da3449fee4dfcd6c642713868ae3b0410412764736f6c63430008160033",
+  "deployedBytecode": "0x608060408181526004918236101561001657600080fd5b600092833560e01c9182631a9a872314612c57575081633e49fb7e146128875781633f4ba83a146127525781634f1ef286146124c65781634f27f8bc146121e057816352d1902d1461216757816359d5238114611f595781635c975abb14611f165781635dfd6e9714611c12578163601b3ae514611be7578163603d454d14611bbf5781636ade6b9f14611b6d5781636fa8bc5114611a53578163716d30ad146118715781637c24803f146118355781637f6fc165146118085781638456cb59146116cd5781638e9821491461153d57816399b956a01461149a5781639c558b2014611243578163ad3cb1cc146111fa578163b70da740146110c3578163c140af7414611088578163c1db82d914610d26578163c2d0831414610b40578163c416eafc1461083b578163c4d66de814610646578163c706b8cc14610440578163c8f75acf146101f557508063c9c4dccc146101b45763cccfd0011461017a57600080fd5b346101b05760203660031901126101b05760209181906001600160a01b036101a0612dee565b1681526001845220549051908152f35b5080fd5b50346101b05760203660031901126101b05760209160ff9060059083906001600160a01b036101e1612dee565b168152600186522001541690519015158152f35b8383346101b057806003193601126101b05761020f612dee565b92610218612e09565b8354835163966f3e2d60e01b8082526001600160a01b03949260c0929086169083818681855afa9081156103845787916020918b91610423575b5001511633141591826103d9575b8261038e575b82610339575b826102cf575b505090506102b1575081600194951685528360205283838620016102968154613150565b9055168352816020528220016102ac8154613150565b905580f35b8351637762f89560e01b81529081906102cb908201613087565b0390fd5b839192508488518094819382525afa91821561032f579160a09186938992610302575b5050015116331415808880610272565b6103219250803d10610328575b6103198183612e91565b810190612ffa565b89806102f2565b503d61030f565b86513d89823e3d90fd5b9150865182815283818681855afa9081156103845787916080918b91610367575b500151163314159161026c565b61037e9150863d8811610328576103198183612e91565b8c61035a565b88513d8b823e3d90fd5b9150865182815283818681855afa9081156103845787916060918b916103bc575b5001511633141591610266565b6103d39150863d8811610328576103198183612e91565b8c6103af565b9150865182815283818681855afa90811561038457879189918b91610406575b5001511633141591610260565b61041d9150863d8811610328576103198183612e91565b8c6103f9565b61043a9150863d8811610328576103198183612e91565b8c610252565b8383346101b057806003193601126101b05761045a612dee565b92610463612e09565b8354835163966f3e2d60e01b8082526001600160a01b03949260c0929086169083818681855afa9081156103845787916020918b91610629575b5001511633141591826105df575b82610594575b82610549575b826104f9575b505090506102b157508160029495168552600160205283838620016104e28154613150565b905516835260016020528220016102ac8154613150565b839192508488518094819382525afa91821561032f579160a0918693899261052c575b50500151163314158088806104bd565b6105429250803d10610328576103198183612e91565b898061051c565b9150865182815283818681855afa9081156103845787916080918b91610577575b50015116331415916104b7565b61058e9150863d8811610328576103198183612e91565b8c61056a565b9150865182815283818681855afa9081156103845787916060918b916105c2575b50015116331415916104b1565b6105d99150863d8811610328576103198183612e91565b8c6105b5565b9150865182815283818681855afa90811561038457879189918b9161060c575b50015116331415916104ab565b6106239150863d8811610328576103198183612e91565b8c6105ff565b6106409150863d8811610328576103198183612e91565b8c61049d565b90503461083757602036600319011261083757610661612dee565b7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a009182549160ff83861c16159267ffffffffffffffff81168015908161082f575b6001149081610825575b15908161081c575b5061080c5767ffffffffffffffff1981166001178555836107ed575b506001600160a01b03169081156107b2575084546001600160a01b031916811785556106fa6133ae565b6107026133ae565b60017f9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f005561072e6133ae565b6000805160206134848339815191526060855160208152601460208201527318dbdb9d1c9858dd17da5b9a5d1a585b1a5e995960621b87820152a2610771578280f35b805468ff00000000000000001916905551600181527fc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d290602090a138808280f35b6102cb908551918291637762f89560e01b8352820160609060208152600b60208201526a5a65726f4164647265737360a81b60408201520190565b68ffffffffffffffffff191668010000000000000001178455386106d0565b855163f92ee8a960e01b81528390fd5b905015386106b4565b303b1591506106ac565b8591506106a2565b8280fd5b9190503461083757602080600319360112610b3c57610858612dee565b8454835163966f3e2d60e01b8082526001600160a01b03969287169160c09081818681875afa908115610a8057899188918c91610b1f575b500151163314159182610ad5575b82610a8a575b82610a35575b826109dc575b50506109c45783829186519384809263012ef5e160e01b82525afa9182156109ba57918491879493899261097a575b50865163cf95838b60e01b81529788928391165afa948515610970578695610927575b5092600167ffffffffffffffff936003936102ac9616885252852001921682546130d4565b6102ac949195508360039361095c60019367ffffffffffffffff973d8511610969575b6109548183612e91565b8101906130b4565b9793965093509350610902565b503d61094a565b84513d88823e3d90fd5b92839195508092503d83116109b3575b6109948183612e91565b810103126109af5785926109a88592612fae565b90386108df565b8680fd5b503d61098a565b85513d89823e3d90fd5b8451637762f89560e01b8152806102cb818501613087565b909150865190815281818581865afa918215610a2b579160a09189938b92610a0e575b505001511633141538806108b0565b610a249250803d10610328576103198183612e91565b38806109ff565b87513d8b823e3d90fd5b9150865182815281818681875afa908115610a805789916080918c91610a63575b50015116331415916108aa565b610a7a9150843d8611610328576103198183612e91565b38610a56565b88513d8c823e3d90fd5b9150865182815281818681875afa908115610a805789916060918c91610ab8575b50015116331415916108a4565b610acf9150843d8611610328576103198183612e91565b38610aab565b9150865182815281818681875afa908115610a8057899189918c91610b02575b500151163314159161089e565b610b199150843d8611610328576103198183612e91565b38610af5565b610b369150843d8611610328576103198183612e91565b38610890565b8380fd5b90503461083757602036600319011261083757610b5b612dee565b8354835163966f3e2d60e01b8082526001600160a01b03949290919085169060c09081818681865afa9081156103845787916020918b91610d09575b500151163314159283610cb7575b83610c6c575b83610c21575b83610bd3575b5050506102b15750168252600160205281206102ac8154613150565b819293508488518095819382525afa801561032f57859260a0928992610c04575b5050015116331415388080610bb7565b610c1a9250803d10610328576103198183612e91565b3880610bf4565b9250865183815281818681865afa9081156103845787916080918b91610c4f575b5001511633141592610bb1565b610c669150843d8611610328576103198183612e91565b38610c42565b9250865183815281818681865afa9081156103845787916060918b91610c9a575b5001511633141592610bab565b610cb19150843d8611610328576103198183612e91565b38610c8d565b925086518381528782828781875afa8015610cff5788928b91610ce2575b5001511633141592610ba5565b610cf99150843d8611610328576103198183612e91565b38610cd5565b81513d8c823e3d90fd5b610d209150843d8611610328576103198183612e91565b38610b97565b905034610837578160031936011261083757610d40612dee565b610d48612e09565b8454845163966f3e2d60e01b80825292959290916001600160a01b03919082169060c080858981865afa948515610f75578a95611069575b508360208096015116331415918261101f575b82610fd4575b82610f7f575b82610f26575b5050610f0e5782869185519283809263012ef5e160e01b82525afa908115610f04579082918991610ec8575b50168351630d164b1d60e41b815283818881855afa908115610ebe57908492918a91610ea1575b508363ffffffff97168a5260018352610e1a876003888d2001921682546130d4565b90558451633b8664cd60e11b815296879182905afa948515610e97578795610e5a575b50600392916001916102ac969716885252852001921682546130d4565b6102ac955091600191610e8560039594833d8511610e90575b610e7d8183612e91565b8101906130f7565b965091509192610e3d565b503d610e73565b83513d89823e3d90fd5b610eb89150833d8511610e9057610e7d8183612e91565b38610df8565b85513d8b823e3d90fd5b809250848092503d8311610efd575b610ee18183612e91565b81010312610ef957610ef38291612fae565b38610dd1565b8780fd5b503d610ed7565b84513d8a823e3d90fd5b8351637762f89560e01b8152806102cb818901613087565b909150855190815281818981865afa918215610f75579160a09185938c92610f58575b50500151163314153880610da5565b610f6e9250803d10610328576103198183612e91565b3880610f49565b86513d8c823e3d90fd5b9150855182815281818a81875afa908115610fca5785916080918d91610fad575b5001511633141591610d9f565b610fc49150843d8611610328576103198183612e91565b38610fa0565b87513d8d823e3d90fd5b9150855182815281818a81875afa908115610fca5785916060918d91611002575b5001511633141591610d99565b6110199150843d8611610328576103198183612e91565b38610ff5565b9150855182815281818a81875afa908115610fca57859188918d9161104c575b5001511633141591610d93565b6110639150843d8611610328576103198183612e91565b3861103f565b816110819296503d8711610328576103198183612e91565b9338610d80565b5050346101b05760203660031901126101b05760209160019082906001600160a01b036110b3612dee565b1681528285522001549051908152f35b919050346108375760209081600319360112610b3c576110e1612dee565b8454825163354daab560e21b815290916001600160a01b0391858188818688165afa80156111f05788906111ba575b61111a91506132b8565b1693841561117f5750917f616464726573735f72656769737472795f6368616e676564000000000000000060609285600080516020613484833981519152956bffffffffffffffffffffffff60a01b161787556018815193808552840152820152a280f35b6102cb908351918291637762f89560e01b8352820160609060208152600b60208201526a5a65726f4164647265737360a81b60408201520190565b508581813d83116111e9575b6111d08183612e91565b81010312610ef9576111e461111a91612fae565b611110565b503d6111c6565b85513d8a823e3d90fd5b5050346101b057816003193601126101b057805161123f9161121b82612e5f565b60058252640352e302e360dc1b602083015251918291602083526020830190612e1f565b0390f35b90503461083757816003193601126108375761125d612dee565b8354835163966f3e2d60e01b80825260243595936001600160a01b0393909260c0929185169083818981855afa9081156113de5786916020918c9161147d575b500151163314159182611433575b826113e8575b82611393575b82611343575b5050905061132b5716808552600160205283838387200154106112f15784526001602052832001805490916102ac916130d4565b8151637762f89560e01b81526020818501526013602482015272496e73756666696369656e7442616c616e636560681b6044820152606490fd5b8251637762f89560e01b8152806102cb818701613087565b839192508787518094819382525afa9182156111f0579160a09185938a92611376575b50500151163314158038806112bd565b61138c9250803d10610328576103198183612e91565b3880611366565b9150855182815283818981855afa9081156113de5786916080918c916113c1575b50015116331415916112b7565b6113d89150863d8811610328576103198183612e91565b386113b4565b87513d8c823e3d90fd5b9150855182815283818981855afa9081156113de5786916060918c91611416575b50015116331415916112b1565b61142d9150863d8811610328576103198183612e91565b38611409565b9150855182815283818981855afa9081156113de57869188918c91611460575b50015116331415916112ab565b6114779150863d8811610328576103198183612e91565b38611453565b6114949150863d8811610328576103198183612e91565b3861129d565b9050823461153a57602036600319011261153a5761123f9083906001600160a01b036114c4612dee565b16815260016020522091825460ff600185015494600281015493600382015490820154906114f9600660058501549401612f09565b958951998a99610100978b5260208b015289015260608801526080870152818116151560a087015260081c16151560c08501528060e0850152830190612e1f565b80fd5b9190503461083757602080600319360112610b3c5761155a612dee565b61156261336c565b33156116b5578454835163354daab560e21b8152916001600160a01b0391849084908890829086165afa9283156109ba57879361167a575b506115a660019361315f565b169182865252828285200190815491821561163a578580938193828094555af16115ce613120565b50156115fc578260017f9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f005580f35b6102cb925051918291637762f89560e01b8352820160609060208152600e60208201526d151c985b9cd9995c91985a5b195960921b60408201520190565b8351637762f89560e01b8152602081870181815260119181019190915270496e73756666696369656e7446756e647360781b604082015281906060010390fd5b92508383813d83116116ae575b6116918183612e91565b810103126109af576115a66116a7600194612fae565b935061159a565b503d611687565b825163de75e09160e01b8152806102cb818701612fc2565b919050346108375782600319360112610837578254815163354daab560e21b81526020939184908290849082906001600160a01b03165afa80156117fe5785906117c4575b61171c91506132b8565b7fcd5ed15c6e187e77e9aee88184c21f4f2182ab5827cb3b7e07fbedcd63f033009081549060ff82166117b657509060016e18dbdb9d1c9858dd17dc185d5cd959608a1b939260ff19161790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258838251338152a1600f81519380855284015282015260008051602061348483398151915260603392a280f35b835163d93c066560e01b8152fd5b508381813d83116117f7575b6117da8183612e91565b810103126117f3576117ee61171c91612fae565b611712565b8480fd5b503d6117d0565b83513d87823e3d90fd5b905034610837576020366003190112610837578160209360ff923581526002855220541690519015158152f35b5050346101b05760203660031901126101b05760209160039082906001600160a01b03611860612dee565b168152600185522001549051908152f35b9190503461083757806003193601126108375761188c612dee565b8354825163966f3e2d60e01b8082526001600160a01b03939260c0929085169083818981855afa908115610a2b5786916020918b91611a36575b5001511633141591826119ec575b826119a1575b82611956575b82611906575b5050905061132b5716835260016020528220016102ac6024358254613113565b839192508787518094819382525afa9182156109ba579160a09185938992611939575b50500151163314158038806118e6565b61194f9250803d10610328576103198183612e91565b3880611929565b9150855182815283818981855afa908115610a2b5786916080918b91611984575b50015116331415916118e0565b61199b9150863d8811610328576103198183612e91565b38611977565b9150855182815283818981855afa908115610a2b5786916060918b916119cf575b50015116331415916118da565b6119e69150863d8811610328576103198183612e91565b386119c2565b9150855182815283818981855afa908115610a2b57869188918b91611a19575b50015116331415916118d4565b611a309150863d8811610328576103198183612e91565b38611a0c565b611a4d9150863d8811610328576103198183612e91565b386118c6565b91905034610837578060031936011261083757611a6e612dee565b60243590611a7a61336c565b33156116b5578454835163354daab560e21b81526001600160a01b03929160209082908890829087165afa80156109ba578790611b32575b611abc915061315f565b16808552600160205283838620018054838110611af25783879493859493611ae6869586956130d4565b90555af16115ce613120565b8451637762f89560e01b8152602081880181815260119181019190915270496e73756666696369656e7446756e647360781b604082015281906060010390fd5b506020813d602011611b65575b81611b4c60209383612e91565b810103126109af57611b60611abc91612fae565b611ab2565b3d9150611b3f565b5050346101b05760203660031901126101b05761123f91611bac9060069083906001600160a01b03611b9d612dee565b16815260016020522001612f09565b9051918291602083526020830190612e1f565b9050346108375760203660031901126108375760209282906001600160a01b03611860612dee565b5050346101b05760203660031901126101b05760209160029082906001600160a01b03611860612dee565b905034610837578160031936011261083757611c2c612dee565b611c34612e09565b8454845163966f3e2d60e01b80825292959290916001600160a01b03919082169060c080858981865afa948515610f75578a95611ef7575b5083602080960151163314159182611ead575b82611e62575b82611e17575b82611dc8575b5050610f0e5782869185519283809263012ef5e160e01b82525afa908115610f04579082918991611d90575b5016835163c7d3f62f60e01b815283818881855afa908115610ebe57908492918a91611d73575b508363ffffffff97168a5260018352611d06876003888d200192168254613113565b9055845163b30e0be360e01b815296879182905afa948515610e97578795611d46575b50600392916001916102ac96971688525285200192168254613113565b6102ac955091600191611d6860039594833d8511610e9057610e7d8183612e91565b965091509192611d29565b611d8a9150833d8511610e9057610e7d8183612e91565b38611ce4565b809250848092503d8311611dc1575b611da98183612e91565b81010312610ef957611dbb8291612fae565b38611cbd565b503d611d9f565b909150855190815281818981865afa918215610f75579160a09185938c92611dfa575b50500151163314153880611c91565b611e109250803d10610328576103198183612e91565b3880611deb565b9150855182815281818a81875afa908115610fca5785916080918d91611e45575b5001511633141591611c8b565b611e5c9150843d8611610328576103198183612e91565b38611e38565b9150855182815281818a81875afa908115610fca5785916060918d91611e90575b5001511633141591611c85565b611ea79150843d8611610328576103198183612e91565b38611e83565b9150855182815281818a81875afa908115610fca57859188918d91611eda575b5001511633141591611c7f565b611ef19150843d8611610328576103198183612e91565b38611ecd565b81611f0f9296503d8711610328576103198183612e91565b9338611c6c565b5050346101b057816003193601126101b05760209060ff7fcd5ed15c6e187e77e9aee88184c21f4f2182ab5827cb3b7e07fbedcd63f03300541690519015158152f35b839150346101b05760203660031901126101b057611f75612dee565b8254845163966f3e2d60e01b8082526001600160a01b03949260c0929086169083818681855afa9081156120ab5787916020918a9161214a575b500151163314159182612100575b826120b5575b82612060575b82612006575b50509050611fec5750168152600160205290812060030181905580f35b8451637762f89560e01b81529081906102cb908201613087565b839192508489518094819382525afa918215612056579160a09186938892612039575b5050015116331415808780611fcf565b61204f9250803d10610328576103198183612e91565b8880612029565b87513d88823e3d90fd5b9150875182815283818681855afa9081156120ab5787916080918a9161208e575b5001511633141591611fc9565b6120a59150863d8811610328576103198183612e91565b8b612081565b89513d8a823e3d90fd5b9150875182815283818681855afa9081156120ab5787916060918a916120e3575b5001511633141591611fc3565b6120fa9150863d8811610328576103198183612e91565b8b6120d6565b9150875182815283818681855afa9081156120ab5787918a918a9161212d575b5001511633141591611fbd565b6121449150863d8811610328576103198183612e91565b8b612120565b6121619150863d8811610328576103198183612e91565b8b611faf565b82843461153a578060031936011261153a57507f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031630036121d357602090517f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc8152f35b5163703e46dd60e11b8152fd5b919050346108375780600319360112610837576121fb612dee565b91612204612e09565b8454835163966f3e2d60e01b80825290936001600160a01b03939290919084169060c080878581865afa968715610a80578a976124a7575b508560208098015116331415918261245d575b82612412575b826123bd575b8261236e575b50506123565784829187519384809263012ef5e160e01b82525afa91821561234c5791859185938a92612310575b508751637221ba7960e11b81529384928391165afa9081156109ba57926001928167ffffffffffffffff600397946102ac99978c916122f3575b50169816895283835285858a20016122e28982546130d4565b9055168752528420019182546130d4565b61230a9150863d8811610969576109548183612e91565b386122c9565b92839194508092503d8311612345575b61232a8183612e91565b81010312610ef957839161233e8692612fae565b903861228f565b503d612320565b86513d8a823e3d90fd5b8551637762f89560e01b8152806102cb818501613087565b909150875190815281818581865afa918215610a80579160a09187938c926123a0575b50500151163314153880612261565b6123b69250803d10610328576103198183612e91565b3880612391565b9150875182815281818681875afa9081156124085787916080918d916123eb575b500151163314159161225b565b6124029150843d8611610328576103198183612e91565b386123de565b89513d8d823e3d90fd5b9150875182815281818681875afa9081156124085787916060918d91612440575b5001511633141591612255565b6124579150843d8611610328576103198183612e91565b38612433565b9150875182815281818681875afa9081156124085787918a918d9161248a575b500151163314159161224f565b6124a19150843d8611610328576103198183612e91565b3861247d565b816124bf9298503d8911610328576103198183612e91565b953861223c565b91809150600319360112610837576124dc612dee565b9060249384359267ffffffffffffffff84116101b057366023850112156101b057838501359061250b82612eb3565b9161251885519384612e91565b808352602095368983830101116117f3578185928a89930183870137840101526001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116308114908115612724575b506127145786868286541687519283809263354daab560e21b82525afa801561270a5785906126d4575b6125a291506132b8565b84516352d1902d60e01b815290821695808289818a5afa91829186936126a4575b50506125de57505050505191634c9c8ce360e01b8352820152fd5b9093919492967f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc9182810361268f5750843b1561267b575080546001600160a01b0319168317905551907fbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b8680a2825115612662575061265e92506133ef565b5080f35b9150503461266f57505080f35b63b398979f60e01b8152fd5b8251634c9c8ce360e01b8152808801859052fd5b8351632a87526960e21b815280890191909152fd5b9080929350813d83116126cd575b6126bc8183612e91565b810103126117f357519038806125c3565b503d6126b2565b508681813d8311612703575b6126ea8183612e91565b810103126117f3576126fe6125a291612fae565b612598565b503d6126e0565b86513d87823e3d90fd5b845163703e46dd60e11b81528790fd5b9050817f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc541614153861256e565b8383346101b057816003193601126101b0578154815163354daab560e21b81526020929183908290879082906001600160a01b03165afa801561287d578490612847575b6127a091506132b8565b7fcd5ed15c6e187e77e9aee88184c21f4f2182ab5827cb3b7e07fbedcd63f03300805460ff81161561283757907018dbdb9d1c9858dd17dd5b9c185d5cd959607a1b929160ff191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa838251338152a1601181519380855284015282015260008051602061348483398151915260603392a280f35b8251638dfc202b60e01b81528690fd5b508281813d8311612876575b61285d8183612e91565b81010312610b3c576128716127a091612fae565b612796565b503d612853565b82513d86823e3d90fd5b90503461083757816003193601126108375780359167ffffffffffffffff8084116117f357366023850112156117f357838301359081116117f35760249036828287010111612c53576128d8612e09565b8654845163354daab560e21b8152602096926001600160a01b0392909190889082908690829087165afa80156113de578a90612c19575b612919915061315f565b3315612c0157169586885260019283875285892094600586019586549460ff8660081c1680612bf6575b156129925750505050505060609260008051602061348483398151915294926f55736572526573746f7265644461746160801b9260ff198254161790556010815193808552840152820152a280f35b60ff86989616612bbf579089959493929160ff8a8e600282518b81019089898c0183376129cd8d828c81018783820152038084520182612e91565b5190209a8b835252205416612b8457908c600692816003840155818a8401558160028401558201558760ff19809a161786550192612a0b8454612ecf565b601f8111612b3c575b508b908c601f8511600114612aaa57936000805160206134848339815191529b9996936d155cd95c949959da5cdd195c995960921b999693829360609d9a9793612a9d575b505050600019600383901b1c191690851b1790555b61010061ff001982541617905589526002855282892091825416179055600e815193808552840152820152a280f35b0101359050388080612a59565b929091601f1985168685528c8520945b818110612b255750938996936d155cd95c949959da5cdd195c995960921b9a9387936000805160206134848339815191529f9d9a979860609f9c9910612b09575b50505050811b019055612a6e565b60001960f88660031b161c199201013516905538808080612afb565b8483018401358655948a0194918d01918d01612aba565b848d528a8d20601f850160051c8101918c8610612b7a575b601f0160051c019088908e5b838210612b6f57505050612a14565b81550188908e612b60565b9091508190612b54565b8951637762f89560e01b81529081018b90526015818401527411da5d141c9bd99a5b19505b1c9958591e555cd959605a1b6044820152606490fd5b8851637762f89560e01b81529081018a905260118184015270105b1c9958591e549959da5cdd195c9959607a1b6044820152606490fd5b5060ff861615612943565b855163de75e09160e01b8152806102cb818601612fc2565b508781813d8311612c4c575b612c2f8183612e91565b81010312612c4857612c4361291991612fae565b61290f565b8980fd5b503d612c25565b8580fd5b9150833461153a57602092836003193601126101b057612c75612dee565b825463354daab560e21b83526001600160a01b039290869082908790829087165afa8015612de4578490612dae575b612cae915061315f565b3315612d965716918282526001845260ff600586842001541615612d5e57508381836005935260018552200160ff198154169055600080516020613484833981519152606084518481526010858201526f155cd95c955b9c9959da5cdd195c995960821b86820152a261123f825192612d2684612e5f565b601784527f556e7265676973746572205375636365737366756c6c790000000000000000008385015251928284938452830190612e1f565b8451637762f89560e01b81529081018490526011602482015270155cd95c939bdd149959da5cdd195c9959607a1b6044820152606490fd5b855163de75e09160e01b8152806102cb818701612fc2565b508581813d8311612ddd575b612dc48183612e91565b81010312610b3c57612dd8612cae91612fae565b612ca4565b503d612dba565b87513d86823e3d90fd5b600435906001600160a01b0382168203612e0457565b600080fd5b602435906001600160a01b0382168203612e0457565b919082519283825260005b848110612e4b575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201612e2a565b6040810190811067ffffffffffffffff821117612e7b57604052565b634e487b7160e01b600052604160045260246000fd5b90601f8019910116810190811067ffffffffffffffff821117612e7b57604052565b67ffffffffffffffff8111612e7b57601f01601f191660200190565b90600182811c92168015612eff575b6020831014612ee957565b634e487b7160e01b600052602260045260246000fd5b91607f1691612ede565b90604051918260008254612f1c81612ecf565b90818452602094600191600181169081600014612f8c5750600114612f4d575b505050612f4b92500383612e91565b565b600090815285812095935091905b818310612f74575050612f4b9350820101388080612f3c565b85548884018501529485019487945091830191612f5b565b92505050612f4b94925060ff191682840152151560051b820101388080612f3c565b51906001600160a01b0382168203612e0457565b60609060208152601d60208201527f43616c6c65722063616e6e6f74206265207a65726f206164647265737300000060408201520190565b908160c0910312612e04576040519060c0820182811067ffffffffffffffff821117612e7b5761307f9160a09160405261303381612fae565b845261304160208201612fae565b602085015261305260408201612fae565b604085015261306360608201612fae565b606085015261307460808201612fae565b608085015201612fae565b60a082015290565b6060906020815260126020820152712ab730baba3437b934bd32b221b0b63632b960711b60408201520190565b90816020910312612e04575167ffffffffffffffff81168103612e045790565b919082039182116130e157565b634e487b7160e01b600052601160045260246000fd5b90816020910312612e04575163ffffffff81168103612e045790565b919082018092116130e157565b3d1561314b573d9061313182612eb3565b9161313f6040519384612e91565b82523d6000602084013e565b606090565b60001981146130e15760010190565b60408051633f784de560e11b81523360048201526020926001600160a01b0391908216908481602481855afa9081156132ad57600091613277575b506132455783600491845192838092638da5cb5b60e01b82525afa90811561323a57600091613205575b501633146131d0575050565b60649250519062461bcd60e51b82526004820152600f60248201526e21b0b63632b91034b99037bbb732b960891b6044820152fd5b90508381813d8311613233575b61321c8183612e91565b81010312612e045761322d90612fae565b386131c4565b503d613212565b83513d6000823e3d90fd5b825162461bcd60e51b815260048101859052600b60248201526a497320656d706c6f79656560a81b6044820152606490fd5b8581813d83116132a6575b61328c8183612e91565b810103126101b0575190811515820361153a57503861319a565b503d613282565b84513d6000823e3d90fd5b604051638da5cb5b60e01b81526001600160a01b03916020908290600490829086165afa90811561336057600091613326575b501633036132f557565b60405162461bcd60e51b81526020600482015260096024820152682737ba1037bbb732b960b91b6044820152606490fd5b90506020813d602011613358575b8161334160209383612e91565b81010312612e045761335290612fae565b386132eb565b3d9150613334565b6040513d6000823e3d90fd5b7f9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f00600281541461339c5760029055565b604051633ee5aeb560e01b8152600490fd5b60ff7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a005460401c16156133dd57565b604051631afcd79f60e31b8152600490fd5b9060008091602081519101845af48080613470575b156134255750506040513d81523d6000602083013e60203d82010160405290565b1561344c57604051639996b31560e01b81526001600160a01b039091166004820152602490fd5b3d1561345e576040513d6000823e3d90fd5b60405163d6bda27560e01b8152600490fd5b503d1515806134045750813b151561340456fef6ed18f10c4a6ef9e510952c67dacc2e07ee8a63cd7e9033ef5bb226f847e5a4a26469706673582212202005e2d36059c1b5e0bce1df174da3449fee4dfcd6c642713868ae3b0410412764736f6c63430008160033",
+  "devdoc": {
+    "errors": {
+      "AddressEmptyCode(address)": [
+        {
+          "details": "There's no code at `target` (it is not a contract)."
+        }
+      ],
+      "ERC1967InvalidImplementation(address)": [
+        {
+          "details": "The `implementation` of the proxy is invalid."
+        }
+      ],
+      "ERC1967NonPayable()": [
+        {
+          "details": "An upgrade function sees `msg.value > 0` that may be lost."
+        }
+      ],
+      "EnforcedPause()": [
+        {
+          "details": "The operation failed because the contract is paused."
+        }
+      ],
+      "ExpectedPause()": [
+        {
+          "details": "The operation failed because the contract is not paused."
+        }
+      ],
+      "FailedCall()": [
+        {
+          "details": "A call to an address target failed. The target may have reverted."
+        }
+      ],
+      "InvalidInitialization()": [
+        {
+          "details": "The contract is already initialized."
+        }
+      ],
+      "NotInitializing()": [
+        {
+          "details": "The contract is not initializing."
+        }
+      ],
+      "ReentrancyGuardReentrantCall()": [
+        {
+          "details": "Unauthorized reentrant call."
+        }
+      ],
+      "UUPSUnauthorizedCallContext()": [
+        {
+          "details": "The call is from an unauthorized context."
+        }
+      ],
+      "UUPSUnsupportedProxiableUUID(bytes32)": [
+        {
+          "details": "The storage `slot` is unsupported as a UUID."
+        }
+      ]
+    },
+    "events": {
+      "Initialized(uint64)": {
+        "details": "Triggered when the contract has been initialized or reinitialized."
+      },
+      "Paused(address)": {
+        "details": "Emitted when the pause is triggered by `account`."
+      },
+      "Unpaused(address)": {
+        "details": "Emitted when the pause is lifted by `account`."
+      },
+      "Upgraded(address)": {
+        "details": "Emitted when the implementation is upgraded."
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "Register(string,address)": {
+        "details": "Creates a new user profile with initial reputation and counters",
+        "params": {
+          "_githubURL": "User's GitHub profile URL",
+          "_user": "Address of the user to register"
+        }
+      },
+      "Unregister(address)": {
+        "details": "Removes user from protocol and clears their data",
+        "params": {
+          "_user": "Address of the user to unregister"
+        },
+        "returns": {
+          "_0": "confirmation Confirmation message"
+        }
+      },
+      "__addUserBalance(address,uint256)": {
+        "params": {
+          "_amount": "Amount to add",
+          "_user": "Address of the user"
+        }
+      },
+      "__cancelByMeRep(address)": {
+        "params": {
+          "_user": "Address of the user"
+        }
+      },
+      "__changeAddressRegistry(address)": {
+        "params": {
+          "_newAddressRegistry": "New AddressRegistry address"
+        }
+      },
+      "__deadlineHitRep(address,address)": {
+        "params": {
+          "_creator": "Address of the creator",
+          "_user": "Address of the member"
+        }
+      },
+      "__getTotalTasksCompleted(address)": {
+        "params": {
+          "_user": "Address of the user"
+        },
+        "returns": {
+          "_0": "uint256 Total tasks completed"
+        }
+      },
+      "__getTotalTasksCreated(address)": {
+        "params": {
+          "_user": "Address of the user"
+        },
+        "returns": {
+          "_0": "uint256 Total tasks created"
+        }
+      },
+      "__getTotalTasksFailed(address)": {
+        "params": {
+          "_user": "Address of the user"
+        },
+        "returns": {
+          "_0": "uint256 Total tasks failed"
+        }
+      },
+      "__getUserBalance(address)": {
+        "params": {
+          "_user": "Address of the user"
+        },
+        "returns": {
+          "_0": "uint256 User balance"
+        }
+      },
+      "__getUserGitProfile(address)": {
+        "params": {
+          "_user": "Address of the user"
+        },
+        "returns": {
+          "_0": "string memory GitHub URL"
+        }
+      },
+      "__getUserReputation(address)": {
+        "params": {
+          "_user": "Address of the user"
+        },
+        "returns": {
+          "_0": "uint256 Reputation score"
+        }
+      },
+      "__isRegistered(address)": {
+        "params": {
+          "_user": "Address of the user"
+        },
+        "returns": {
+          "_0": "bool Registration status"
+        }
+      },
+      "__revisionRep(address,address)": {
+        "params": {
+          "_creator": "Address of the creator",
+          "_user": "Address of the member"
+        }
+      },
+      "__takeUserBalance(address,uint256)": {
+        "params": {
+          "_amount": "Amount to remove",
+          "_user": "Address of the user"
+        }
+      },
+      "__taskAcceptRep(address,address)": {
+        "params": {
+          "_creator": "Address of the creator",
+          "_user": "Address of the member"
+        }
+      },
+      "__taskCompleteCounter(address,address)": {
+        "params": {
+          "_creator": "Address of the creator",
+          "_user": "Address of the member"
+        }
+      },
+      "__taskCreateCounter(address)": {
+        "params": {
+          "_user": "Address of the user"
+        }
+      },
+      "__taskFailCounter(address,address)": {
+        "params": {
+          "_creator": "Address of the creator",
+          "_user": "Address of the member"
+        }
+      },
+      "initialize(address)": {
+        "params": {
+          "_addressRegistry": "Address of the AddressRegistry contract"
+        }
+      },
+      "paused()": {
+        "details": "Returns true if the contract is paused, and false otherwise."
+      },
+      "proxiableUUID()": {
+        "details": "Implementation of the ERC-1822 {proxiableUUID} function. This returns the storage slot used by the implementation. It is used to validate the implementation's compatibility when performing an upgrade. IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier."
+      },
+      "upgradeToAndCall(address,bytes)": {
+        "custom:oz-upgrades-unsafe-allow-reachable": "delegatecall",
+        "details": "Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call encoded in `data`. Calls {_authorizeUpgrade}. Emits an {Upgraded} event."
+      },
+      "withdrawAllUserFund(address)": {
+        "params": {
+          "_user": "Address of the user"
+        }
+      },
+      "withdrawUserFund(address,uint256)": {
+        "params": {
+          "_amount": "Amount to withdraw",
+          "_user": "Address of the user"
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "Register(string,address)": {
+        "notice": "Registers a new user in the protocol"
+      },
+      "Unregister(address)": {
+        "notice": "Unregisters a user and deletes their profile data"
+      },
+      "__addUserBalance(address,uint256)": {
+        "notice": "Adds funds to user's balance"
+      },
+      "__cancelByMeRep(address)": {
+        "notice": "Deducts cancellation penalty from user's reputation"
+      },
+      "__changeAddressRegistry(address)": {
+        "notice": "Updates the AddressRegistry contract address"
+      },
+      "__deadlineHitRep(address,address)": {
+        "notice": "Deducts deadline hit penalties from both user and creator's reputation"
+      },
+      "__getTotalTasksCompleted(address)": {
+        "notice": "Gets total tasks completed by user"
+      },
+      "__getTotalTasksCreated(address)": {
+        "notice": "Gets total tasks created by user"
+      },
+      "__getTotalTasksFailed(address)": {
+        "notice": "Gets total tasks failed by user"
+      },
+      "__getUserBalance(address)": {
+        "notice": "Gets user's balance"
+      },
+      "__getUserGitProfile(address)": {
+        "notice": "Gets user's GitHub profile URL"
+      },
+      "__getUserReputation(address)": {
+        "notice": "Gets user's reputation score"
+      },
+      "__isRegistered(address)": {
+        "notice": "Checks if user is registered"
+      },
+      "__revisionRep(address,address)": {
+        "notice": "Deducts revision penalty from both user and creator's reputation"
+      },
+      "__takeUserBalance(address,uint256)": {
+        "notice": "Removes funds from user's balance"
+      },
+      "__taskAcceptRep(address,address)": {
+        "notice": "Adds task acceptance rewards to both user and creator's reputation"
+      },
+      "__taskCompleteCounter(address,address)": {
+        "notice": "Increments task completion counters for both user and creator"
+      },
+      "__taskCreateCounter(address)": {
+        "notice": "Increments user's task created counter"
+      },
+      "__taskFailCounter(address,address)": {
+        "notice": "Increments task failure counters for both user and creator"
+      },
+      "initialize(address)": {
+        "notice": "Initializes the UsersContract"
+      },
+      "pause()": {
+        "notice": "Pauses the contract"
+      },
+      "unpause()": {
+        "notice": "Unpauses the contract"
+      },
+      "withdrawAllUserFund(address)": {
+        "notice": "Withdraws all funds from user's balance"
+      },
+      "withdrawUserFund(address,uint256)": {
+        "notice": "Withdraws a specific amount from user's balance"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 2647,
+        "contract": "contracts/User/user.sol:UsersContract",
+        "label": "addressRegistry",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(IAddressRegistry)11174"
+      },
+      {
+        "astId": 2670,
+        "contract": "contracts/User/user.sol:UsersContract",
+        "label": "Users",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_struct(User)2665_storage)"
+      },
+      {
+        "astId": 2674,
+        "contract": "contracts/User/user.sol:UsersContract",
+        "label": "usedGitURL",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IAddressRegistry)11174": {
+        "encoding": "inplace",
+        "label": "contract IAddressRegistry",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_struct(User)2665_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct UsersContract.User)",
+        "numberOfBytes": "32",
+        "value": "t_struct(User)2665_storage"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(User)2665_storage": {
+        "encoding": "inplace",
+        "label": "struct UsersContract.User",
+        "members": [
+          {
+            "astId": 2650,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "totalTasksCreated",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2652,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "totalTasksCompleted",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2654,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "totalTasksFailed",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2656,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "reputation",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2658,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "balance",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2660,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "isRegistered",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 2662,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "exists",
+            "offset": 1,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 2664,
+            "contract": "contracts/User/user.sol:UsersContract",
+            "label": "GitProfile",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_string_storage"
+          }
+        ],
+        "numberOfBytes": "224"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

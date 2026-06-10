@@ -128,7 +128,7 @@ export async function handleUpdateAccount(
   };
 
   try {
-    const { data } = await axios.patch(
+    const { data } = await axios.put(
       `${API_BASE}/api/users/${_id}`,
       backendData,
       {

@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const userSchema = Joi.object({
+ export const userSchema = Joi.object({
   walletAddress: Joi.string()
     .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address")
     .required(), // ✅ Changed to string and validate as Ethereum address

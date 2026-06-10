@@ -1,28 +1,26 @@
-import { handleDelleteAccount } from "@/utils/lib/express/mutations/users";
+import { handleUpdateAccount, type UpdateAccountPayload } from "@/utils/lib/express/mutations/users";
 import { useState } from "react";
 import { getValidJwt } from "@/utils/globalLib/walletAuth";
 import { useRouter } from "next/navigation";
 
-export function useDangerSection() {
+export function useUpdateProfile() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const [userId, setUserId] = useState("");
 
-
-    const handleDeleteAccount = async (address: string) => {
+    const handleUpdateProfile = async (userId: string, address: string, formData: UpdateAccountPayload) => {
         setLoading(true);
         setError(null);
 
         try {
             const jwt = await getValidJwt(address);
-            await handleDelleteAccount(userId, jwt, address);
+            await handleUpdateAccount(userId, formData, jwt, address);
 
-            router.push("/");
+            router.refresh();
         } catch (err: any) {
-            console.error("Error deleting account:", err);
-            setError(err.message || "Failed to delete account");
+            console.error("Error updating profile:", err);
+            setError(err.message || "Failed to update profile");
             throw err;
         } finally {
             setLoading(false);
@@ -30,10 +28,8 @@ export function useDangerSection() {
     };
 
     return {
-        handleDeleteAccount,
+        handleUpdateProfile,
         loading,
         error,
-        userId,
-        setUserId,
     };
 }

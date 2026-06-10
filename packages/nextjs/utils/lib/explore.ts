@@ -86,69 +86,120 @@ export type OnchainTask = {
     exists: boolean;
 };
 
+/**
+ * Raw shape returned by __getTask on-chain.
+ * The contract returns ALL numeric fields as bigint; we map the small
+ * ones (taskId, maxRevision, deadlineHours) to number in OnchainTask.
+ */
+export type RawContractTask = {
+    status: number;
+    taskId: bigint;
+    value: bigint;
+    reward: bigint;
+    deadlineAt: bigint;
+    createdAt: bigint;
+    creatorStake: bigint;
+    memberStake: bigint;
+    maxRevision: bigint;
+    deadlineHours: bigint;
+    creator: string;
+    member: string;
+    title: string;
+    githubURL: string;
+    isMemberStakeLocked: boolean;
+    isCreatorStakeLocked: boolean;
+    isRewardClaimed: boolean;
+    exists: boolean;
+};
+
+/**
+ * Converts the raw ABI-decoded contract struct into the typed OnchainTask.
+ * Scaffold-eth / wagmi infers ALL uint fields as bigint, so we cast the
+ * small integer fields (taskId, maxRevision, deadlineHours) to number here.
+ */
+export function mapContractTask(raw: RawContractTask): OnchainTask {
+    return {
+        status: raw.status as TaskStatus,
+        taskId: Number(raw.taskId),
+        value: raw.value,
+        reward: raw.reward,
+        deadlineAt: raw.deadlineAt,
+        createdAt: raw.createdAt,
+        creatorStake: raw.creatorStake,
+        memberStake: raw.memberStake,
+        maxRevision: Number(raw.maxRevision),
+        deadlineHours: Number(raw.deadlineHours),
+        creator: raw.creator,
+        member: raw.member,
+        title: raw.title,
+        githubURL: raw.githubURL,
+        isMemberStakeLocked: raw.isMemberStakeLocked,
+        isCreatorStakeLocked: raw.isCreatorStakeLocked,
+        isRewardClaimed: raw.isRewardClaimed,
+        exists: raw.exists,
+    };
+}
+
 // ======================================================
 // MERGED TYPE
 // ======================================================
 
-export type Task = OffchainTask &
-    Partial<OnchainTask>;
+export type Task = OffchainTask & Partial<OnchainTask>;
 
 // ======================================================
 // HOOK
 // ======================================================
 
+/**
+ * WHY onchain tasks are NOT fetched here
+ * ──────────────────────────────────────
+ * React hooks (useTaskData) must be called unconditionally at the top level
+ * of a component or custom hook — never inside async functions, loops, or
+ * callbacks.  Fetching N tasks would require N hook calls in a loop whose
+ * length is only known at runtime, which violates the Rules of Hooks.
+ *
+ * Pattern used instead:
+ *   • useExplore  → fetches the off-chain list + exposes taskCounter
+ *   • TaskOverlay → calls useTaskData(task.smartContractId) for the ONE
+ *                   selected task, merges off-chain + on-chain data, and
+ *                   displays the enriched result.
+ */
 export function useExplore() {
-    // NOTE: The blockchain hooks (useTaskData) can only be called at component level
-    // This utility function returns offchain tasks only. For onchain data, use
-    // useTaskData hook directly in components.
-
-    const getOnchainTasks = async (): Promise<OnchainTask[]> => {
-        try {
-            // TODO: Implement onchain task fetching using viem publicClient
-            // or refactor calling code to use useTaskData hook at component level
-            return [];
-        } catch (error) {
-            console.error("Error fetching onchain tasks:", error);
-            return [];
-        }
-    };
+    // ✅ Hook called at the top level of this custom hook — valid React.
+    //    No taskId → only global state (taskCounter, etc.) is returned.
+    const {
+        data: { taskCounter },
+        loading: { taskCounter: isCounterLoading },
+    } = useTaskData();
 
     const getOffchainTasks = async (): Promise<OffchainTask[]> => {
         try {
-            const tasks = await getAllTasks();
-            return tasks as OffchainTask[];
+            return (await getAllTasks()) as OffchainTask[];
         } catch (error) {
             console.error("Error fetching offchain tasks:", error);
             return [];
         }
     };
 
+    /**
+     * Returns off-chain tasks cast as Task[].
+     * On-chain fields (reward, stakes, deadline…) are undefined until
+     * a component enriches an individual task with useTaskData.
+     */
     const getTasks = async (): Promise<Task[]> => {
         try {
-            const [onchainTasks, offchainTasks] = await Promise.all([
-                getOnchainTasks(),
-                getOffchainTasks(),
-            ]);
-
-            const onchainMap = new Map(
-                onchainTasks.map((task) => [task.taskId, task])
-            );
-
-            const mergedTasks: Task[] = offchainTasks.map((offchainTask) => ({
-                ...offchainTask,
-                ...(onchainMap.get(offchainTask.smartContractId) ?? {}),
-            }));
-
-            return mergedTasks;
+            return (await getOffchainTasks()) as Task[];
         } catch (error) {
-            console.error("Error merging tasks:", error);
+            console.error("Error fetching tasks:", error);
             return [];
         }
     };
 
     return {
+        /** Reactive on-chain task count — undefined while loading */
+        taskCounter: taskCounter !== undefined ? Number(taskCounter) : undefined,
+        isCounterLoading,
         getTasks,
-        getOnchainTasks,
         getOffchainTasks,
     };
 }

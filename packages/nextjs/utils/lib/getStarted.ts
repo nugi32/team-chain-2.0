@@ -20,14 +20,16 @@ export function useCreateAccount() {
     try {
       // Smart contract registration
       console.log("[createAccount] Starting Register transaction for:", data.github);
-      
+
       // Set the form values
       form.setRegisterGitHubURL(data.github);
       form.setRegisterUser(address);
-      
+
       // Call the action handler
       await actions.handleRegister();
       console.log("[createAccount] Register transaction succeeded");
+
+
 
       const jwt = await getValidJwt(address);
       const accountId = await handleCreateAccount(data, jwt, address);
@@ -37,10 +39,10 @@ export function useCreateAccount() {
       return accountId;
     } catch (err: unknown) {
       console.error("[createAccount] Error caught:", err);
-      
+
       const decodedError = decodeSmartContractError(err);
       console.error("[createAccount] Decoded error:", decodedError);
-      
+
       setError(decodedError);
       throw new Error(decodedError);
     } finally {
