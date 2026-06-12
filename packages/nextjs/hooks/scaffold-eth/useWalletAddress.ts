@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { getUserById } from "@/utils/lib/express/queries/users";
+import { Address } from "viem";
 
 /**
  * Hook that gets wallet address from either:
@@ -13,7 +14,7 @@ import { getUserById } from "@/utils/lib/express/queries/users";
  */
 export const useWalletAddress = () => {
   const { address: connectedAddress, isConnected } = useAccount();
-  const [backendWalletAddress, setBackendWalletAddress] = useState<`0x${string}` | undefined>();
+  const [backendWalletAddress, setBackendWalletAddress] = useState<Address | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -39,7 +40,7 @@ export const useWalletAddress = () => {
 
         const user = await getUserById(userId);
         if (user.walletAddress) {
-          setBackendWalletAddress(user.walletAddress as `0x${string}`);
+          setBackendWalletAddress(user.walletAddress as Address);
         } else {
           setError(new Error("User has no wallet address"));
         }
@@ -54,7 +55,7 @@ export const useWalletAddress = () => {
   }, [isConnected, connectedAddress]);
 
   // Priority: connected wallet > backend wallet
-  const walletAddress = connectedAddress || backendWalletAddress;
+  const walletAddress = (connectedAddress || backendWalletAddress) as Address | undefined;
   const source = isConnected ? "connected" : "backend";
 
   return {

@@ -4,12 +4,24 @@ import TextInput from "./TextInput";
 import Hint from "./Hint";
 import type { FormData } from "./types";
 import { useTaskLifecycleLogic } from "@/utils/lib/smartContractWrapper/task/TaskLifecycleLogic";
-import { useAccount } from "wagmi";
-import { getUserById } from "@/utils/lib/express/queries/users";
-import { useEffect, useState } from "react";
+import { useWalletAddress } from "@/hooks/scaffold-eth";
 import { formatEther, parseEther } from "ethers";
 
 const EFFORT_OPTIONS = ["< 4 hrs", "4–8 hrs", "1–3 days", "1 week", "2+ weeks"];
+
+// Safely parse a user-entered ether string into a wei bigint.
+// Returns undefined for empty/invalid/zero input so callers can
+// treat it the same as "not provided yet".
+function safeParseEther(value: string | undefined): bigint | undefined {
+  if (!value) return undefined;
+  try {
+    const wei = parseEther(value);
+    return wei > 0n ? wei : undefined;
+  } catch {
+    // user is mid-typing something like "0." or "1.2.3"
+    return undefined;
+  }
+}
 
 export default function Step2({
   data,
@@ -18,27 +30,7 @@ export default function Step2({
   data: FormData;
   set: (k: keyof FormData, v: unknown) => void;
 }) {
-  const { address, isConnected } = useAccount();
-  const [backendUserAddress, setBackendUserAddress] = useState<`0x${string}` | undefined>();
-
-  useEffect(() => {
-    if (isConnected) return;
-    const fetchUser = async () => {
-      const userId = localStorage.getItem("userId");
-      if (!userId) return;
-      try {
-        const user = await getUserById(userId);
-        setBackendUserAddress(user.walletAddress as `0x${string}`);
-      } catch (err) {
-        console.error("Failed to fetch backend user:", err);
-      }
-    };
-    fetchUser();
-  }, [isConnected]);
-
-  const userAddress = (isConnected && address ? address : backendUserAddress) as
-    | `0x${string}`
-    | undefined;
+  const { walletAddress } = useWalletAddress();
 
   // Deadline: only forward a value when the date is strictly > 1 hr in the future.
   // Past dates produced deadlineHours=1n, which caused silent contract reverts.
@@ -52,9 +44,8 @@ export default function Step2({
     ? BigInt(parseInt(data.maxRevisions))
     : undefined;
 
-  const memberReward = data.reward
-    ? BigInt(Math.floor(parseFloat(data.reward) * 1e18))
-    : undefined;
+  // Reward is entered/displayed in ETH, but the contract expects wei.
+  const memberReward = safeParseEther(data.reward);
 
   const {
     creatorRequiredStake,
@@ -63,9 +54,8 @@ export default function Step2({
     isStuck,
     enabled,
     contractFound,
-  } = useTaskLifecycleLogic({ deadlineHours, maximumRevision, memberReward, address: userAddress });
-
-  const missingArg = !userAddress
+  } = useTaskLifecycleLogic({ deadlineHours, maximumRevision, memberReward, address: walletAddress as `0x${string}` | undefined });
+  const missingArg = !walletAddress
     ? "wallet address"
     : !deadlineHours
       ? "a future deadline (must be > 1 hr from now)"
@@ -77,6 +67,7 @@ export default function Step2({
 
   const reward = parseFloat(data.reward || "0");
 
+  // Stake comes back from the contract in wei -> convert to ETH for display.
   const requiredStake =
     creatorRequiredStake != null
       ? parseFloat(formatEther(creatorRequiredStake)).toFixed(4)
@@ -119,7 +110,7 @@ export default function Step2({
     }
     return (
       <span>
-        Ξ {formatEther(requiredStake ?? "0")}
+        Ξ {requiredStake ?? "0"}
       </span>
     );
   };
@@ -164,7 +155,7 @@ export default function Step2({
           </Label>
           <TextInput
             value={data.reward}
-            onChange={(v) => set("reward", parseEther(v || "0").toString())}
+            onChange={(v) => set("reward", v)}
             placeholder="0.0"
             type="number"
             prefix="Ξ"

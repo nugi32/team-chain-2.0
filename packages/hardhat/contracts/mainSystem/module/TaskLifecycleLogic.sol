@@ -224,7 +224,8 @@ contract TaskLifecycleLogic is ITaskLifecycleLogic {
         uint256 neg = (_getDataContract().__getReputationScore() * users.__getUserReputation(Caller)) +
             (_getDataContract().__getDeadlineScore() * DeadlineHours);
 
-        uint256 rawValue = (pos <= neg) ? 0 : (pos - neg);
+        // Use ratio-based calculation: higher neg scales down value gracefully instead of zeroing it
+        uint256 rawValue = (pos > neg) ? (pos - neg) : (pos * 100) / (neg / (1 ether) + 1);
 
         return (rawValue * 1 ether) / 100;
     }
