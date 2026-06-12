@@ -24,7 +24,14 @@ const createLimiter = rateLimit({
 
 // ownership check pakai mongoose
 const taskOwnershipCheck = ownershipMiddleware(async (req) => {
-  return await taskSchema.findById(req.params.id)
+  const API_BASE_URL = process.env.API_URL || "http://localhost:8000";
+  const response = await fetch(`${API_BASE_URL}/tasks/${req.params.id}`, {
+    headers: {
+      Authorization: req.headers.authorization || "",
+    },
+  });
+  if (!response.ok) return null;
+  return await response.json();
 })
 
 router.get("/", getTasks)

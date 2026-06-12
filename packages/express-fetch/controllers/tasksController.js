@@ -1,14 +1,15 @@
 import { createTaskSchema } from "../models/tasks.js";
+import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 dotenv.config();
 
 const API_BASE_URL = process.env.API_URL || "http://localhost:4000";
 
-console.log( API_BASE_URL);
+console.log(API_BASE_URL);
 console.log(process.env.JWT_SECRET);
 
 // Helper function to perform fetch with timeout and common headers
-const fetchWithTimeout = async (url, options = {}, timeout = 5000) => {
+const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   try {
@@ -71,33 +72,55 @@ export const getTask = async (req, res) => {
 export const createTask = async (req, res) => {
   try {
     // Validate request body
-    const { error, value } = createTaskSchema.validate(req.body);
+    const { error, value } = createTaskSchema.validate(req.body, { stripUnknown: true });
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      return res.status(400).json({ 
+        message: error.details[0].message,
+        details: error.details 
+      });
     }
 
-    // Add owner from authenticated user
+    // Extract reward and calculate stake (10% of reward)
+    const rewardAmount = parseFloat(value.reward) || 0;
+    const stakeAmount = (rewardAmount * 0.1).toFixed(6);
+
+    // Build task data with all required fields
     const taskData = {
+      id: uuidv4(),
       ...value,
+      stakeRequired: stakeAmount.toString(),
       owner: req.user.address.toLowerCase(),
+      // Ensure arrays are properly formatted
+      roles: Array.isArray(value.roles) ? value.roles : [],
+      skills: Array.isArray(value.skills) ? value.skills : [],
+      badges: Array.isArray(value.badges) ? value.badges : [],
+      milestones: Array.isArray(value.milestones) ? value.milestones : null,
     };
+
+    console.log("Creating task with data:", JSON.stringify(taskData, null, 2));
 
     const response = await fetchWithTimeout(`${API_BASE_URL}/tasks`, {
       method: "POST",
       body: JSON.stringify(taskData),
-    });
+    }, 15000);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(errorText);
-      return res.status(response.status).json({ message: "Failed to create task" });
+      console.error("API Error:", errorText);
+      return res.status(response.status).json({ 
+        message: "Failed to create task",
+        error: errorText 
+      });
     }
 
     const savedTask = await response.json();
     res.status(201).json(savedTask);
   } catch (error) {
     console.error("Create task error:", error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ 
+      message: error.message,
+      error: error.toString()
+    });
   }
 };
 

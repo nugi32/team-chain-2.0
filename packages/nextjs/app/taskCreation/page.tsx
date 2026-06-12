@@ -4,30 +4,31 @@ import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight, FileText, Coins, Users, Eye } from "lucide-react";
 
-import Step1 from "@/components/create-task/Step1";
-import Step2 from "@/components/create-task/Step2";
-import Step3 from "@/components/create-task/Step3";
-import Step4 from "@/components/create-task/Step4";
-import PreviewSidebar from "@/components/create-task/PreviewSidebar";
-import type { FormData } from "@/components/create-task/types";
+import Step1 from "@/components/taskCreation/Step1";
+import Step2 from "@/components/taskCreation/Step2";
+import Step3 from "@/components/taskCreation/Step3";
+import Step4 from "@/components/taskCreation/Step4";
+import PreviewSidebar from "@/components/taskCreation/PreviewSidebar";
+import type { FormData } from "@/components/taskCreation/types";
 
 const EMPTY: FormData = {
   title: "",
-  teamName: "",
+  projectName: "",
   objective: "",
   category: "",
-  taskType: "bounty",
   stakeRequired: "",
   reward: "",
   effort: "",
   deadline: "",
-  slots: "1",
   minReputation: "",
   roles: [],
   skills: [],
   description: "",
   milestones: [],
   badges: [],
+  githubIssueUrl: "",
+  maxRevisions: "",
+  slots: "1",
 };
 
 const STEPS = [
@@ -55,8 +56,8 @@ export default function CreateTaskPage() {
   };
 
   const canNext: Record<number, boolean> = {
-    1: !!data.title && !!data.teamName && !!data.category && !!data.objective,
-    2: !!data.stakeRequired && !!data.reward && !!data.deadline,
+    1: !!data.title && !!data.projectName && !!data.category && !!data.objective,
+    2: !!data.reward && !!data.deadline,
     3: data.skills.length > 0 && !!data.description,
     4: true,
   };

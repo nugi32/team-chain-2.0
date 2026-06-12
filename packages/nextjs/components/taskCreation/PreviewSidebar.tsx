@@ -13,7 +13,7 @@ const BADGE_MAP: Record<string, string> = {
 
 export default function PreviewSidebar({ data }: { data: FormData }) {
   const completion = [
-    !!data.title, !!data.teamName, !!data.category, !!data.objective,
+    !!data.title, !!data.projectName, !!data.category, !!data.objective,
     !!data.stakeRequired, !!data.reward, !!data.deadline,
     data.skills.length > 0, !!data.description,
   ];
@@ -37,7 +37,7 @@ export default function PreviewSidebar({ data }: { data: FormData }) {
         <div className="mt-3 flex flex-col gap-1">
           {[
             { label: "Title",       done: !!data.title },
-            { label: "Team",        done: !!data.teamName },
+            { label: "Project",     done: !!data.projectName },
             { label: "Category",    done: !!data.category },
             { label: "Objective",   done: !!data.objective },
             { label: "Stake",       done: !!data.stakeRequired },
@@ -64,13 +64,13 @@ export default function PreviewSidebar({ data }: { data: FormData }) {
           <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-3">Card preview</p>
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-[9px] font-bold flex-shrink-0">
-              {(data.teamName || "TC").slice(0, 2).toUpperCase()}
+              {(data.projectName || "TC").slice(0, 2).toUpperCase()}
             </div>
             <div>
               <p className="text-[10px] font-semibold text-gray-200 leading-tight truncate max-w-[140px]">
                 {data.title || "Task title"}
               </p>
-              <p className="text-[9px] text-gray-600">{data.teamName || "Team name"}</p>
+              <p className="text-[9px] text-gray-600">{data.projectName || "Project name"}</p>
             </div>
           </div>
           <p className="text-[9px] text-gray-500 mb-2 leading-snug line-clamp-2">{data.objective || "One-line objective…"}</p>

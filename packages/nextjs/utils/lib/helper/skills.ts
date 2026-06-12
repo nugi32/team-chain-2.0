@@ -1,5 +1,3 @@
-
-
 export type SkillCategory =
   | "language"
   | "frontend"

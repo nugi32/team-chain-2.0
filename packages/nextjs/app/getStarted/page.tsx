@@ -41,7 +41,7 @@ import { useAccount } from "wagmi";
 import { initCachedToken } from "@/utils/globalLib/walletAuth";
 import { notification } from "~~/utils/scaffold-eth";
 
-import { skills, type Skill, SkillCategory } from "@/utils/lib/helper/skills";
+import { skills, type SkillCategory } from "@/utils/lib/helper/skills";
 
 
 // ─── Category meta ────────────────────────────────────────────────────────────

@@ -3,6 +3,121 @@ import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldWriteContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
+export interface CreateTaskParams {
+    title: string;
+    githubURL: string;
+    deadlineHours: bigint;
+    maximumRevision: bigint;
+    user: `0x${string}`;
+}
+
+export interface DeleteTaskParams {
+    taskId: bigint;
+    user: `0x${string}`;
+}
+
+export interface ActivateTaskParams {
+    taskId: bigint;
+    user: `0x${string}`;
+    value: bigint;
+}
+
+export interface OpenRegistrationParams {
+    taskId: bigint;
+}
+
+export interface CloseRegistrationParams {
+    taskId: bigint;
+}
+
+export interface RequestJoinTaskParams {
+    taskId: bigint;
+    user: `0x${string}`;
+    value: bigint;
+}
+
+export interface WithdrawJoinRequestParams {
+    taskId: bigint;
+    user: `0x${string}`;
+}
+
+export interface ApproveJoinRequestParams {
+    taskId: bigint;
+    applicant: `0x${string}`;
+}
+
+export interface RejectJoinRequestParams {
+    taskId: bigint;
+    applicant: `0x${string}`;
+}
+
+export interface RequestSubmitTaskParams {
+    taskId: bigint;
+    pullRequestURL: string;
+    note: string;
+    user: `0x${string}`;
+}
+
+export interface ReSubmitTaskParams {
+    taskId: bigint;
+    note: string;
+    githubFixedURL: string;
+    user: `0x${string}`;
+}
+
+export interface RequestRevisionParams {
+    taskId: bigint;
+    note: string;
+    additionalDeadlineHours: bigint;
+}
+
+export interface ApproveTaskParams {
+    taskId: bigint;
+}
+
+export interface CancelByMeParams {
+    taskId: bigint;
+    user: `0x${string}`;
+}
+
+export interface TriggerDeadlineParams {
+    taskId: bigint;
+}
+
+export interface GetJoinRequestCountParams {
+    taskId: bigint;
+}
+
+export interface GetMemberRequiredStakeParams {
+    taskId: bigint;
+}
+
+export interface GetCreatorStakeParams {
+    deadlineHours: bigint;
+    maximumRevision: bigint;
+    rewardWei: bigint;
+    caller: `0x${string}`;
+}
+
+export interface GetProjectValueParams {
+    deadlineHours: bigint;
+    maximumRevision: bigint;
+    rewardWei: bigint;
+    caller: `0x${string}`;
+}
+
+export interface ChangeAddressRegistryParams {
+    newAddress: `0x${string}`;
+}
+
+export interface PauseParams {
+    caller: `0x${string}`;
+}
+
+export interface UnpauseParams {
+    caller: `0x${string}`;
+}
+
 export const useTaskController = () => {
     const { address: connectedAddress } = useAccount();
 

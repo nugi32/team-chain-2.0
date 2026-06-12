@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Camera, Upload, Trash2, X, User, Plus } from "lucide-react";
+import { Camera, X, User, Plus, Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import SectionHeading from "./SectionHeading";
 import Field from "./Field";
@@ -14,6 +14,10 @@ import { useUpdateProfile } from "@/utils/lib/updateProfile";
 import { useParams } from "next/navigation";
 import { useAccount } from "wagmi";
 import { notification } from "~~/utils/scaffold-eth";
+import {
+  skills as SKILL_OPTIONS,
+  type SkillCategory,
+} from "@/utils/lib/helper/skills";
 
 // ── Role helpers ───────────────────────────────────────────────────────────────
 const ROLE_OPTIONS: { value: Role; label: string }[] = [
@@ -22,20 +26,151 @@ const ROLE_OPTIONS: { value: Role; label: string }[] = [
   { value: "project_manager", label: "Project Manager" },
 ];
 
-// Backend returns "Developer" / "Project Manager" — map back to Role keys
 const ROLE_REVERSE_MAP: Record<string, Role> = {
-  "Developer": "developer",
-  "Designer": "designer",
+  Developer: "developer",
+  Designer: "designer",
   "Project Manager": "project_manager",
 };
 
+// ── Skill picker categories ────────────────────────────────────────────────────
+const CATEGORIES: { value: SkillCategory | "all"; label: string }[] = [
+  { value: "all",      label: "All" },
+  { value: "language", label: "Languages" },
+  { value: "frontend", label: "Frontend" },
+  { value: "backend",  label: "Backend" },
+  { value: "mobile",   label: "Mobile" },
+  { value: "database", label: "Database" },
+  { value: "devops",   label: "DevOps" },
+  { value: "design",   label: "Tools" },
+];
+
+// ── SkillPicker sub-component ─────────────────────────────────────────────────
+interface SkillPickerProps {
+  selected: string[];
+  onChange: (skills: string[]) => void;
+}
+
+function SkillPicker({ selected, onChange }: SkillPickerProps) {
+  const [query, setQuery]       = useState("");
+  const [activeTab, setActiveTab] = useState<SkillCategory | "all">("all");
+
+  const filtered = SKILL_OPTIONS.filter((s) => {
+    const matchesCategory = activeTab === "all" || s.category === activeTab;
+    const matchesQuery    = s.name.toLowerCase().includes(query.toLowerCase());
+    return matchesCategory && matchesQuery;
+  });
+
+  const toggle = (skillName: string) => {
+    if (selected.includes(skillName)) {
+      onChange(selected.filter((s) => s !== skillName));
+    } else {
+      onChange([...selected, skillName]);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-gray-800 bg-gray-900/60 overflow-hidden">
+      {/* Search */}
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-800">
+        <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search skills…"
+          className="flex-1 bg-transparent text-xs text-gray-200 placeholder:text-gray-600 outline-none"
+        />
+        {query && (
+          <button onClick={() => setQuery("")} className="text-gray-600 hover:text-gray-400 transition-colors">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+
+      {/* Category tabs */}
+      <div className="flex gap-1 px-2 pt-2 pb-1 overflow-x-auto scrollbar-none">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat.value}
+            onClick={() => setActiveTab(cat.value)}
+            className={`flex-shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-colors ${
+              activeTab === cat.value
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : "text-gray-500 hover:text-gray-300 border border-transparent hover:border-gray-700"
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Skill grid */}
+      <div className="p-2 max-h-52 overflow-y-auto">
+        {filtered.length === 0 ? (
+          <p className="text-[11px] text-gray-600 text-center py-4">No skills match.</p>
+        ) : (
+          <div className="flex flex-wrap gap-1.5">
+            {filtered.map((skill) => {
+              const isSelected = selected.includes(skill.name);
+              return (
+                <button
+                  key={skill.id}
+                  onClick={() => toggle(skill.name)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all ${
+                    isSelected
+                      ? "bg-indigo-500/20 border-indigo-500/40 text-indigo-300"
+                      : "bg-gray-800/60 border-gray-700/60 text-gray-400 hover:border-indigo-500/30 hover:text-indigo-300"
+                  }`}
+                >
+                  {isSelected && <span className="mr-1 opacity-70">✓</span>}
+                  {skill.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Selected pills summary */}
+      {selected.length > 0 && (
+        <div className="px-3 py-2.5 border-t border-gray-800 bg-gray-900/40">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider mr-0.5">
+              Selected:
+            </span>
+            {selected.map((s) => (
+              <span
+                key={s}
+                className="flex items-center gap-1 pl-2 pr-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/25 text-[11px] text-indigo-300"
+              >
+                {s}
+                <button
+                  onClick={() => toggle(s)}
+                  className="text-indigo-400/60 hover:text-red-400 transition-colors"
+                >
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </span>
+            ))}
+            <button
+              onClick={() => onChange([])}
+              className="ml-auto text-[10px] text-gray-600 hover:text-red-400 transition-colors"
+            >
+              Clear all
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────────
 export default function ProfileSection() {
   const { address, isConnected } = useAccount();
   const { handleUpdateProfile } = useUpdateProfile();
   const searchParams = useSearchParams();
   const params = useParams<{ id: string }>();
 
-  // Resolve user ID: URL ?id= takes priority, then localStorage
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
@@ -44,7 +179,6 @@ export default function ProfileSection() {
       localStorage.getItem("userId") ||
       params.id ||
       "";
-
     setUserId(id);
   }, [searchParams, params.id]);
 
@@ -65,8 +199,7 @@ export default function ProfileSection() {
   const [descPoints, setDescPoints] = useState<string[]>([]);
   const [descFooter, setDescFooter] = useState("");
 
-  const [skills, setSkills] = useState<string[]>([]);
-  const [skillInput, setSkillInput] = useState("");
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -90,7 +223,7 @@ export default function ProfileSection() {
         setDescSummary(user.description?.summary || "");
         setDescPoints(user.description?.points ?? []);
         setDescFooter(user.description?.footer || "");
-        setSkills(user.skills ?? []);
+        setSelectedSkills(user.skills ?? []);
       } catch (err) {
         console.error("Failed to load profile:", err);
       } finally {
@@ -110,16 +243,6 @@ export default function ProfileSection() {
     setDirty(true);
   };
 
-  const addSkill = () => {
-    const s = skillInput.trim();
-    if (!s || skills.includes(s)) return;
-    mutate(() => setSkills((prev) => [...prev, s]));
-    setSkillInput("");
-  };
-
-  const removeSkill = (s: string) =>
-    mutate(() => setSkills((prev) => prev.filter((x) => x !== s)));
-
   const addPoint = () =>
     mutate(() => setDescPoints((prev) => [...prev, ""]));
 
@@ -129,17 +252,21 @@ export default function ProfileSection() {
   const removePoint = (i: number) =>
     mutate(() => setDescPoints((prev) => prev.filter((_, j) => j !== i)));
 
-  // ── Save — delegates to handleUpdateAccount ────────────────────────────────
+  const handleSkillsChange = (skills: string[]) => {
+    setSelectedSkills(skills);
+    setDirty(true);
+  };
+
+  // ── Save ───────────────────────────────────────────────────────────────────
   const save = async () => {
-     if (!isConnected || !address) {
-            notification.error("Please connect your wallet first.");
-            setSaving(false);
-            return;
-          }
+    if (!isConnected || !address) {
+      notification.error("Please connect your wallet first.");
+      setSaving(false);
+      return;
+    }
     if (!userId) return;
     setSaving(true);
     try {
-      // Convert a newly picked File to base64 so it can go through the JSON mutation
       let avatarValue: string | undefined;
       if (avatarFile) {
         avatarValue = await new Promise<string>((resolve, reject) => {
@@ -149,31 +276,26 @@ export default function ProfileSection() {
           reader.readAsDataURL(avatarFile);
         });
       } else if (profilePicture === null) {
-        avatarValue = ""; // empty string signals removal to the backend
+        avatarValue = "";
       }
 
-const payload: UpdateAccountPayload = {
-  name,
-  role,
-  linkedin,
-  github,
-  email,
-  ...(avatarValue !== undefined && { avatar: avatarValue }),
-  description: {
-    header: descHeader,
-    summary: descSummary,
-    points: descPoints,
-    footer: descFooter,
-  },
-  skills,
-};
+      const payload: UpdateAccountPayload = {
+        name,
+        role,
+        linkedin,
+        github,
+        email,
+        ...(avatarValue !== undefined && { avatar: avatarValue }),
+        description: {
+          header: descHeader,
+          summary: descSummary,
+          points: descPoints,
+          footer: descFooter,
+        },
+        skills: selectedSkills,
+      };
 
-await handleUpdateProfile(
-  userId,
-  walletAddress,
-  payload,
-);
-
+      await handleUpdateProfile(userId, walletAddress, payload);
       setAvatarFile(null);
       setDirty(false);
     } catch (err) {
@@ -183,7 +305,7 @@ await handleUpdateProfile(
     }
   };
 
-  // ── Loading / no-ID guards ─────────────────────────────────────────────────
+  // ── Guards ─────────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -222,18 +344,14 @@ await handleUpdateProfile(
             )}
           </div>
           <button
+            onClick={() => fileRef.current?.click()}
             className="absolute inset-0 rounded-2xl bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <Camera className="w-5 h-5 text-white" />
           </button>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
         </div>
-
-        <div className="flex-1">
-          <div className="flex gap-2">
-
-          </div>
-        </div>
+        <div className="flex-1" />
       </div>
 
       {/* ── Basic info ─────────────────────────────────────────────────────── */}
@@ -340,41 +458,11 @@ await handleUpdateProfile(
 
       {/* ── Skills ─────────────────────────────────────────────────────────── */}
       <div className="mb-2">
-        <Field label="Skills" hint="Used for task matching and shown on your public profile.">
-          <div className="flex gap-2">
-            <input
-              value={skillInput}
-              onChange={(e) => setSkillInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && addSkill()}
-              placeholder="Add a skill…"
-              className="flex-1 rounded-xl border border-gray-800 bg-gray-900 focus:border-indigo-500/50 px-3 py-2.5 text-xs text-gray-200 placeholder:text-gray-600 outline-none transition-colors"
-            />
-            <button
-              onClick={addSkill}
-              className="px-3 py-2.5 rounded-xl border border-gray-800 bg-gray-900 hover:border-indigo-500/40 text-xs text-gray-400 hover:text-indigo-400 transition-colors"
-            >
-              Add
-            </button>
-          </div>
-
-          {skills.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {skills.map((s) => (
-                <span
-                  key={s}
-                  className="flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-[11px] text-gray-300"
-                >
-                  {s}
-                  <button
-                    onClick={() => removeSkill(s)}
-                    className="text-gray-600 hover:text-red-400 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
+        <Field
+          label="Skills"
+          hint={`Used for task matching and shown on your public profile. ${selectedSkills.length > 0 ? `${selectedSkills.length} selected.` : ""}`}
+        >
+          <SkillPicker selected={selectedSkills} onChange={handleSkillsChange} />
         </Field>
       </div>
 

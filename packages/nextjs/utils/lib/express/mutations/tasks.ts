@@ -1,31 +1,51 @@
-// utils/lib/express/mutations/tasks.ts
 import axios from "axios";
 import { getUserById } from "@/utils/lib/express/queries/users";
 
 export type Role = "developer" | "designer" | "project_manager";
 
-interface CreateTaskPayload {
-  _id: string;
-  smartContractId: number;
+export type TaskCategory =
+  | "Smart Contracts"
+  | "Frontend"
+  | "Backend"
+  | "Security Audit"
+  | "Design / UX"
+  | "Documentation";
+
+export type TaskEffort =
+  | "< 4 hrs"
+  | "4–8 hrs"
+  | "1–3 days"
+  | "1 week"
+  | "2+ weeks"
+  | "";
+
+export interface Milestone {
+  id: string;
   title: string;
-  description: {
-    header: string;
-    summary: string;
-    points: string[];
-    footer: string;
-  };
-  picture: string;
+  reward: string;
+  deadline: string;
+  description: string;
+}
+
+export interface CreateTaskPayload {
+  _id: string;
+  title: string;
+  projectName: string;
+  objective: string;
+  category: TaskCategory;
+  effort?: TaskEffort;
+  minReputation?: string;
+  roles?: string[];
   skills: string[];
+  description: string;
+  milestones?: Milestone[] | null;
+  badges?: string[];
 }
 
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
-/* =========================
-   TASKS
-========================= */
 
 export async function handleCreateTask(
   formData: CreateTaskPayload,
@@ -40,11 +60,17 @@ export async function handleCreateTask(
 
   const backendData = {
     owner: formData._id,
-    smartContractId: formData.smartContractId,
     title: formData.title,
-    description: formData.description,
-    picture: formData.picture,
+    projectName: formData.projectName,
+    objective: formData.objective,
+    category: formData.category,
+    effort: formData.effort,
+    minReputation: formData.minReputation,
+    roles: formData.roles,
     skills: formData.skills,
+    description: formData.description,
+    milestones: formData.milestones,
+    badges: formData.badges,
   };
 
   const response = await axios.post<{ id: string }>(
@@ -71,44 +97,60 @@ export async function handleUpdateTask(
   jwtToken: string,
   walletAddress: string
 ) {
-  const user = await getUserById(formData._id || "");
+  if (formData._id) {
+    const user = await getUserById(formData._id);
 
-  if (user.owner !== walletAddress) {
-    throw new Error("User data did not match");
+    if (user.owner !== walletAddress) {
+      throw new Error("User data did not match");
+    }
   }
 
   const backendData = {
-    ...(formData.smartContractId && {
-      smartContractId: formData.smartContractId,
+    ...(formData.title !== undefined && { title: formData.title }),
+    ...(formData.projectName !== undefined && {
+      projectName: formData.projectName,
     }),
-    ...(formData.title && {
-      title: formData.title,
+    ...(formData.objective !== undefined && {
+      objective: formData.objective,
     }),
-    ...(formData.description && {
+    ...(formData.category !== undefined && {
+      category: formData.category,
+    }),
+    ...(formData.effort !== undefined && {
+      effort: formData.effort,
+    }),
+    ...(formData.minReputation !== undefined && {
+      minReputation: formData.minReputation,
+    }),
+    ...(formData.roles !== undefined && {
+      roles: formData.roles,
+    }),
+    ...(formData.skills !== undefined && {
+      skills: formData.skills,
+    }),
+    ...(formData.description !== undefined && {
       description: formData.description,
     }),
-    ...(formData.picture && {
-      picture: formData.picture,
+    ...(formData.milestones !== undefined && {
+      milestones: formData.milestones,
+    }),
+    ...(formData.badges !== undefined && {
+      badges: formData.badges,
     }),
   };
 
-  try {
-    const { data } = await axios.patch(
-      `${API_BASE}/api/tasks/${taskId}`,
-      backendData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      }
-    );
+  const { data } = await axios.patch(
+    `${API_BASE}/api/tasks/${taskId}`,
+    backendData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    }
+  );
 
-    return data;
-  } catch (err) {
-    console.error("Error while updating task:", err);
-    throw err;
-  }
+  return data;
 }
 
 export async function handleDeleteTask(
@@ -123,24 +165,15 @@ export async function handleDeleteTask(
     throw new Error("User data did not match");
   }
 
-  try {
-    const response = await axios.delete(
-      `${API_BASE}/api/tasks/${taskId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      }
-    );
-
-    if (!response) {
-      throw new Error("An error occurred while deleting task");
+  const response = await axios.delete(
+    `${API_BASE}/api/tasks/${taskId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
     }
+  );
 
-    return response.data;
-  } catch (err) {
-    console.error("An error occurred while deleting task");
-    throw err;
-  }
+  return response.data;
 }

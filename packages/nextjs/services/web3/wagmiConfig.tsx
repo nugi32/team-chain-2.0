@@ -18,21 +18,21 @@ export const wagmiConfig = createConfig({
   ssr: true,
   client({ chain }) {
     // Extra fallback for mainnet.
-    const mainnetFallbackWithDefaultRPC = [http("https://mainnet.rpc.buidlguidl.com")];
-    let rpcFallbacks = [...(chain.id === mainnet.id ? mainnetFallbackWithDefaultRPC : []), http()];
+    const mainnetFallbackWithDefaultRPC = [http("https://mainnet.rpc.buidlguidl.com", { timeout: 15000 })];
+    let rpcFallbacks = [...(chain.id === mainnet.id ? mainnetFallbackWithDefaultRPC : []), http(undefined, { timeout: 15000 })];
 
     const rpcOverrideUrl = (scaffoldConfig.rpcOverrides as ScaffoldConfig["rpcOverrides"])?.[chain.id];
 
     if (rpcOverrideUrl) {
-      rpcFallbacks = [http(rpcOverrideUrl), ...rpcFallbacks];
+      rpcFallbacks = [http(rpcOverrideUrl, { timeout: 15000 }), ...rpcFallbacks];
     } else {
       const alchemyHttpUrl = getAlchemyHttpUrl(chain.id);
       if (alchemyHttpUrl) {
         const isUsingDefaultKey = scaffoldConfig.alchemyApiKey === DEFAULT_ALCHEMY_API_KEY;
         // If using default Scaffold-ETH 2 API key, we prioritize the default RPC
         rpcFallbacks = isUsingDefaultKey
-          ? [...rpcFallbacks, http(alchemyHttpUrl)]
-          : [http(alchemyHttpUrl), ...rpcFallbacks];
+          ? [...rpcFallbacks, http(alchemyHttpUrl, { timeout: 15000 })]
+          : [http(alchemyHttpUrl, { timeout: 15000 }), ...rpcFallbacks];
       }
     }
 
@@ -41,7 +41,9 @@ export const wagmiConfig = createConfig({
       transport: fallback(rpcFallbacks),
       ...(chain.id !== (hardhat as Chain).id
         ? {
-            pollingInterval: scaffoldConfig.pollingInterval,
+            // Use longer polling intervals for testnet/mainnet to avoid rate limiting
+            // Testnet: 8000ms, Mainnet: 12000ms
+            pollingInterval: chain.id === 1 ? 12000 : 8000,
           }
         : {}),
     });
