@@ -6,7 +6,6 @@
     "packages": [
       "packages/hardhat",
       "packages/nextjs",
-      "packages/express",
       "packages/express-fetch"
     ]
   },
