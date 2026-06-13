@@ -183,6 +183,9 @@ export const useTaskController = () => {
     const [creatorStakeCaller, setCreatorStakeCaller] = useState(connectedAddress || "");
     const [projectValueCaller, setProjectValueCaller] = useState(connectedAddress || "");
 
+    const [handleApproveJoinRequestAndRejectOthersId, setHandleApproveJoinRequestAndRejectOthersId] = useState<bigint | undefined>(undefined);
+    const [handleApproveJoinRequestAndRejectOthersApplicant, setHandleApproveJoinRequestAndRejectOthersApplicant] = useState("");
+
     const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "TaskController" });
 
     const handleCreateTask = async () => {
@@ -327,6 +330,25 @@ export const useTaskController = () => {
                 {
                     functionName: "approveJoinRequest",
                     args: [approveTaskId, approveApplicant],
+                },
+                {
+                    onBlockConfirmation: (txnReceipt) => {
+                        console.log("Transaction blockHash", txnReceipt.blockHash);
+                    },
+                }
+            );
+        } catch (e) {
+            console.error("Error approving join request", e);
+            throw e;
+        }
+    };
+
+        const handleApproveJoinRequestAndRejectOthers = async () => {
+        try {
+            await writeContractAsync(
+                {
+                    functionName: "approveJoinRequestAndRejectOthers",
+                    args: [handleApproveJoinRequestAndRejectOthersId, handleApproveJoinRequestAndRejectOthersApplicant],
                 },
                 {
                     onBlockConfirmation: (txnReceipt) => {
@@ -582,8 +604,14 @@ export const useTaskController = () => {
             setDeadlineHours,
             maxRevision,
             setMaxRevision,
+            rewardWei,
+            setRewardWei,
             value,
             setValue,
+            pullRequestUrl,
+            setPullRequestUrl,
+            githubFixedUrl,
+            setGithubFixedUrl,
         },
 
         task: {
@@ -595,74 +623,79 @@ export const useTaskController = () => {
             setOpenRegTaskId,
             closeRegTaskId,
             setCloseRegTaskId,
+            joinTaskId,
+            setJoinTaskId,
+            withdrawTaskId,
+            setWithdrawTaskId,
+            approveTaskId,
+            setApproveTaskId,
+            handleApproveJoinRequestAndRejectOthersId,
+            setHandleApproveJoinRequestAndRejectOthersId,
+            rejectTaskId,
+            setRejectTaskId,
+            submitTaskId,
+            setSubmitTaskId,
+            resubmitTaskId,
+            setResubmitTaskId,
+            revisionTaskId,
+            setRevisionTaskId,
+            approveTaskIdForCompletion,
+            setApproveTaskIdForCompletion,
             cancelTaskId,
             setCancelTaskId,
             triggerDeadlineTaskId,
             setTriggerDeadlineTaskId,
         },
 
-        joinRequest: {
-            joinTaskId,
-            setJoinTaskId,
-            joinUser,
-            setJoinUser,
-            withdrawTaskId,
-            setWithdrawTaskId,
-            withdrawUser,
-            setWithdrawUser,
-            approveTaskId,
-            setApproveTaskId,
-            approveApplicant,
-            setApproveApplicant,
-            rejectTaskId,
-            setRejectTaskId,
-            rejectApplicant,
-            setRejectApplicant,
-        },
-
-        submit: {
-            submitTaskId,
-            setSubmitTaskId,
-            pullRequestUrl,
-            setPullRequestUrl,
-            submitNote,
-            setSubmitNote,
-            submitUser,
-            setSubmitUser,
-
-            resubmitTaskId,
-            setResubmitTaskId,
-            resubmitNote,
-            setResubmitNote,
-            githubFixedUrl,
-            setGithubFixedUrl,
-            resubmitUser,
-            setResubmitUser,
-
-            revisionTaskId,
-            setRevisionTaskId,
-            revisionNote,
-            setRevisionNote,
-            additionalDeadlineHours,
-            setAdditionalDeadlineHours,
-
-            approveTaskIdForCompletion,
-            setApproveTaskIdForCompletion,
-        },
-
-        admin: {
+        user: {
             createUser,
             setCreateUser,
+            deleteUser,
+            setDeleteUser,
+            activateUser,
+            setActivateUser,
+            joinUser,
+            setJoinUser,
+            withdrawUser,
+            setWithdrawUser,
+            approveApplicant,
+            setApproveApplicant,
+            handleApproveJoinRequestAndRejectOthersApplicant,
+            setHandleApproveJoinRequestAndRejectOthersApplicant,
+            rejectApplicant,
+            setRejectApplicant,
+            submitUser,
+            setSubmitUser,
+            resubmitUser,
+            setResubmitUser,
+            cancelUser,
+            setCancelUser,
             creatorStakeCaller,
             setCreatorStakeCaller,
             projectValueCaller,
             setProjectValueCaller,
-            newRegistryAddress,
-            setNewRegistryAddress,
             pauseCaller,
             setPauseCaller,
             unpauseCaller,
             setUnpauseCaller,
+        },
+
+        notes: {
+            submitNote,
+            setSubmitNote,
+            resubmitNote,
+            setResubmitNote,
+            revisionNote,
+            setRevisionNote,
+        },
+
+        config: {
+            additionalDeadlineHours,
+            setAdditionalDeadlineHours,
+            withdrawFee,
+            setWithdrawFee,
+            newRegistryAddress,
+            setNewRegistryAddress,
         },
 
         actions: {
@@ -674,6 +707,7 @@ export const useTaskController = () => {
             handleRequestJoinTask,
             handleWithdrawJoinRequest,
             handleApproveJoinRequest,
+            handleApproveJoinRequestAndRejectOthers,
             handleRejectJoinRequest,
             handleRequestSubmitTask,
             handleReSubmitTask,
@@ -687,7 +721,7 @@ export const useTaskController = () => {
             handleUnpause,
         },
 
-        contract: {
+        data: {
             joinRequestCount,
             memberRequiredStake,
             creatorStake,
@@ -696,10 +730,11 @@ export const useTaskController = () => {
 
         loading: {
             isPending,
-            joinRequestCount: isJoinRequestCountLoading,
-            memberRequiredStake: isMemberRequiredStakeLoading,
-            creatorStake: isCreatorStakeLoading,
-            projectValue: isProjectValueLoading,
+            isJoinRequestCountLoading,
+            isMemberRequiredStakeLoading,
+            isCreatorStakeLoading,
+            isProjectValueLoading,
         },
     };
 };
+

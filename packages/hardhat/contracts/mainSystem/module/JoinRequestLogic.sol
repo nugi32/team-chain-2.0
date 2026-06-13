@@ -19,9 +19,9 @@ contract JoinRequestLogic is IJoinRequestLogic {
     IAddressRegistry public addressRegistry;
 
     modifier ctcCall() {
-        if(msg.sender != addressRegistry.__taskComponentsAddr().taskControler) revert JoinRequestErr("UnauthorizedCaller");
+        if (msg.sender != addressRegistry.__taskComponentsAddr().taskControler)
+            revert JoinRequestErr("UnauthorizedCaller");
         _;
-        
     }
 
     // =============================================================
@@ -46,7 +46,6 @@ contract JoinRequestLogic is IJoinRequestLogic {
         return IDataContract(addressRegistry.__dataContract());
     }
 
-
     // =============================================================
     // JOIN REQUEST FUNCTIONS
     // =============================================================
@@ -67,8 +66,7 @@ contract JoinRequestLogic is IJoinRequestLogic {
         }
 
         // Calculate required stake
-        uint256 requiredStake = (t.reward *
-            _getDataContract().__getMemberStakeFromRewardPercentage()) / 100;
+        uint256 requiredStake = (t.reward * _getDataContract().__getMemberStakeFromRewardPercentage()) / 100;
 
         // Check for existing pending request - O(1) lookup
         if (_getTaskDataContract().__hasPendingRequest(taskId, user)) {
@@ -113,7 +111,7 @@ contract JoinRequestLogic is IJoinRequestLogic {
     function __withdrawJoinRequest(uint256 taskId, address user) external override ctcCall {
         // Get request data using O(1) lookup
         ITaskData.JoinRequestData memory request = _getTaskDataContract().__getJoinRequestByUser(taskId, user);
-        
+
         if (!request.isPending || request.hasWithdrawn) {
             revert JoinRequestErr("NoPendingRequest");
         }
@@ -135,10 +133,10 @@ contract JoinRequestLogic is IJoinRequestLogic {
      */
     function __approveJoinRequest(uint256 taskId, address applicant) external override ctcCall {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
-        
+
         // Get request data using O(1) lookup
         ITaskData.JoinRequestData memory request = _getTaskDataContract().__getJoinRequestByUser(taskId, applicant);
-        
+
         if (!request.isPending) {
             revert JoinRequestErr("NoPendingRequest");
         }
@@ -163,6 +161,52 @@ contract JoinRequestLogic is IJoinRequestLogic {
         emit JoinRequestEvent(taskId, applicant, "JoinApproved");
     }
 
+    function __approveAndRejectOthers(uint256 taskId, address applicant) external ctcCall {
+        ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
+
+        ITaskData.JoinRequestData memory request = _getTaskDataContract().__getJoinRequestByUser(taskId, applicant);
+
+        if (!request.isPending) {
+            revert JoinRequestErr("NoPendingRequest");
+        }
+
+        uint256 approvedIndex = _getTaskDataContract().joinRequestIndex(taskId, applicant);
+
+        _getTaskDataContract().__updateJoinRequestStatus(taskId, approvedIndex, ITaskData.UserTask.Accepted);
+
+        _getTaskDataContract().__updateJoinRequestFlags(taskId, approvedIndex, false, true);
+
+        ITaskData.JoinRequestData[] memory requests = _getTaskDataContract().__getJoinRequests(taskId);
+
+        for (uint256 i; i < requests.length; ++i) {
+            address currentApplicant = requests[i].applicant;
+
+            if (currentApplicant != applicant && requests[i].isPending) {
+                uint256 idx = _getTaskDataContract().joinRequestIndex(taskId, currentApplicant);
+
+                _getTaskDataContract().__updateJoinRequestStatus(taskId, idx, ITaskData.UserTask.Rejected);
+
+                _getTaskDataContract().__updateJoinRequestFlags(taskId, idx, false, true);
+
+                _getUsersContract().__addUserBalance(currentApplicant, requests[i].stakeAmount);
+            }
+        }
+
+        _getTaskDataContract().__updateTaskParticipants(taskId, t.creator, applicant);
+
+        _getTaskDataContract().__updateTaskFinancials(taskId, t.value, t.reward, t.creatorStake, request.stakeAmount);
+
+        _getTaskDataContract().__updateTaskFlags(taskId, true, t.isCreatorStakeLocked, t.isRewardClaimed);
+
+        uint256 newDeadline = block.timestamp + (uint256(t.deadlineHours) * 1 hours);
+
+        _getTaskDataContract().__updateTaskDeadline(taskId, newDeadline, t.deadlineHours);
+
+        _getTaskDataContract().__updateTaskStatus(taskId, ITaskData.TaskStatus.InProgres);
+
+        emit JoinRequestEvent(taskId, applicant, "JoinApprovedAndOthersRejected");
+    }
+
     /**
      * @notice Rejects a join request
      * @dev Only callable by task creator, returns stake to applicant
@@ -170,7 +214,7 @@ contract JoinRequestLogic is IJoinRequestLogic {
     function __rejectJoinRequest(uint256 taskId, address _applicant) external override ctcCall {
         // Get request data using O(1) lookup
         ITaskData.JoinRequestData memory request = _getTaskDataContract().__getJoinRequestByUser(taskId, _applicant);
-        
+
         if (!request.isPending) {
             revert JoinRequestErr("NoPendingRequest");
         }

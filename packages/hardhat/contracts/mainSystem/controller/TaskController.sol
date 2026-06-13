@@ -264,6 +264,18 @@ contract TaskController is
         emit ControllerEvent("JoinApproved", taskId, applicant);
     }
 
+    function approveJoinRequestAndRejectOthers(uint256 taskId, address applicant)
+        external
+        override
+        taskExists(taskId)
+        onlyTaskCreator(taskId)
+        nonReentrant
+        whenNotPaused
+    {
+        _getTaskJoinRequestContract().__approveAndRejectOthers(taskId, applicant);
+        emit ControllerEvent("JoinApproved", taskId, applicant);
+    }
+
     /**
      * @notice Rejects a join request
      */

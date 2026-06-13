@@ -29,7 +29,7 @@ export function useTaskCreation() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { address, isConnected } = useAccount();
-    const { actions, form, admin } = useTaskController();
+    const { actions, form, user } = useTaskController();
 
     /**
      * Create a task on-chain and store metadata off-chain
@@ -55,7 +55,7 @@ export function useTaskCreation() {
             }
 
             // Set up smart contract parameters
-            admin.setCreateUser(address);
+            user.setCreateUser(address);
             form.setTitle(scPayload.title);
             form.setGithubUrl(scPayload.githubURL);
             form.setDeadlineHours(scPayload.deadlineHours);

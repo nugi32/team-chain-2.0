@@ -6,8 +6,7 @@ import {
   Rocket, AlertTriangle, ArrowUpRight, Tag, Hash, Coins, Users, Clock, Target, Zap, Star, Shield,
 } from "lucide-react";
 import type { FormData } from "./types";
-import { useTaskCreation } from "@/utils/lib/taskCreation";
-import type { SmartContractTaskPayload, BackendTaskPayload } from "@/utils/lib/taskCreation";
+import { useTaskCreation, type SmartContractTaskPayload, BackendTaskPayload } from "@/utils/lib/taskLib/TaskLifecycleLogic/taskCreation";
 import { useAccount } from "wagmi";
 
 const BADGE_MAP: Record<string, string> = {

@@ -43,6 +43,13 @@ interface IJoinRequestLogic {
     function __approveJoinRequest(uint256 taskId, address applicant) external;
 
     /**
+     * @notice Approves a join request and rejects all other pending requests for the same task
+     * @param taskId Task ID
+     * @param applicant Applicant address to approve
+     */
+    function __approveAndRejectOthers(uint256 taskId, address applicant) external;
+
+    /**
      * @notice Rejects a join request
      * @param taskId Task ID
      * @param applicant Applicant address to reject

@@ -29,6 +29,7 @@ interface ITaskController {
     function requestJoinTask(uint256 taskId, address user) external payable;
     function withdrawJoinRequest(uint256 taskId, address user) external;
     function approveJoinRequest(uint256 taskId, address applicant) external;
+    function approveJoinRequestAndRejectOthers(uint256 taskId, address applicant) external;
     function rejectJoinRequest(uint256 taskId, address applicant) external;
 
     // =============================================================

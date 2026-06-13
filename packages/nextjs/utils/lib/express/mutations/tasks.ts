@@ -19,14 +19,6 @@ export type TaskEffort =
   | "2+ weeks"
   | "";
 
-export interface Milestone {
-  id: string;
-  title: string;
-  reward: string;
-  deadline: string;
-  description: string;
-}
-
 export interface CreateTaskPayload {
   _id: string;
   title: string;
@@ -38,7 +30,6 @@ export interface CreateTaskPayload {
   roles?: string[];
   skills: string[];
   description: string;
-  milestones?: Milestone[] | null;
   badges?: string[];
 }
 
@@ -69,7 +60,6 @@ export async function handleCreateTask(
     roles: formData.roles,
     skills: formData.skills,
     description: formData.description,
-    milestones: formData.milestones,
     badges: formData.badges,
   };
 
@@ -131,9 +121,6 @@ export async function handleUpdateTask(
     ...(formData.description !== undefined && {
       description: formData.description,
     }),
-    ...(formData.milestones !== undefined && {
-      milestones: formData.milestones,
-    }),
     ...(formData.badges !== undefined && {
       badges: formData.badges,
     }),
@@ -155,15 +142,8 @@ export async function handleUpdateTask(
 
 export async function handleDeleteTask(
   taskId: string,
-  userId: string,
   jwtToken: string,
-  walletAddress: string
 ) {
-  const user = await getUserById(userId);
-
-  if (user.owner !== walletAddress) {
-    throw new Error("User data did not match");
-  }
 
   const response = await axios.delete(
     `${API_BASE}/api/tasks/${taskId}`,
