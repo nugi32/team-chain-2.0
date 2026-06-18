@@ -8,6 +8,17 @@ import {
 import type { FormData } from "./types";
 import { useTaskCreation, type SmartContractTaskPayload, BackendTaskPayload } from "@/utils/lib/taskLib/TaskLifecycleLogic/taskCreation";
 import { useAccount } from "wagmi";
+import { notification } from "~~/utils/scaffold-eth";
+import Link from "next/link";
+
+// Simple UUID v4 generator for browser
+function generateUUID(): string {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === "x" ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 const BADGE_MAP: Record<string, string> = {
   "Low Risk": "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -58,8 +69,7 @@ export default function Step4({
    */
   const buildBackendPayload = (): BackendTaskPayload => {
     return {
-      _id: "", // Will be filled by backend
-      title: data.title,
+      contractId: generateUUID(), // Generate unique UUID for this task
       projectName: data.projectName,
       objective: data.objective,
       category: data.category as any, // Category validation happens in form
@@ -68,8 +78,8 @@ export default function Step4({
       roles: data.roles,
       skills: data.skills,
       description: data.description,
-      milestones: data.milestones,
       badges: data.badges,
+      reward: data.reward || "0", // ETH amount as string
     };
   };
 
@@ -78,7 +88,8 @@ export default function Step4({
 
     try {
       if (!address) {
-        throw new Error("Please connect your wallet first.");
+        notification.error("Please connect your wallet to publish the task on-chain.");
+        return;
       }
 
       const scPayload = buildSmartContractPayload();
@@ -121,7 +132,8 @@ export default function Step4({
           <button className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-800 text-xs text-gray-400 hover:text-white hover:border-gray-700 transition-colors">
             View task <ArrowUpRight className="w-3 h-3" />
           </button>
-          <button className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-colors">
+          <button className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-colors"
+            onClick={() => window.location.reload()}>
             Create another
           </button>
         </div>
@@ -236,9 +248,10 @@ export default function Step4({
                 {slots} slot{parseInt(slots) > 1 ? "s" : ""} • {data.category || "Uncategorized"}
               </span>
               <div className="flex gap-1.5">
-                <button className="px-3 py-1.5 rounded-lg border border-gray-700 text-[10px] text-gray-400">
+                <Link className="px-3 py-1.5 rounded-lg border border-gray-700 text-[10px] text-gray-400"
+                  href={`/dashboard/${localStorage.getItem("userId")}`}>
                   View Task
-                </button>
+                </Link>
                 <button className="px-3 py-1.5 rounded-lg bg-indigo-600 text-[10px] font-semibold text-white">
                   Apply
                 </button>
@@ -300,7 +313,7 @@ export default function Step4({
       <button
         type="button"
         onClick={handlePublish}
-        disabled={warnings.length > 0 || publishing || isLoading || !!localError || !!taskError}
+        disabled={warnings.length > 0 || publishing || isLoading}
         className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2"
       >
         {publishing || isLoading ? (

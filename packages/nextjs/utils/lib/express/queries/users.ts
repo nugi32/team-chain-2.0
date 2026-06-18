@@ -31,6 +31,61 @@ export async function getAllUsers() {
     }
 }
 
+export async function getUserByAddress(
+    walletAddress: string
+): Promise<User> {
+    try {
+        if (!walletAddress) {
+            throw new Error("wallet address not found");
+        }
+
+        const users = await getAllUsers();
+
+        const user = users.find(
+            (user) =>
+                user.walletAddress.toLowerCase() === walletAddress.toLowerCase()
+        );
+
+        if (!user) {
+            throw new Error("user not found");
+        }
+
+        return user;
+    } catch (err) {
+        console.error(
+            `error while fetching user by wallet address, error message: ${err}`
+        );
+        throw err;
+    }
+}
+
+export async function getStartedFindUserByAddress(
+    walletAddress: string) {
+    try {
+        if (!walletAddress) {
+            throw new Error("wallet address not found");
+        }
+
+        const users = await getAllUsers();
+
+        const user = users.find(
+            (user) =>
+                user.walletAddress.toLowerCase() === walletAddress.toLowerCase()
+        );
+
+        if (!user) {
+            console.error("user not found");
+        }
+
+        return user; //Type 'User | undefined' is not assignable to type 'User'.Type 'undefined' is not assignable to type 'User'.
+    } catch (err) {
+        console.error(
+            `error while fetching user by wallet address, error message: ${err}`
+        );
+        throw err;
+    }
+}
+
 export async function getUserById(_id: string) {
     try {
         if (!_id) {

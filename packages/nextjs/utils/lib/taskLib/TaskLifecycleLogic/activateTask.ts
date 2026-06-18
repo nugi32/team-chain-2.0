@@ -2,14 +2,13 @@ import { useState } from "react";
 import { useTaskController } from "@/utils/lib/smartContractWrapper/user/TaskController";
 import { useAccount } from "wagmi";
 import { getTaskById } from "@/utils/lib/express/queries/tasks";
-import { useTaskLifecycleLogic } from "@/utils/lib/smartContractWrapper/task/TaskLifecycleLogic";
 import { useTaskData } from "@/utils/lib/smartContractWrapper/user/taskData";
 
 export function useActivateTask() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { address, isConnected } = useAccount();
-    const { actions, task, user, form } = useTaskController();
+    const { actions, task, user, form, data } = useTaskController();
 
     const deleteTask = async (
         expressTaskId: string
@@ -30,12 +29,11 @@ export function useActivateTask() {
                 throw new Error("Task data is not available yet.");
             }
 
-            const { creatorRequiredStake } = useTaskLifecycleLogic({
-                deadlineHours: onchainData.deadlineHours,
-                maximumRevision: onchainData.maxRevision,
-                memberReward: onchainData.reward,
-                address: address as `0x${string}`,
-            });
+            form.setDeadlineHours(onchainData.deadlineHours.toString());
+            form.setMaxRevision(onchainData.maxRevision.toString());
+            form.setRewardWei(onchainData.reward.toString());
+            user.setCreatorStakeCaller(address);
+            const creatorRequiredStake = data.creatorStake();
 
             if (creatorRequiredStake === undefined) {
                 throw new Error("Unable to calculate the required stake for this task.");

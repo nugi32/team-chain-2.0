@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   11155111: {
     AccessControl: {
-      address: "0x97DE3E75EB974600B50e9326ccF19D1a6F3f4637",
+      address: "0x515FF62638d3ee6BfB7aE27Be3fcE6acE33E4bBb",
       abi: [
         {
           anonymous: false,
@@ -361,10 +361,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021767,
+      deployedOnBlock: 11070773,
     },
     AccessControl_Implementation: {
-      address: "0xa063810333BA72982013473135A1ccf1b78598a7",
+      address: "0x3Eb3F84C2E088E10b90066ce6Db29eb82699a967",
       abi: [
         {
           inputs: [
@@ -662,10 +662,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021766,
+      deployedOnBlock: 11070772,
     },
     AccessControl_Proxy: {
-      address: "0x97DE3E75EB974600B50e9326ccF19D1a6F3f4637",
+      address: "0x515FF62638d3ee6BfB7aE27Be3fcE6acE33E4bBb",
       abi: [
         {
           inputs: [
@@ -738,10 +738,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021767,
+      deployedOnBlock: 11070773,
     },
     AddressRegistry: {
-      address: "0xC0BFe9710CBF43e5E9F7A5373E3980A90bAf0b5d",
+      address: "0x4Fa4b931f60BE3606300B9602A63c1705191fB43",
       abi: [
         {
           anonymous: false,
@@ -1318,10 +1318,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021769,
+      deployedOnBlock: 11070775,
     },
     AddressRegistry_Implementation: {
-      address: "0xf2C18707BA00C2492a494096241b51323d5451b1",
+      address: "0xE68A8F6a7E605F4aED8DEd03D0212d1FDD91993f",
       abi: [
         {
           inputs: [
@@ -1842,10 +1842,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021768,
+      deployedOnBlock: 11070774,
     },
     AddressRegistry_Proxy: {
-      address: "0xC0BFe9710CBF43e5E9F7A5373E3980A90bAf0b5d",
+      address: "0x4Fa4b931f60BE3606300B9602A63c1705191fB43",
       abi: [
         {
           inputs: [
@@ -1918,10 +1918,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021769,
+      deployedOnBlock: 11070775,
     },
     CancellationLogic: {
-      address: "0x6bEA0FA8A10d8F2614462138f4B51B790738d222",
+      address: "0x4E08375b124d33747486F9754F919e23eCF85721",
       abi: [
         {
           inputs: [
@@ -2036,10 +2036,4809 @@ const deployedContracts = {
         __triggerDeadline:
           "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
       },
-      deployedOnBlock: 11021780,
+      deployedOnBlock: 11070786,
+    },
+    JoinRequestLogic: {
+      address: "0xD144b0bc092aF37f3570e9B1Ca922Abc60c07c32",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressRegistry",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "JoinRequestErr",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "action",
+              type: "string",
+            },
+          ],
+          name: "JoinRequestEvent",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "applicant",
+              type: "address",
+            },
+          ],
+          name: "__approveAndRejectOthers",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "applicant",
+              type: "address",
+            },
+          ],
+          name: "__approveJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newAddress",
+              type: "address",
+            },
+          ],
+          name: "__changeAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_applicant",
+              type: "address",
+            },
+          ],
+          name: "__rejectJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "__requestJoinTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "__withdrawJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "addressRegistry",
+          outputs: [
+            {
+              internalType: "contract IAddressRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        __approveAndRejectOthers:
+          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __approveJoinRequest:
+          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __changeAddressRegistry:
+          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __rejectJoinRequest:
+          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __requestJoinTask:
+          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __withdrawJoinRequest:
+          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+      },
+      deployedOnBlock: 11070785,
+    },
+    SubmissionLogic: {
+      address: "0xDfdd367fd39d6cB98a9434D382905A48c96C8939",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressRegistry",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "SubmissionErr",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "action",
+              type: "string",
+            },
+          ],
+          name: "SubmissionEvent",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "__approveTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newAddress",
+              type: "address",
+            },
+          ],
+          name: "__changeAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "GithubFixedURL",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "__reSubmitTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "additionalDeadlineHours",
+              type: "uint256",
+            },
+          ],
+          name: "__requestRevision",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "PullRequestURL",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "__requestSubmitTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "addressRegistry",
+          outputs: [
+            {
+              internalType: "contract IAddressRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        __approveTask:
+          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __changeAddressRegistry:
+          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __reSubmitTask:
+          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __requestRevision:
+          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __requestSubmitTask:
+          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+      },
+      deployedOnBlock: 11070784,
+    },
+    System_wallet: {
+      address: "0x28E540331C95b37C19418E12D018a1C14BB40504",
+      abi: [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "previousAdmin",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+          ],
+          name: "AdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "beacon",
+              type: "address",
+            },
+          ],
+          name: "BeaconUpgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+          ],
+          name: "AddressEmptyCode",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "ERC1967InvalidImplementation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ERC1967NonPayable",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "EnforcedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ExpectedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InsufficientFunds",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidInitialization",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotInitializing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+          ],
+          name: "SafeERC20FailedOperation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "UUPSUnauthorizedCallContext",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "slot",
+              type: "bytes32",
+            },
+          ],
+          name: "UUPSUnsupportedProxiableUUID",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ZeroAddress",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "addressUtilsEror",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "version",
+              type: "uint64",
+            },
+          ],
+          name: "Initialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Paused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Unpaused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "eventName",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "param1",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "param2",
+              type: "uint256",
+            },
+          ],
+          name: "walletContractEvent",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "UPGRADE_INTERFACE_VERSION",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newAddressRegistry",
+              type: "address",
+            },
+          ],
+          name: "__changeAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "addressRegistry",
+          outputs: [
+            {
+              internalType: "contract IAddressRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address[]",
+              name: "tokens",
+              type: "address[]",
+            },
+            {
+              internalType: "address[]",
+              name: "tos",
+              type: "address[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "amounts",
+              type: "uint256[]",
+            },
+          ],
+          name: "batchTransferToken",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "ethBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressRegistry",
+              type: "address",
+            },
+          ],
+          name: "initialize",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "pause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "paused",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proxiableUUID",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+          ],
+          name: "tokenBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address payable",
+              name: "_to",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "transfer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "to",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "transferToken",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "unpause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newImplementation",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+          ],
+          name: "upgradeToAndCall",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_logic",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "_data",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "payable",
+          type: "constructor",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070781,
+    },
+    System_wallet_Implementation: {
+      address: "0x0AeB16D5A957bfEd43f51C87409700e5aFf8B385",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+          ],
+          name: "AddressEmptyCode",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "ERC1967InvalidImplementation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ERC1967NonPayable",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "EnforcedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ExpectedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InsufficientFunds",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidInitialization",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotInitializing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+          ],
+          name: "SafeERC20FailedOperation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "UUPSUnauthorizedCallContext",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "slot",
+              type: "bytes32",
+            },
+          ],
+          name: "UUPSUnsupportedProxiableUUID",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ZeroAddress",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "addressUtilsEror",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "version",
+              type: "uint64",
+            },
+          ],
+          name: "Initialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Paused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Unpaused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "eventName",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "param1",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "param2",
+              type: "uint256",
+            },
+          ],
+          name: "walletContractEvent",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          inputs: [],
+          name: "UPGRADE_INTERFACE_VERSION",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newAddressRegistry",
+              type: "address",
+            },
+          ],
+          name: "__changeAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "addressRegistry",
+          outputs: [
+            {
+              internalType: "contract IAddressRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address[]",
+              name: "tokens",
+              type: "address[]",
+            },
+            {
+              internalType: "address[]",
+              name: "tos",
+              type: "address[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "amounts",
+              type: "uint256[]",
+            },
+          ],
+          name: "batchTransferToken",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "ethBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressRegistry",
+              type: "address",
+            },
+          ],
+          name: "initialize",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "pause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "paused",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proxiableUUID",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+          ],
+          name: "tokenBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address payable",
+              name: "_to",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "transfer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "to",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "transferToken",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "unpause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newImplementation",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+          ],
+          name: "upgradeToAndCall",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070780,
+    },
+    System_wallet_Proxy: {
+      address: "0x28E540331C95b37C19418E12D018a1C14BB40504",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_logic",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "_data",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "payable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "previousAdmin",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+          ],
+          name: "AdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "beacon",
+              type: "address",
+            },
+          ],
+          name: "BeaconUpgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070781,
+    },
+    TaskController: {
+      address: "0x67E12dCaA89FA5b9da4D4b2b1120a39140656c58",
+      abi: [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "previousAdmin",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+          ],
+          name: "AdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "beacon",
+              type: "address",
+            },
+          ],
+          name: "BeaconUpgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+          ],
+          name: "AddressEmptyCode",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "ERC1967InvalidImplementation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ERC1967NonPayable",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "EnforcedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ExpectedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidInitialization",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "errName",
+              type: "string",
+            },
+          ],
+          name: "MainContractErr",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotInitializing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "UUPSUnauthorizedCallContext",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "slot",
+              type: "bytes32",
+            },
+          ],
+          name: "UUPSUnsupportedProxiableUUID",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "addressUtilsEror",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "errName",
+              type: "string",
+            },
+          ],
+          name: "systemError",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "eventName",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "ControllerEvent",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "version",
+              type: "uint64",
+            },
+          ],
+          name: "Initialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Paused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Unpaused",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "UPGRADE_INTERFACE_VERSION",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint128",
+              name: "DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "rewardWei",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "Caller",
+              type: "address",
+            },
+          ],
+          name: "___getCreatorStake",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint128",
+              name: "DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "rewardWei",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "Caller",
+              type: "address",
+            },
+          ],
+          name: "___getProjectValue",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newAddress",
+              type: "address",
+            },
+          ],
+          name: "__changeControllerAndModuleAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "activateTask",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "addressRegistry",
+          outputs: [
+            {
+              internalType: "contract IAddressRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "applicant",
+              type: "address",
+            },
+          ],
+          name: "approveJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "applicant",
+              type: "address",
+            },
+          ],
+          name: "approveJoinRequestAndRejectOthers",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "approveTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "cancelByMe",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "closeRegistration",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_Title",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_GithubURL",
+              type: "string",
+            },
+            {
+              internalType: "uint128",
+              name: "_DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "_MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "_rewardAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "createTask",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "deleteTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "getJoinRequestCount",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "getMemberRequiredStake",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_registryAddress",
+              type: "address",
+            },
+          ],
+          name: "initialize",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "openRegistration",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "caller",
+              type: "address",
+            },
+          ],
+          name: "pause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "paused",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proxiableUUID",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "GithubFixedURL",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "reSubmitTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_applicant",
+              type: "address",
+            },
+          ],
+          name: "rejectJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "requestJoinTask",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "additionalDeadlineHours",
+              type: "uint256",
+            },
+          ],
+          name: "requestRevision",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "PullRequestURL",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "requestSubmitTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "triggerDeadline",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "caller",
+              type: "address",
+            },
+          ],
+          name: "unpause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newImplementation",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+          ],
+          name: "upgradeToAndCall",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "withdrawJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "withdrawToSystemWallet",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_logic",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "_data",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "payable",
+          type: "constructor",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070788,
+    },
+    TaskController_Implementation: {
+      address: "0x93C49F5a319c5C0Ff1104E59a69Dd2aed43AC350",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+          ],
+          name: "AddressEmptyCode",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "ERC1967InvalidImplementation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ERC1967NonPayable",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "EnforcedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ExpectedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidInitialization",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "errName",
+              type: "string",
+            },
+          ],
+          name: "MainContractErr",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotInitializing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "UUPSUnauthorizedCallContext",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "slot",
+              type: "bytes32",
+            },
+          ],
+          name: "UUPSUnsupportedProxiableUUID",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "addressUtilsEror",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "errName",
+              type: "string",
+            },
+          ],
+          name: "systemError",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "eventName",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "ControllerEvent",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "version",
+              type: "uint64",
+            },
+          ],
+          name: "Initialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Paused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Unpaused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          inputs: [],
+          name: "UPGRADE_INTERFACE_VERSION",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint128",
+              name: "DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "rewardWei",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "Caller",
+              type: "address",
+            },
+          ],
+          name: "___getCreatorStake",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint128",
+              name: "DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "rewardWei",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "Caller",
+              type: "address",
+            },
+          ],
+          name: "___getProjectValue",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newAddress",
+              type: "address",
+            },
+          ],
+          name: "__changeControllerAndModuleAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "activateTask",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "addressRegistry",
+          outputs: [
+            {
+              internalType: "contract IAddressRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "applicant",
+              type: "address",
+            },
+          ],
+          name: "approveJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "applicant",
+              type: "address",
+            },
+          ],
+          name: "approveJoinRequestAndRejectOthers",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "approveTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "cancelByMe",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "closeRegistration",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_Title",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_GithubURL",
+              type: "string",
+            },
+            {
+              internalType: "uint128",
+              name: "_DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "_MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "_rewardAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "createTask",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "deleteTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "getJoinRequestCount",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "getMemberRequiredStake",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_registryAddress",
+              type: "address",
+            },
+          ],
+          name: "initialize",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "openRegistration",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "caller",
+              type: "address",
+            },
+          ],
+          name: "pause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "paused",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proxiableUUID",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "GithubFixedURL",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "reSubmitTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_applicant",
+              type: "address",
+            },
+          ],
+          name: "rejectJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "requestJoinTask",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "additionalDeadlineHours",
+              type: "uint256",
+            },
+          ],
+          name: "requestRevision",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "PullRequestURL",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "Note",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "requestSubmitTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "triggerDeadline",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "caller",
+              type: "address",
+            },
+          ],
+          name: "unpause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newImplementation",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+          ],
+          name: "upgradeToAndCall",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "withdrawJoinRequest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "withdrawToSystemWallet",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070787,
+    },
+    TaskController_Proxy: {
+      address: "0x67E12dCaA89FA5b9da4D4b2b1120a39140656c58",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_logic",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "_data",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "payable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "previousAdmin",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+          ],
+          name: "AdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "beacon",
+              type: "address",
+            },
+          ],
+          name: "BeaconUpgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070788,
+    },
+    TaskLifecycleLogic: {
+      address: "0x9FAE23d653d5333823C9DBaa95B0f09B55b5D4Ac",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressRegistry",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "TaskLifecycleErr",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "action",
+              type: "string",
+            },
+          ],
+          name: "TaskLifecycleEvent",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint128",
+              name: "DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "rewardWei",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "Caller",
+              type: "address",
+            },
+          ],
+          name: "___getCreatorStake",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint128",
+              name: "DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "rewardWei",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "Caller",
+              type: "address",
+            },
+          ],
+          name: "___getProjectValue",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "__activateTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newAddress",
+              type: "address",
+            },
+          ],
+          name: "__changeAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "__closeRegistration",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_Title",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_GithubURL",
+              type: "string",
+            },
+            {
+              internalType: "uint128",
+              name: "_DeadlineHours",
+              type: "uint128",
+            },
+            {
+              internalType: "uint128",
+              name: "_MaximumRevision",
+              type: "uint128",
+            },
+            {
+              internalType: "uint256",
+              name: "_rewardAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__createTask",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_taskId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__deleteTask",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "taskId",
+              type: "uint256",
+            },
+          ],
+          name: "__openRegistration",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "addressRegistry",
+          outputs: [
+            {
+              internalType: "contract IAddressRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        ___getCreatorStake:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        ___getProjectValue:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __activateTask:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __changeAddressRegistry:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __closeRegistration:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __createTask:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __deleteTask:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __openRegistration:
+          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+      },
+      deployedOnBlock: 11070783,
+    },
+    UsersContract: {
+      address: "0x97Bd3879608E204BE92A4ee72Fa230fd3780EdFe",
+      abi: [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "previousAdmin",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+          ],
+          name: "AdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "beacon",
+              type: "address",
+            },
+          ],
+          name: "BeaconUpgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+          ],
+          name: "AddressEmptyCode",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "ERC1967InvalidImplementation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ERC1967NonPayable",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "EnforcedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ExpectedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidInitialization",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotInitializing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "UUPSUnauthorizedCallContext",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "slot",
+              type: "bytes32",
+            },
+          ],
+          name: "UUPSUnsupportedProxiableUUID",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "addressUtilsEror",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "errName",
+              type: "string",
+            },
+          ],
+          name: "userError",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "version",
+              type: "uint64",
+            },
+          ],
+          name: "Initialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Paused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Unpaused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "eventName",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "userAddress",
+              type: "address",
+            },
+          ],
+          name: "userEvent",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_githubURL",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "Register",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "UPGRADE_INTERFACE_VERSION",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "Unregister",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "Users",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalTasksCreated",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalTasksCompleted",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalTasksFailed",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "reputation",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isRegistered",
+              type: "bool",
+            },
+            {
+              internalType: "bool",
+              name: "exists",
+              type: "bool",
+            },
+            {
+              internalType: "string",
+              name: "GitProfile",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "__addUserBalance",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__cancelByMeRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newAddressRegistry",
+              type: "address",
+            },
+          ],
+          name: "__changeAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__deadlineHitRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getTotalTasksCompleted",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getTotalTasksCreated",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getTotalTasksFailed",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getUserBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getUserGitProfile",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getUserReputation",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__isRegistered",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__penaltyIsBiggerThanReputation",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__revisionRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "__takeUserBalance",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__taskAcceptRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__taskCompleteCounter",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__taskCreateCounter",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__taskFailCounter",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "depositUserFund",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressRegistry",
+              type: "address",
+            },
+          ],
+          name: "initialize",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "pause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "paused",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proxiableUUID",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+            {
+              internalType: "address payable",
+              name: "_wallet",
+              type: "address",
+            },
+          ],
+          name: "transferFeeToWallet",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "unpause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newImplementation",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+          ],
+          name: "upgradeToAndCall",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          name: "usedGitURL",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "withdrawAllUserFund",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "withdrawUserFund",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_logic",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "_data",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "payable",
+          type: "constructor",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070779,
+    },
+    UsersContract_Implementation: {
+      address: "0x4C4a1Dea1B04E8245edDBacb737Fb31dC04309a6",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+          ],
+          name: "AddressEmptyCode",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "ERC1967InvalidImplementation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ERC1967NonPayable",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "EnforcedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ExpectedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidInitialization",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotInitializing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "UUPSUnauthorizedCallContext",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "slot",
+              type: "bytes32",
+            },
+          ],
+          name: "UUPSUnsupportedProxiableUUID",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+          ],
+          name: "addressUtilsEror",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "errName",
+              type: "string",
+            },
+          ],
+          name: "userError",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "version",
+              type: "uint64",
+            },
+          ],
+          name: "Initialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Paused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "Unpaused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "eventName",
+              type: "string",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "userAddress",
+              type: "address",
+            },
+          ],
+          name: "userEvent",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_githubURL",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "Register",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "UPGRADE_INTERFACE_VERSION",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "Unregister",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "Users",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalTasksCreated",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalTasksCompleted",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalTasksFailed",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "reputation",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "isRegistered",
+              type: "bool",
+            },
+            {
+              internalType: "bool",
+              name: "exists",
+              type: "bool",
+            },
+            {
+              internalType: "string",
+              name: "GitProfile",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "__addUserBalance",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__cancelByMeRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newAddressRegistry",
+              type: "address",
+            },
+          ],
+          name: "__changeAddressRegistry",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__deadlineHitRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getTotalTasksCompleted",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getTotalTasksCreated",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getTotalTasksFailed",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getUserBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getUserGitProfile",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__getUserReputation",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__isRegistered",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__penaltyIsBiggerThanReputation",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__revisionRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "__takeUserBalance",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__taskAcceptRep",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__taskCompleteCounter",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "__taskCreateCounter",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_creator",
+              type: "address",
+            },
+          ],
+          name: "__taskFailCounter",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "depositUserFund",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressRegistry",
+              type: "address",
+            },
+          ],
+          name: "initialize",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "pause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "paused",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proxiableUUID",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+            {
+              internalType: "address payable",
+              name: "_wallet",
+              type: "address",
+            },
+          ],
+          name: "transferFeeToWallet",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "unpause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newImplementation",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+          ],
+          name: "upgradeToAndCall",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          name: "usedGitURL",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "withdrawAllUserFund",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "withdrawUserFund",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070778,
+    },
+    UsersContract_Proxy: {
+      address: "0x97Bd3879608E204BE92A4ee72Fa230fd3780EdFe",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_logic",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "_data",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "payable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "previousAdmin",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "newAdmin",
+              type: "address",
+            },
+          ],
+          name: "AdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "beacon",
+              type: "address",
+            },
+          ],
+          name: "BeaconUpgraded",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          stateMutability: "payable",
+          type: "fallback",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11070779,
     },
     dataContract: {
-      address: "0x47a7d4eada5AeE676AaEea84CC5fFe5D63fB49E9",
+      address: "0x30b8fC1842F46C50b127fF00897B62682e1b3858",
       abi: [
         {
           inputs: [
@@ -3148,2856 +7947,10 @@ const deployedContracts = {
       inheritedFunctions: {
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
       },
-      deployedOnBlock: 11021776,
-    },
-    JoinRequestLogic: {
-      address: "0xb54f7ae3B985E3DCB18AD41cee041b3be2Ca87ff",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addressRegistry",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "JoinRequestErr",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "action",
-              type: "string",
-            },
-          ],
-          name: "JoinRequestEvent",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "applicant",
-              type: "address",
-            },
-          ],
-          name: "__approveJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newAddress",
-              type: "address",
-            },
-          ],
-          name: "__changeAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "_applicant",
-              type: "address",
-            },
-          ],
-          name: "__rejectJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "__requestJoinTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "__withdrawJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addressRegistry",
-          outputs: [
-            {
-              internalType: "contract IAddressRegistry",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        __approveJoinRequest:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __changeAddressRegistry:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __rejectJoinRequest:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __requestJoinTask:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __withdrawJoinRequest:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-      },
-      deployedOnBlock: 11021779,
-    },
-    SubmissionLogic: {
-      address: "0x54c07F60cF316dB08A49C40EBfF8367eCf9fde57",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addressRegistry",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "SubmissionErr",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "action",
-              type: "string",
-            },
-          ],
-          name: "SubmissionEvent",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "__approveTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newAddress",
-              type: "address",
-            },
-          ],
-          name: "__changeAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "GithubFixedURL",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "__reSubmitTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "additionalDeadlineHours",
-              type: "uint256",
-            },
-          ],
-          name: "__requestRevision",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "PullRequestURL",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "__requestSubmitTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addressRegistry",
-          outputs: [
-            {
-              internalType: "contract IAddressRegistry",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        __approveTask:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __changeAddressRegistry:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __reSubmitTask:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __requestRevision:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __requestSubmitTask:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-      },
-      deployedOnBlock: 11021778,
-    },
-    System_wallet: {
-      address: "0x2868021c7DCD86cb1eD77b5D71D1628224a5062d",
-      abi: [
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "previousAdmin",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "newAdmin",
-              type: "address",
-            },
-          ],
-          name: "AdminChanged",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "beacon",
-              type: "address",
-            },
-          ],
-          name: "BeaconUpgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "target",
-              type: "address",
-            },
-          ],
-          name: "AddressEmptyCode",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "ERC1967InvalidImplementation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ERC1967NonPayable",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "EnforcedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ExpectedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "FailedCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InsufficientFunds",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidInitialization",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "NotInitializing",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "token",
-              type: "address",
-            },
-          ],
-          name: "SafeERC20FailedOperation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "UUPSUnauthorizedCallContext",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "slot",
-              type: "bytes32",
-            },
-          ],
-          name: "UUPSUnsupportedProxiableUUID",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ZeroAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "addressUtilsEror",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint64",
-              name: "version",
-              type: "uint64",
-            },
-          ],
-          name: "Initialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Paused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Unpaused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "eventName",
-              type: "string",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "param1",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "param2",
-              type: "uint256",
-            },
-          ],
-          name: "walletContractEvent",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "UPGRADE_INTERFACE_VERSION",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newAddressRegistry",
-              type: "address",
-            },
-          ],
-          name: "__changeAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addressRegistry",
-          outputs: [
-            {
-              internalType: "contract IAddressRegistry",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address[]",
-              name: "tokens",
-              type: "address[]",
-            },
-            {
-              internalType: "address[]",
-              name: "tos",
-              type: "address[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "amounts",
-              type: "uint256[]",
-            },
-          ],
-          name: "batchTransferToken",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "ethBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addressRegistry",
-              type: "address",
-            },
-          ],
-          name: "initialize",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "pause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "paused",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "proxiableUUID",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "token",
-              type: "address",
-            },
-          ],
-          name: "tokenBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address payable",
-              name: "_to",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "transfer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "token",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "to",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "transferToken",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "unpause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newImplementation",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "data",
-              type: "bytes",
-            },
-          ],
-          name: "upgradeToAndCall",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_logic",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_data",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "payable",
-          type: "constructor",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021775,
-    },
-    System_wallet_Implementation: {
-      address: "0x64Cf2100ace6C472671072001B0087C1300b239A",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "target",
-              type: "address",
-            },
-          ],
-          name: "AddressEmptyCode",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "ERC1967InvalidImplementation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ERC1967NonPayable",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "EnforcedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ExpectedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "FailedCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InsufficientFunds",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidInitialization",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "NotInitializing",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "token",
-              type: "address",
-            },
-          ],
-          name: "SafeERC20FailedOperation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "UUPSUnauthorizedCallContext",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "slot",
-              type: "bytes32",
-            },
-          ],
-          name: "UUPSUnsupportedProxiableUUID",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ZeroAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "addressUtilsEror",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint64",
-              name: "version",
-              type: "uint64",
-            },
-          ],
-          name: "Initialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Paused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Unpaused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "eventName",
-              type: "string",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "param1",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "param2",
-              type: "uint256",
-            },
-          ],
-          name: "walletContractEvent",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          inputs: [],
-          name: "UPGRADE_INTERFACE_VERSION",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newAddressRegistry",
-              type: "address",
-            },
-          ],
-          name: "__changeAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addressRegistry",
-          outputs: [
-            {
-              internalType: "contract IAddressRegistry",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address[]",
-              name: "tokens",
-              type: "address[]",
-            },
-            {
-              internalType: "address[]",
-              name: "tos",
-              type: "address[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "amounts",
-              type: "uint256[]",
-            },
-          ],
-          name: "batchTransferToken",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "ethBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addressRegistry",
-              type: "address",
-            },
-          ],
-          name: "initialize",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "pause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "paused",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "proxiableUUID",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "token",
-              type: "address",
-            },
-          ],
-          name: "tokenBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address payable",
-              name: "_to",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "transfer",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "token",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "to",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          name: "transferToken",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "unpause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newImplementation",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "data",
-              type: "bytes",
-            },
-          ],
-          name: "upgradeToAndCall",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021774,
-    },
-    System_wallet_Proxy: {
-      address: "0x2868021c7DCD86cb1eD77b5D71D1628224a5062d",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_logic",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_data",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "payable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "previousAdmin",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "newAdmin",
-              type: "address",
-            },
-          ],
-          name: "AdminChanged",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "beacon",
-              type: "address",
-            },
-          ],
-          name: "BeaconUpgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021775,
-    },
-    TaskController: {
-      address: "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
-      abi: [
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "previousAdmin",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "newAdmin",
-              type: "address",
-            },
-          ],
-          name: "AdminChanged",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "beacon",
-              type: "address",
-            },
-          ],
-          name: "BeaconUpgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "target",
-              type: "address",
-            },
-          ],
-          name: "AddressEmptyCode",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "ERC1967InvalidImplementation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ERC1967NonPayable",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "EnforcedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ExpectedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "FailedCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidInitialization",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "errName",
-              type: "string",
-            },
-          ],
-          name: "MainContractErr",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "NotInitializing",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "UUPSUnauthorizedCallContext",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "slot",
-              type: "bytes32",
-            },
-          ],
-          name: "UUPSUnsupportedProxiableUUID",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "addressUtilsEror",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "errName",
-              type: "string",
-            },
-          ],
-          name: "systemError",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "eventName",
-              type: "string",
-            },
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "ControllerEvent",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint64",
-              name: "version",
-              type: "uint64",
-            },
-          ],
-          name: "Initialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Paused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Unpaused",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "UPGRADE_INTERFACE_VERSION",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint128",
-              name: "DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "uint256",
-              name: "rewardWei",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "Caller",
-              type: "address",
-            },
-          ],
-          name: "___getCreatorStake",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint128",
-              name: "DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "uint256",
-              name: "rewardWei",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "Caller",
-              type: "address",
-            },
-          ],
-          name: "___getProjectValue",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newAddress",
-              type: "address",
-            },
-          ],
-          name: "__changeControllerAndModuleAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "activateTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addressRegistry",
-          outputs: [
-            {
-              internalType: "contract IAddressRegistry",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "applicant",
-              type: "address",
-            },
-          ],
-          name: "approveJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "approveTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "cancelByMe",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "closeRegistration",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_Title",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_GithubURL",
-              type: "string",
-            },
-            {
-              internalType: "uint128",
-              name: "_DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "_MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "createTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "deleteTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "getJoinRequestCount",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "getMemberRequiredStake",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_registryAddress",
-              type: "address",
-            },
-          ],
-          name: "initialize",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "openRegistration",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "caller",
-              type: "address",
-            },
-          ],
-          name: "pause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "paused",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "proxiableUUID",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "GithubFixedURL",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "reSubmitTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "_applicant",
-              type: "address",
-            },
-          ],
-          name: "rejectJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "requestJoinTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "additionalDeadlineHours",
-              type: "uint256",
-            },
-          ],
-          name: "requestRevision",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "PullRequestURL",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "requestSubmitTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "triggerDeadline",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "caller",
-              type: "address",
-            },
-          ],
-          name: "unpause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newImplementation",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "data",
-              type: "bytes",
-            },
-          ],
-          name: "upgradeToAndCall",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "withdrawJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "withdrawToSystemWallet",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_logic",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_data",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "payable",
-          type: "constructor",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021782,
-    },
-    TaskController_Implementation: {
-      address: "0x237F76e50eF2DAEBaAE79F014F107DB85f78CAFB",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "target",
-              type: "address",
-            },
-          ],
-          name: "AddressEmptyCode",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "ERC1967InvalidImplementation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ERC1967NonPayable",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "EnforcedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ExpectedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "FailedCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidInitialization",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "errName",
-              type: "string",
-            },
-          ],
-          name: "MainContractErr",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "NotInitializing",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "UUPSUnauthorizedCallContext",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "slot",
-              type: "bytes32",
-            },
-          ],
-          name: "UUPSUnsupportedProxiableUUID",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "addressUtilsEror",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "errName",
-              type: "string",
-            },
-          ],
-          name: "systemError",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "eventName",
-              type: "string",
-            },
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "ControllerEvent",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint64",
-              name: "version",
-              type: "uint64",
-            },
-          ],
-          name: "Initialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Paused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Unpaused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          inputs: [],
-          name: "UPGRADE_INTERFACE_VERSION",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint128",
-              name: "DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "uint256",
-              name: "rewardWei",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "Caller",
-              type: "address",
-            },
-          ],
-          name: "___getCreatorStake",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint128",
-              name: "DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "uint256",
-              name: "rewardWei",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "Caller",
-              type: "address",
-            },
-          ],
-          name: "___getProjectValue",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newAddress",
-              type: "address",
-            },
-          ],
-          name: "__changeControllerAndModuleAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "activateTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addressRegistry",
-          outputs: [
-            {
-              internalType: "contract IAddressRegistry",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "applicant",
-              type: "address",
-            },
-          ],
-          name: "approveJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "approveTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "cancelByMe",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "closeRegistration",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_Title",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_GithubURL",
-              type: "string",
-            },
-            {
-              internalType: "uint128",
-              name: "_DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "_MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "createTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "deleteTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "getJoinRequestCount",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "getMemberRequiredStake",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_registryAddress",
-              type: "address",
-            },
-          ],
-          name: "initialize",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "openRegistration",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "caller",
-              type: "address",
-            },
-          ],
-          name: "pause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "paused",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "proxiableUUID",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "GithubFixedURL",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "reSubmitTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "_applicant",
-              type: "address",
-            },
-          ],
-          name: "rejectJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "requestJoinTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "additionalDeadlineHours",
-              type: "uint256",
-            },
-          ],
-          name: "requestRevision",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "PullRequestURL",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "Note",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "requestSubmitTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "triggerDeadline",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "caller",
-              type: "address",
-            },
-          ],
-          name: "unpause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newImplementation",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "data",
-              type: "bytes",
-            },
-          ],
-          name: "upgradeToAndCall",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "withdrawJoinRequest",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "withdrawToSystemWallet",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021781,
-    },
-    TaskController_Proxy: {
-      address: "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_logic",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_data",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "payable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "previousAdmin",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "newAdmin",
-              type: "address",
-            },
-          ],
-          name: "AdminChanged",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "beacon",
-              type: "address",
-            },
-          ],
-          name: "BeaconUpgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021782,
+      deployedOnBlock: 11070782,
     },
     taskData: {
-      address: "0xDC3bF2CEF81C24df12C491bFF647104bC7e5D182",
+      address: "0x5c174eba8F425E02Ab604C091518Ab6DBe018c0f",
       abi: [
         {
           anonymous: false,
@@ -7693,10 +9646,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021771,
+      deployedOnBlock: 11070777,
     },
     taskData_Implementation: {
-      address: "0x8081b7bCE3077082FcB5a8eD08E19D8707858c96",
+      address: "0x4c1C39139Dd2d8Af716ecd1FA5a90EEBEe47ce91",
       abi: [
         {
           inputs: [
@@ -9344,10 +11297,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021770,
+      deployedOnBlock: 11070776,
     },
     taskData_Proxy: {
-      address: "0xDC3bF2CEF81C24df12C491bFF647104bC7e5D182",
+      address: "0x5c174eba8F425E02Ab604C091518Ab6DBe018c0f",
       abi: [
         {
           inputs: [
@@ -9420,1823 +11373,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11021771,
-    },
-    TaskLifecycleLogic: {
-      address: "0xDEFd9cC9Cff6f14a25300A837D506929f17990A8",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addressRegistry",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "TaskLifecycleErr",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "action",
-              type: "string",
-            },
-          ],
-          name: "TaskLifecycleEvent",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint128",
-              name: "DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "uint256",
-              name: "rewardWei",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "Caller",
-              type: "address",
-            },
-          ],
-          name: "___getCreatorStake",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint128",
-              name: "DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "uint256",
-              name: "rewardWei",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "Caller",
-              type: "address",
-            },
-          ],
-          name: "___getProjectValue",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-          ],
-          name: "__activateTask",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newAddress",
-              type: "address",
-            },
-          ],
-          name: "__changeAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "__closeRegistration",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_Title",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_GithubURL",
-              type: "string",
-            },
-            {
-              internalType: "uint128",
-              name: "_DeadlineHours",
-              type: "uint128",
-            },
-            {
-              internalType: "uint128",
-              name: "_MaximumRevision",
-              type: "uint128",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__createTask",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_taskId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__deleteTask",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "taskId",
-              type: "uint256",
-            },
-          ],
-          name: "__openRegistration",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addressRegistry",
-          outputs: [
-            {
-              internalType: "contract IAddressRegistry",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        ___getCreatorStake:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        ___getProjectValue:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __activateTask:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __changeAddressRegistry:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __closeRegistration:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __createTask:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __deleteTask:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __openRegistration:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-      },
-      deployedOnBlock: 11021777,
-    },
-    UsersContract: {
-      address: "0x27789f30Da57bB4209249487dF77FD154EDE1f48",
-      abi: [
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "previousAdmin",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "newAdmin",
-              type: "address",
-            },
-          ],
-          name: "AdminChanged",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "beacon",
-              type: "address",
-            },
-          ],
-          name: "BeaconUpgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "target",
-              type: "address",
-            },
-          ],
-          name: "AddressEmptyCode",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "ERC1967InvalidImplementation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ERC1967NonPayable",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "EnforcedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ExpectedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "FailedCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidInitialization",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "NotInitializing",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "UUPSUnauthorizedCallContext",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "slot",
-              type: "bytes32",
-            },
-          ],
-          name: "UUPSUnsupportedProxiableUUID",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "addressUtilsEror",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "errName",
-              type: "string",
-            },
-          ],
-          name: "userError",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint64",
-              name: "version",
-              type: "uint64",
-            },
-          ],
-          name: "Initialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Paused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Unpaused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "eventName",
-              type: "string",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "userAddress",
-              type: "address",
-            },
-          ],
-          name: "userEvent",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_githubURL",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "Register",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "UPGRADE_INTERFACE_VERSION",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "Unregister",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "Users",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalTasksCreated",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalTasksCompleted",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalTasksFailed",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "reputation",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isRegistered",
-              type: "bool",
-            },
-            {
-              internalType: "bool",
-              name: "exists",
-              type: "bool",
-            },
-            {
-              internalType: "string",
-              name: "GitProfile",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "__addUserBalance",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__cancelByMeRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newAddressRegistry",
-              type: "address",
-            },
-          ],
-          name: "__changeAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__deadlineHitRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getTotalTasksCompleted",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getTotalTasksCreated",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getTotalTasksFailed",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getUserBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getUserGitProfile",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getUserReputation",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__isRegistered",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__penaltyIsBiggerThanReputation",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__revisionRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "__takeUserBalance",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__taskAcceptRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__taskCompleteCounter",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__taskCreateCounter",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__taskFailCounter",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addressRegistry",
-              type: "address",
-            },
-          ],
-          name: "initialize",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "pause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "paused",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "proxiableUUID",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "unpause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newImplementation",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "data",
-              type: "bytes",
-            },
-          ],
-          name: "upgradeToAndCall",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          name: "usedGitURL",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "withdrawAllUserFund",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "withdrawUserFund",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_logic",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_data",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "payable",
-          type: "constructor",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021773,
-    },
-    UsersContract_Implementation: {
-      address: "0xBBcdd2e55F14470470A683178d156497D4071D74",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "target",
-              type: "address",
-            },
-          ],
-          name: "AddressEmptyCode",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "ERC1967InvalidImplementation",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ERC1967NonPayable",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "EnforcedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ExpectedPause",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "FailedCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidInitialization",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "NotInitializing",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ReentrancyGuardReentrantCall",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "UUPSUnauthorizedCallContext",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "slot",
-              type: "bytes32",
-            },
-          ],
-          name: "UUPSUnsupportedProxiableUUID",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "message",
-              type: "string",
-            },
-          ],
-          name: "addressUtilsEror",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "errName",
-              type: "string",
-            },
-          ],
-          name: "userError",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint64",
-              name: "version",
-              type: "uint64",
-            },
-          ],
-          name: "Initialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Paused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "Unpaused",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string",
-              name: "eventName",
-              type: "string",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "userAddress",
-              type: "address",
-            },
-          ],
-          name: "userEvent",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_githubURL",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "Register",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "UPGRADE_INTERFACE_VERSION",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "Unregister",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "Users",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalTasksCreated",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalTasksCompleted",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalTasksFailed",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "reputation",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isRegistered",
-              type: "bool",
-            },
-            {
-              internalType: "bool",
-              name: "exists",
-              type: "bool",
-            },
-            {
-              internalType: "string",
-              name: "GitProfile",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "__addUserBalance",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__cancelByMeRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newAddressRegistry",
-              type: "address",
-            },
-          ],
-          name: "__changeAddressRegistry",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__deadlineHitRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getTotalTasksCompleted",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getTotalTasksCreated",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getTotalTasksFailed",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getUserBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getUserGitProfile",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__getUserReputation",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__isRegistered",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__penaltyIsBiggerThanReputation",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__revisionRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "__takeUserBalance",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__taskAcceptRep",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__taskCompleteCounter",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "__taskCreateCounter",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_creator",
-              type: "address",
-            },
-          ],
-          name: "__taskFailCounter",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_addressRegistry",
-              type: "address",
-            },
-          ],
-          name: "initialize",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "pause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "paused",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "proxiableUUID",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "unpause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "newImplementation",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "data",
-              type: "bytes",
-            },
-          ],
-          name: "upgradeToAndCall",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          name: "usedGitURL",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "withdrawAllUserFund",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "withdrawUserFund",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021772,
-    },
-    UsersContract_Proxy: {
-      address: "0x27789f30Da57bB4209249487dF77FD154EDE1f48",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_logic",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_data",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "payable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "previousAdmin",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "newAdmin",
-              type: "address",
-            },
-          ],
-          name: "AdminChanged",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "beacon",
-              type: "address",
-            },
-          ],
-          name: "BeaconUpgraded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "implementation",
-              type: "address",
-            },
-          ],
-          name: "Upgraded",
-          type: "event",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11021773,
+      deployedOnBlock: 11070777,
     },
   },
 } as const;

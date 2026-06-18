@@ -190,10 +190,17 @@ export const useTaskController = () => {
 
     const handleCreateTask = async () => {
         try {
+            // IMPORTANT: Always pass connectedAddress to ensure msg.sender matches _user parameter
+            // The contract validates: if (msg.sender != _user) revert systemError("CallerMustBeUser");
+            const userAddress = connectedAddress;
+            if (!userAddress) {
+                throw new Error("User not connected");
+            }
+
             await writeContractAsync(
                 {
                     functionName: "createTask",
-                    args: [title, githubUrl, deadlineHours, maxRevision, createUser || connectedAddress],
+                    args: [title, githubUrl, deadlineHours, maxRevision, parseEther(value), userAddress],
                     value: parseEther(value),
                 },
                 {
@@ -202,6 +209,7 @@ export const useTaskController = () => {
                     },
                 }
             );
+            // Task ID will be available from contract data after transaction confirmation
         } catch (e) {
             console.error("Error creating task", e);
             throw e;

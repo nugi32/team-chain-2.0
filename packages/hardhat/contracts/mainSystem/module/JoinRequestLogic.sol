@@ -53,8 +53,9 @@ contract JoinRequestLogic is IJoinRequestLogic {
     /**
      * @notice Requests to join a task with stake
      * @dev Validates task status and user eligibility
+     * @dev SECURITY FIX C-1: ETH is now pre-deposited in UsersContract, don't expect msg.value
      */
-    function __requestJoinTask(uint256 taskId, address user) external payable override ctcCall {
+    function __requestJoinTask(uint256 taskId, address user) external override ctcCall {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
 
         if (t.status != ITaskData.TaskStatus.OpenRegistration) {
@@ -73,23 +74,14 @@ contract JoinRequestLogic is IJoinRequestLogic {
             revert JoinRequestErr("AlreadyRequested");
         }
 
+        // SECURITY FIX C-1: Check user balance (which now includes deposited ETH)
         uint256 userBalance = _getUsersContract().__getUserBalance(user);
-        uint256 fromBalance = userBalance >= requiredStake ? requiredStake : userBalance;
-        uint256 remaining = requiredStake - fromBalance;
-
-        if (msg.value < remaining) {
+        if (userBalance < requiredStake) {
             revert JoinRequestErr("InsufficientStake");
         }
 
-        // Deduct from internal balance
-        if (fromBalance > 0) {
-            _getUsersContract().__takeUserBalance(user, fromBalance);
-        }
-
-        // Refund excess ETH
-        if (msg.value > remaining) {
-            payable(msg.sender).transfer(msg.value - remaining);
-        }
+        // Deduct stake from user's balance (ETH is now in UsersContract vault)
+        _getUsersContract().__takeUserBalance(user, requiredStake);
 
         ITaskData.JoinRequestData memory newRequest = ITaskData.JoinRequestData({
             applicant: user,
@@ -134,6 +126,11 @@ contract JoinRequestLogic is IJoinRequestLogic {
     function __approveJoinRequest(uint256 taskId, address applicant) external override ctcCall {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
 
+        // SECURITY FIX H-6: Ensure task is still in OpenRegistration status
+        if (t.status != ITaskData.TaskStatus.OpenRegistration) {
+            revert JoinRequestErr("InvalidStatus");
+        }
+
         // Get request data using O(1) lookup
         ITaskData.JoinRequestData memory request = _getTaskDataContract().__getJoinRequestByUser(taskId, applicant);
 
@@ -163,6 +160,11 @@ contract JoinRequestLogic is IJoinRequestLogic {
 
     function __approveAndRejectOthers(uint256 taskId, address applicant) external ctcCall {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
+
+        // SECURITY FIX NEW-M-1: Add status check to prevent overwriting approved member
+        if (t.status != ITaskData.TaskStatus.OpenRegistration) {
+            revert JoinRequestErr("InvalidStatus");
+        }
 
         ITaskData.JoinRequestData memory request = _getTaskDataContract().__getJoinRequestByUser(taskId, applicant);
 

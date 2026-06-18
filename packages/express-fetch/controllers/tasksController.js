@@ -1,5 +1,4 @@
 import { createTaskSchema } from "../models/tasks.js";
-import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -85,8 +84,9 @@ export const createTask = async (req, res) => {
     const stakeAmount = (rewardAmount * 0.1).toFixed(6);
 
     // Build task data with all required fields
+    // Use contractId from frontend as the unique task identifier
     const taskData = {
-      id: uuidv4(),
+      id: value.contractId,
       ...value,
       stakeRequired: stakeAmount.toString(),
       owner: req.user.address.toLowerCase(),

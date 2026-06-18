@@ -15,6 +15,7 @@ interface ITaskController {
         string memory _GithubURL,
         uint128 _DeadlineHours,
         uint128 _MaximumRevision,
+        uint256 _rewardAmount,
         address _user
     ) external payable;
 

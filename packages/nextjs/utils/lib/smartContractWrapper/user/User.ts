@@ -19,6 +19,9 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const [newRegistryAddress, setNewRegistryAddress] = useState("");
 
+  const [depositUser, setDepositUser] = useState("");
+  const [depositAmount, setDepositAmount] = useState<bigint>(0n);
+
   const gitHash = githubUrl
     ? keccak256(stringToBytes(githubUrl))
     : undefined;
@@ -99,6 +102,19 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       });
     } catch (e) {
       console.error("Error unregistering user", e);
+      throw e;
+    }
+  };
+
+  const handleDeposit = async () => {
+    try {
+      await writeContractAsync({
+        functionName: "deposit",
+        args: [depositUser || connectedAddress],
+        value: depositAmount,
+      });
+    } catch (e) {
+      console.error("Error withdrawing all funds", e);
       throw e;
     }
   };
@@ -209,6 +225,9 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
       newRegistryAddress,
       setNewRegistryAddress,
+
+      setDepositUser,
+      setDepositAmount
     },
 
     actions: {
@@ -219,6 +238,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       handleChangeAddressRegistry,
       handlePause,
       handleUnpause,
+      handleDeposit,
     },
   };
 };

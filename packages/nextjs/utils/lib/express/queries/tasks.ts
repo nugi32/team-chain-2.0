@@ -21,7 +21,34 @@ export async function getAllTasks() {
         const { data } = await axios.get<Task[]>(`${BASE_URL}/api/tasks`);
         return data;
     } catch (err) {
-        console.error(`error while fetch all user data, error message : ${err}`);
+        console.error(`error while fetch all task data, error message : ${err}`);
+        throw err;
+    }
+}
+
+export async function getTaskBySmartContractId(
+    _id: string) {
+    try {
+        if (!_id) {
+            throw new Error("task ID not found");
+        }
+
+        const tasks = await getAllTasks();
+
+        const task = tasks.find(
+            (task) =>
+                task._id === _id
+        );
+
+        if (!task) {
+            console.error("task not found");
+        }
+
+        return task; //Type 'Task | undefined' is not assignable to type 'Task'.Type 'undefined' is not assignable to type 'Task'.
+    } catch (err) {
+        console.error(
+            `error while fetching task by ID, error message: ${err}`
+        );
         throw err;
     }
 }
@@ -35,7 +62,7 @@ export async function getTaskById(_id: string) {
         const { data } = await axios.get<Task>(`${BASE_URL}/api/tasks/${_id}`);
         return data;
     } catch (err) {
-        console.error(`error while fetch all user data, error message : ${err}`);
+        console.error(`error while fetch all task data, error message : ${err}`);
         throw err;
     }
 }

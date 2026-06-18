@@ -133,17 +133,9 @@ contract CancellationLogic is ICancellationLogic {
         _getTaskDataContract().__updateTaskStatus(taskId, ITaskData.TaskStatus.Cancelled);
 
         // Apply reputation penalties
+        // SECURITY FIX C-3: Remove unnecessary __penaltyIsBiggerThanReputation guards
+        // Safe subtraction is now handled in __deadlineHitRep
         if (_getUsersContract().__isRegistered(t.member) && _getUsersContract().__isRegistered(t.creator)) {
-            uint256 memberRep = _getUsersContract().__getUserReputation(t.member);
-            uint256 creatorRep = _getUsersContract().__getUserReputation(t.creator);
-
-            if (creatorRep < _getDataContract().__getDeadlineHitCreator()) {
-                _getUsersContract().__penaltyIsBiggerThanReputation(t.creator);
-            }
-            if (memberRep < _getDataContract().__getDeadlineHitMember()) {
-                _getUsersContract().__penaltyIsBiggerThanReputation(t.member);
-            }
-
             _getUsersContract().__deadlineHitRep(t.member, t.creator);
         }
 

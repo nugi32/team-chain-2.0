@@ -29,6 +29,7 @@ interface ITaskLifecycleLogic {
      * @param _GithubURL GitHub repository URL
      * @param _DeadlineHours Deadline in hours
      * @param _MaximumRevision Maximum number of revisions allowed
+     * @param _rewardAmount Reward amount in wei
      * @param _user Creator address
      * @return taskId The ID of the newly created task
      */
@@ -37,8 +38,9 @@ interface ITaskLifecycleLogic {
         string memory _GithubURL,
         uint128 _DeadlineHours,
         uint128 _MaximumRevision,
+        uint256 _rewardAmount,
         address _user
-    ) external payable returns (uint256 taskId);
+    ) external returns (uint256 taskId);
 
     /**
      * @notice Deletes a task
@@ -52,7 +54,7 @@ interface ITaskLifecycleLogic {
      * @param taskId Task ID to activate
      * @param user Creator address
      */
-    function __activateTask(uint256 taskId, address user) external payable;
+    function __activateTask(uint256 taskId, address user) external;
 
     /**
      * @notice Opens registration for task applicants

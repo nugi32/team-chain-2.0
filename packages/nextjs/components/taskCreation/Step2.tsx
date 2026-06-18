@@ -1,24 +1,21 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import Label from "./Label";
 import TextInput from "./TextInput";
 import Hint from "./Hint";
 import type { FormData } from "./types";
-import { useTaskLifecycleLogic } from "@/utils/lib/smartContractWrapper/task/TaskLifecycleLogic";
+import { useTaskController } from "@/utils/lib/smartContractWrapper/user/TaskController";
 import { useWalletAddress } from "@/hooks/scaffold-eth";
 import { formatEther, parseEther } from "ethers";
 
 const EFFORT_OPTIONS = ["< 4 hrs", "4–8 hrs", "1–3 days", "1 week", "2+ weeks"];
 
-// Safely parse a user-entered ether string into a wei bigint.
-// Returns undefined for empty/invalid/zero input so callers can
-// treat it the same as "not provided yet".
 function safeParseEther(value: string | undefined): bigint | undefined {
   if (!value) return undefined;
   try {
     const wei = parseEther(value);
     return wei > 0n ? wei : undefined;
   } catch {
-    // user is mid-typing something like "0." or "1.2.3"
     return undefined;
   }
 }
@@ -32,8 +29,13 @@ export default function Step2({
 }) {
   const { walletAddress } = useWalletAddress();
 
-  // Deadline: only forward a value when the date is strictly > 1 hr in the future.
-  // Past dates produced deadlineHours=1n, which caused silent contract reverts.
+  // ─── useTaskController replaces useTaskLifecycleLogic ──────────────────────
+  // form.setDeadlineHours / setMaxRevision / setRewardWei feed into the
+  // internal useScaffoldReadContract that calls ___getCreatorStake.
+  // data.creatorStake is the result; loading.isCreatorStakeLoading is the flag.
+  const { form, user, data: contractData, loading } = useTaskController();
+
+  // ─── Derive args from FormData ──────────────────────────────────────────────
   const deadlineMs = data.deadline ? new Date(data.deadline).getTime() - Date.now() : null;
   const deadlineHours =
     deadlineMs !== null && deadlineMs > 3_600_000
@@ -44,17 +46,38 @@ export default function Step2({
     ? BigInt(parseInt(data.maxRevisions))
     : undefined;
 
-  // Reward is entered/displayed in ETH, but the contract expects wei.
   const memberReward = safeParseEther(data.reward);
 
-  const {
-    creatorRequiredStake,
-    isTaskLoading,
-    stakeError,
-    isStuck,
-    enabled,
-    contractFound,
-  } = useTaskLifecycleLogic({ deadlineHours, maximumRevision, memberReward, address: walletAddress as `0x${string}` | undefined });
+  // ─── Sync derived values into the hook's internal state ────────────────────
+  // Must be useEffect — calling setters during render causes infinite loops.
+  // Each setter only fires when its value actually changes.
+  useEffect(() => {
+    if (deadlineHours !== undefined) form.setDeadlineHours(deadlineHours);
+  }, [deadlineHours]);
+
+  useEffect(() => {
+    if (maximumRevision !== undefined) form.setMaxRevision(maximumRevision);
+  }, [maximumRevision]);
+
+  useEffect(() => {
+    // rewardWei is stored as string in the hook: BigInt(rewardWei) is used in args
+    if (memberReward !== undefined) form.setRewardWei(memberReward.toString());
+  }, [memberReward]);
+
+  useEffect(() => {
+    if (walletAddress) user.setCreatorStakeCaller(walletAddress as `0x${string}`);
+  }, [walletAddress]);
+
+  // ─── Map hook outputs to the same shape as old useTaskLifecycleLogic ────────
+  const creatorRequiredStake = contractData.creatorStake;            // bigint | undefined
+  const isTaskLoading        = loading.isCreatorStakeLoading;        // boolean
+  const stakeError           = null;                                  // not exposed by useTaskController
+  const contractFound        = true;                                  // scaffold handles missing contracts
+  const enabled              = !!walletAddress && !!deadlineHours && !!maximumRevision && !!memberReward;
+  // isStuck: all args ready, not loading, but still no result → call reverted silently
+  const isStuck              = enabled && !isTaskLoading && creatorRequiredStake === undefined;
+
+  // ─── Derived display values ─────────────────────────────────────────────────
   const missingArg = !walletAddress
     ? "wallet address"
     : !deadlineHours
@@ -67,7 +90,6 @@ export default function Step2({
 
   const reward = parseFloat(data.reward || "0");
 
-  // Stake comes back from the contract in wei -> convert to ETH for display.
   const requiredStake =
     creatorRequiredStake != null
       ? parseFloat(formatEther(creatorRequiredStake)).toFixed(4)
@@ -77,9 +99,7 @@ export default function Step2({
     requiredStake != null ? (reward + parseFloat(requiredStake)).toFixed(4) : null;
 
   // ─── Stake field display ────────────────────────────────────────────────────
-
   const StakeValue = () => {
-    console.log(requiredStake, { enabled, contractFound, isTaskLoading, stakeError, isStuck });
     if (!enabled) {
       return <span className="text-xs text-gray-600">Fill all fields first</span>;
     }
@@ -108,23 +128,18 @@ export default function Step2({
         </span>
       );
     }
-    return (
-      <span>
-        Ξ {requiredStake ?? "0"}
-      </span>
-    );
+    return <span>Ξ {requiredStake ?? "0"}</span>;
   };
 
   const stakeHint = () => {
-    if (!contractFound) return "TaskLifecycleLogic not found in deployedContracts.ts for this chain.";
-    if (stakeError) return `Contract error: ${(stakeError as Error).message ?? "unknown"}`;
+    if (!contractFound) return "TaskController not found in deployedContracts.ts for this chain.";
+    if (stakeError) return `Contract error: ${(stakeError as Error | null)?.message ?? "unknown"}`;
     if (isStuck) return "Contract returned nothing. The call may have reverted — check that all inputs are valid.";
     if (missingArg) return `Waiting for ${missingArg}.`;
     return "Fetched live from the contract — locked until the task is resolved.";
   };
 
-  // ─── Summary cards ─────────────────────────────────────────────────────────
-
+  // ─── Summary cards ──────────────────────────────────────────────────────────
   const hasError = isStuck || !!stakeError || !contractFound;
 
   const summaryCards = [

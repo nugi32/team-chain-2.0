@@ -1,5 +1,5 @@
 {
-  "address": "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
+  "address": "0x67E12dCaA89FA5b9da4D4b2b1120a39140656c58",
   "abi": [
     {
       "anonymous": false,
@@ -373,6 +373,24 @@
           "internalType": "uint256",
           "name": "taskId",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "applicant",
+          "type": "address"
+        }
+      ],
+      "name": "approveJoinRequestAndRejectOthers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "taskId",
+          "type": "uint256"
         }
       ],
       "name": "approveTask",
@@ -432,6 +450,11 @@
           "internalType": "uint128",
           "name": "_MaximumRevision",
           "type": "uint128"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_rewardAmount",
+          "type": "uint256"
         },
         {
           "internalType": "address",
@@ -766,51 +789,51 @@
       "type": "constructor"
     }
   ],
-  "transactionHash": "0xcaa675ede44aa9074bd238a4367d89771b1df019528849d38c72c7c38066dbff",
+  "transactionHash": "0xa3f5aeae23d09fa3110d4f0e54e7dbbd2ce4f061e4bdc52570c59926dff78824",
   "receipt": {
     "to": null,
-    "from": "0x18406636bCEeB717FEE50f4E0D6D7a9a7E3f189C",
-    "contractAddress": "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
-    "transactionIndex": 143,
-    "gasUsed": "354875",
-    "logsBloom": "0x00000000000000000000000000000000400000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000002000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000008000000000000280000000000000000100000000000000080000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    "blockHash": "0x6005dc5504552d7b1a776c3c24a769df3d76078d29a78709e2176dfa9dc30468",
-    "transactionHash": "0xcaa675ede44aa9074bd238a4367d89771b1df019528849d38c72c7c38066dbff",
+    "from": "0xD88FA27b4C625BaB59deA308B92cA7B6B0CA1Bb3",
+    "contractAddress": "0x67E12dCaA89FA5b9da4D4b2b1120a39140656c58",
+    "transactionIndex": 112,
+    "gasUsed": "354907",
+    "logsBloom": "0x00000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000400000000000002000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000010000800000000000000000000000080000000000000000000000000000000000000000000400000000000000000000000000000000000000000000020000000000000000000000000000000000004000000000000000004000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xc15bca30fcc899fb60f9f0943c86c6409afd59455c97b84e47359a0aab91b4ae",
+    "transactionHash": "0xa3f5aeae23d09fa3110d4f0e54e7dbbd2ce4f061e4bdc52570c59926dff78824",
     "logs": [
       {
-        "transactionIndex": 143,
-        "blockNumber": 11021782,
-        "transactionHash": "0xcaa675ede44aa9074bd238a4367d89771b1df019528849d38c72c7c38066dbff",
-        "address": "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
+        "transactionIndex": 112,
+        "blockNumber": 11070788,
+        "transactionHash": "0xa3f5aeae23d09fa3110d4f0e54e7dbbd2ce4f061e4bdc52570c59926dff78824",
+        "address": "0x67E12dCaA89FA5b9da4D4b2b1120a39140656c58",
         "topics": [
           "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-          "0x000000000000000000000000237f76e50ef2daebaae79f014f107db85f78cafb"
+          "0x00000000000000000000000093c49f5a319c5c0ff1104e59a69dd2aed43ac350"
         ],
         "data": "0x",
-        "logIndex": 427,
-        "blockHash": "0x6005dc5504552d7b1a776c3c24a769df3d76078d29a78709e2176dfa9dc30468"
+        "logIndex": 233,
+        "blockHash": "0xc15bca30fcc899fb60f9f0943c86c6409afd59455c97b84e47359a0aab91b4ae"
       },
       {
-        "transactionIndex": 143,
-        "blockNumber": 11021782,
-        "transactionHash": "0xcaa675ede44aa9074bd238a4367d89771b1df019528849d38c72c7c38066dbff",
-        "address": "0x4EC955C0fDFdFFb1046343498f8e4Ee8753B5134",
+        "transactionIndex": 112,
+        "blockNumber": 11070788,
+        "transactionHash": "0xa3f5aeae23d09fa3110d4f0e54e7dbbd2ce4f061e4bdc52570c59926dff78824",
+        "address": "0x67E12dCaA89FA5b9da4D4b2b1120a39140656c58",
         "topics": [
           "0xc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d2"
         ],
         "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "logIndex": 428,
-        "blockHash": "0x6005dc5504552d7b1a776c3c24a769df3d76078d29a78709e2176dfa9dc30468"
+        "logIndex": 234,
+        "blockHash": "0xc15bca30fcc899fb60f9f0943c86c6409afd59455c97b84e47359a0aab91b4ae"
       }
     ],
-    "blockNumber": 11021782,
-    "cumulativeGasUsed": "14267430",
+    "blockNumber": 11070788,
+    "cumulativeGasUsed": "10279226",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0x237F76e50eF2DAEBaAE79F014F107DB85f78CAFB",
-    "0xc4d66de8000000000000000000000000c0bfe9710cbf43e5e9f7a5373e3980a90baf0b5d"
+    "0x93C49F5a319c5C0Ff1104E59a69Dd2aed43AC350",
+    "0xc4d66de80000000000000000000000004fa4b931f60be3606300b9602a63c1705191fb43"
   ],
   "numDeployments": 1,
   "solcInputHash": "0e89febeebc7444140de8e67c9067d2c",
@@ -820,10 +843,10 @@
   "execute": {
     "methodName": "initialize",
     "args": [
-      "0xC0BFe9710CBF43e5E9F7A5373E3980A90bAf0b5d"
+      "0x4Fa4b931f60BE3606300B9602A63c1705191fB43"
     ]
   },
-  "implementation": "0x237F76e50eF2DAEBaAE79F014F107DB85f78CAFB",
+  "implementation": "0x93C49F5a319c5C0Ff1104E59a69Dd2aed43AC350",
   "devdoc": {
     "details": "This contract implements an upgradeable proxy. It is upgradeable because calls are delegated to an implementation address that can be changed. This address is stored in storage in the location specified by https://eips.ethereum.org/EIPS/eip-1967[EIP1967], so that it doesn't conflict with the storage layout of the implementation behind the proxy.",
     "kind": "dev",

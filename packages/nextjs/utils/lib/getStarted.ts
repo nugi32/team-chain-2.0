@@ -6,9 +6,10 @@ import {
 } from "@/utils/lib/express/mutations/users";
 import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
 import { decodeSmartContractError } from "@/utils/lib/helper/smartCotntractErrDecoder";
+import { getStartedFindUserByAddress } from "@/utils/lib/express/queries/users";
 
 export function useCreateAccount() {
-  const { form, actions } = useUsersContract();
+  const { form, actions, user } = useUsersContract();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +21,17 @@ export function useCreateAccount() {
     try {
       // Smart contract registration
       console.log("[createAccount] Starting Register transaction for:", data.github);
+
+      const existingUser = await getStartedFindUserByAddress(address);
+
+      if (user.isRegistered && (!existingUser)) {
+        const jwt = await getValidJwt(address);
+        const accountId = await handleCreateAccount(data, jwt, address);
+
+        if (!accountId) throw new Error("Database did not return id");
+
+        return accountId;
+      }
 
       // Set the form values
       form.setRegisterGitHubURL(data.github);

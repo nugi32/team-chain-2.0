@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "../../system/interfaces/taskCTCcall/ITaskData.sol";
 import "../../system/interfaces/taskCTCcall/ISubmissionLogic.sol";
+import "../../system/interfaces/taskCTCcall/ICancellationLogic.sol";
 import "../../system/interfaces/IAddressRegistry.sol";
 import "../../system/interfaces/CTCcall/IUsers.sol";
 import "../../system/interfaces/IDataContract.sol";
@@ -45,6 +46,10 @@ contract SubmissionLogic is ISubmissionLogic {
         return IDataContract(addressRegistry.__dataContract());
     }
 
+    function _getTaskCancellationContract() internal view returns (ICancellationLogic) {
+        return ICancellationLogic(addressRegistry.__taskComponentsAddr().cancelModule);
+    }
+
     // =============================================================
     // SUBMISSION FUNCTIONS
     // =============================================================
@@ -63,6 +68,13 @@ contract SubmissionLogic is ISubmissionLogic {
 
         if (t.status != ITaskData.TaskStatus.InProgres) {
             revert SubmissionErr("InvalidStatus");
+        }
+
+        // SECURITY FIX M-1, NEW-H-2: Add deadline check - late submissions should be blocked
+        // Cannot call __triggerDeadline here due to ctcCall routing issue
+        // (msg.sender would be submisionModule not taskControler, causing revert)
+        if (block.timestamp > t.deadlineAt && t.deadlineAt != 0) {
+            revert SubmissionErr("SubmissionPastDeadline");
         }
 
         ITaskData.TaskSubmitData memory existingSubmit = _getTaskDataContract().__getTaskSubmit(taskId);
@@ -101,15 +113,14 @@ contract SubmissionLogic is ISubmissionLogic {
             revert SubmissionErr("InvalidStatus");
         }
 
-        if (s.revisionTime > t.maxRevision) {
-            if (s.status == ITaskData.SubmitStatus.Pending) {
-                revert SubmissionErr("SubmissionError");
-            } else {
-                __approveTask(taskId);
-                return;
-            }
+        // SECURITY FIX H-3: Check revision count before updating to prevent stale memory reads
+        if (s.revisionTime >= t.maxRevision) {
+            // Max revisions exceeded - auto-approve the task
+            __approveTask(taskId);
+            return;
         }
 
+        // Update submission and refresh from storage
         _getTaskDataContract().__updateSubmitContent(taskId, GithubFixedURL, Note);
         _getTaskDataContract().__updateSubmitStatus(taskId, ITaskData.SubmitStatus.Pending);
 
@@ -136,6 +147,13 @@ contract SubmissionLogic is ISubmissionLogic {
         uint256 newDeadline = block.timestamp + additionalSeconds;
         uint256 newRevisionTime = s.revisionTime + 1;
 
+        // SECURITY FIX H-3: Check max revisions BEFORE updating submission state
+        if (newRevisionTime > t.maxRevision) {
+            // Max revisions exceeded - auto-approve the task instead of requesting revision
+            __approveTask(taskId);
+            return;
+        }
+
         // Update submission
         _getTaskDataContract().__updateSubmitStatus(taskId, ITaskData.SubmitStatus.RevisionNeeded);
         _getTaskDataContract().__updateSubmitContent(taskId, s.githubURL, Note);
@@ -143,28 +161,10 @@ contract SubmissionLogic is ISubmissionLogic {
         _getTaskDataContract().__updateTaskDeadline(taskId, newDeadline, t.deadlineHours);
 
         // Apply reputation penalties
+        // SECURITY FIX C-3: Remove dangerous __penaltyIsBiggerThanReputation guards
+        // Safe subtraction is now handled in __revisionRep
         if (_getUsersContract().__isRegistered(t.member) && _getUsersContract().__isRegistered(t.creator)) {
-            uint256 userRep = _getUsersContract().__getUserReputation(t.member);
-            uint256 creatorRep = _getUsersContract().__getUserReputation(t.creator);
-
-            if (creatorRep < _getDataContract().__getRevisionPenalty()) {
-                _getUsersContract().__penaltyIsBiggerThanReputation(t.creator);
-            }
-
-            if (userRep < _getDataContract().__getRevisionPenalty()) {
-                _getUsersContract().__penaltyIsBiggerThanReputation(t.member);
-            }
-
             _getUsersContract().__revisionRep(t.member, t.creator);
-        }
-
-        // Check if max revisions exceeded
-        if (newRevisionTime > t.maxRevision) {
-            if (s.status == ITaskData.SubmitStatus.Pending) {
-                revert SubmissionErr("SubmissionError");
-            } else {
-                __approveTask(taskId);
-            }
         }
 
         emit SubmissionEvent(taskId, address(0), "RevisionRequested");
@@ -173,6 +173,7 @@ contract SubmissionLogic is ISubmissionLogic {
     /**
      * @notice Approves a task submission
      * @dev Only callable by task creator, distributes rewards
+     * @dev SECURITY FIX M-5: Implement fee collection mechanism
      */
     function __approveTask(uint256 taskId) public override ctcCall {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
@@ -188,7 +189,12 @@ contract SubmissionLogic is ISubmissionLogic {
             revert SubmissionErr("AlreadyClaimed");
         }
 
-        uint256 memberGet = t.reward + t.memberStake;
+        // SECURITY FIX M-5: Implement fee collection
+        uint256 feePercentage = _getDataContract().__getFeePercentage();
+        uint256 feeAmount = (t.reward * feePercentage) / 100;
+        uint256 memberReward = t.reward - feeAmount;
+        
+        uint256 memberGet = memberReward + t.memberStake;
         uint256 creatorGet = t.creatorStake;
 
         // Update task flags and status
@@ -206,9 +212,14 @@ contract SubmissionLogic is ISubmissionLogic {
         });
         _getTaskDataContract().__setTaskSubmit(taskId, emptySubmit);
 
-        // Distribute rewards
+        // Distribute rewards (minus fees)
         _getUsersContract().__addUserBalance(t.member, memberGet);
         _getUsersContract().__addUserBalance(t.creator, creatorGet);
+        
+        // Collect fees for protocol
+        if (feeAmount > 0) {
+            _getTaskDataContract().__increaseFee(feeAmount);
+        }
 
         // Update reputation
         if (_getUsersContract().__isRegistered(t.member) && _getUsersContract().__isRegistered(t.creator)) {

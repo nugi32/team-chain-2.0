@@ -83,6 +83,27 @@ contract UsersContract is
         
         emit userEvent("contract_initialized", _addressRegistry);
     }
+
+    /**
+     * @notice SECURITY FIX C-1: Accept ETH deposits to serve as central vault
+     * @dev Required for withdrawal mechanism to work - ETH must be stored somewhere
+     */
+    receive() external payable {
+        // Accept ETH for user deposits, task rewards, and fund returns
+    }
+
+    /**
+     * @notice Deposits ETH from user to their balance account
+     * @param _user Address of the user making deposit
+     * @dev SECURITY FIX C-1: Explicit deposit function for ETH flow control
+     */
+    function depositUserFund(address _user) external payable callerZeroAddr onlyUser nonReentrant {
+        if (msg.value == 0) revert userError("ZeroAmount");
+        if (_user == address(0)) revert userError("ZeroAddress");
+        
+        Users[_user].balance += msg.value;
+        emit userEvent("FundsDeposited", _user);
+    }
 //
     /**
      * @notice Registers a new user in the protocol
@@ -174,6 +195,27 @@ contract UsersContract is
         
         u.balance = 0;
         (bool success, ) = payable(_user).call{value: _amount}("");
+        if (!success) revert userError("TransferFailed");
+    }
+
+    /**
+     * @notice Transfers protocol fees to a designated wallet
+     * @param _amount Amount of fees to transfer
+     * @param _wallet Destination wallet address
+     * @dev SECURITY FIX NEW-H-1: Allows protocol fees (physically stored here) to be withdrawn
+     * @dev Only callable via ctcCall from TaskController
+     */
+    function transferFeeToWallet(
+        uint256 _amount,
+        address payable _wallet
+    ) external nonReentrant ctcCall {
+        if (_wallet == address(0)) revert userError("ZeroAddress");
+        if (_amount == 0) revert userError("ZeroAmount");
+        
+        // Check that the contract has sufficient balance for fees
+        if (address(this).balance < _amount) revert userError("InsufficientFeesAvailable");
+        
+        (bool success, ) = _wallet.call{value: _amount}("");
         if (!success) revert userError("TransferFailed");
     }
 
@@ -341,21 +383,30 @@ contract UsersContract is
     /**
      * @notice Deducts cancellation penalty from user's reputation
      * @param _user Address of the user
+     * @dev SECURITY FIX C-3: Use safe subtraction to prevent underflow
      */
     function __cancelByMeRep(address _user) external ctcCall {
-        Users[_user].reputation -= IDataContract(addressRegistry.__dataContract()).__getCancelByMe();
+        uint256 penalty = IDataContract(addressRegistry.__dataContract()).__getCancelByMe();
+        uint256 currentRep = Users[_user].reputation;
+        // SECURITY FIX C-3: Safe subtraction - reputation cannot go below 0
+        Users[_user].reputation = currentRep > penalty ? currentRep - penalty : 0;
     }
 
     /**
      * @notice Deducts revision penalty from both user and creator's reputation
      * @param _user Address of the member
      * @param _creator Address of the creator
+     * @dev SECURITY FIX C-3: Use safe subtraction to prevent underflow
      */
     function __revisionRep(address _user, address _creator) external ctcCall {
         uint256 penalty = IDataContract(addressRegistry.__dataContract()).__getRevisionPenalty();
         
-        Users[_user].reputation -= penalty;
-        Users[_creator].reputation -= penalty;
+        // SECURITY FIX C-3: Safe subtraction for both user and creator
+        uint256 memberRep = Users[_user].reputation;
+        Users[_user].reputation = memberRep > penalty ? memberRep - penalty : 0;
+        
+        uint256 creatorRep = Users[_creator].reputation;
+        Users[_creator].reputation = creatorRep > penalty ? creatorRep - penalty : 0;
     }
 
     /**
@@ -374,12 +425,20 @@ contract UsersContract is
      * @notice Deducts deadline hit penalties from both user and creator's reputation
      * @param _user Address of the member
      * @param _creator Address of the creator
+     * @dev SECURITY FIX C-3: Use safe subtraction to prevent underflow
      */
     function __deadlineHitRep(address _user, address _creator) external ctcCall{
         IDataContract dataContract = IDataContract(addressRegistry.__dataContract());
         
-        Users[_user].reputation -= dataContract.__getDeadlineHitMember();
-        Users[_creator].reputation -= dataContract.__getDeadlineHitCreator();
+        // SECURITY FIX C-3: Safe subtraction for member
+        uint256 memberRep = Users[_user].reputation;
+        uint256 memberPenalty = dataContract.__getDeadlineHitMember();
+        Users[_user].reputation = memberRep > memberPenalty ? memberRep - memberPenalty : 0;
+        
+        // SECURITY FIX C-3: Safe subtraction for creator
+        uint256 creatorRep = Users[_creator].reputation;
+        uint256 creatorPenalty = dataContract.__getDeadlineHitCreator();
+        Users[_creator].reputation = creatorRep > creatorPenalty ? creatorRep - creatorPenalty : 0;
     }
 
     function __penaltyIsBiggerThanReputation(address _user) external ctcCall {

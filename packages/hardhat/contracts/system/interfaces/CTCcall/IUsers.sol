@@ -32,4 +32,10 @@ interface IUsers {
     function __taskAcceptRep(address _user, address _creator) external;
     function __deadlineHitRep(address _user, address _creator) external;
     function __penaltyIsBiggerThanReputation(address _user) external;
+    
+    /* =======================
+        FEE WITHDRAWAL
+    ======================= */
+    
+    function transferFeeToWallet(uint256 _amount, address payable _wallet) external;
 }

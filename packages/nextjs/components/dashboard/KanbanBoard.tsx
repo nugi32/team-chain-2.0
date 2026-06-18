@@ -116,10 +116,13 @@ import TaskCard from "./TaskCard";
  * Shared tab type
  */
 export type TabType =
+  | "Created"
   | "Active"
+  | "OpenRegistration"
+  | "InProgres"
   | "Review"
   | "Completed"
-  | "Disputed";
+  | "Cancelled";
 
 interface Task {
   id: string;
@@ -184,13 +187,19 @@ export default function KanbanBoard({
               <span
                 className={[
                   "ml-1.5 text-[10px] rounded-full px-1.5 py-0.5",
-                  tab === "Disputed"
-                    ? "bg-red-500/20 text-red-400"
-                    : tab === "Review"
-                    ? "bg-amber-500/20 text-amber-400"
-                    : tab === "Completed"
-                    ? "bg-emerald-500/20 text-emerald-400"
-                    : "bg-indigo-500/20 text-indigo-400",
+                  tab === "Created"
+                    ? "bg-slate-500/20 text-slate-400"
+                    : tab === "Active"
+                      ? "bg-blue-500/20 text-blue-400"
+                      : tab === "OpenRegistration"
+                        ? "bg-indigo-500/20 text-indigo-400"
+                        : tab === "InProgres"
+                          ? "bg-cyan-500/20 text-cyan-400"
+                          : tab === "Review"
+                            ? "bg-amber-500/20 text-amber-400"
+                            : tab === "Completed"
+                              ? "bg-emerald-500/20 text-emerald-400"
+                              : "bg-red-500/20 text-red-400", // Cancelled
                 ].join(" ")}
               >
                 {count}

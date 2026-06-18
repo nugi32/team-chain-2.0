@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getUserById } from "@/utils/lib/express/queries/users";
 
 export type Role = "developer" | "designer" | "project_manager";
 
@@ -20,8 +19,7 @@ export type TaskEffort =
   | "";
 
 export interface CreateTaskPayload {
-  _id: string;
-  title: string;
+  contractId: string; // Smart contract task ID (uint256 as string)
   projectName: string;
   objective: string;
   category: TaskCategory;
@@ -31,6 +29,7 @@ export interface CreateTaskPayload {
   skills: string[];
   description: string;
   badges?: string[];
+  reward: string; // ETH amount as string, used for stake calculation
 }
 
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
@@ -40,18 +39,11 @@ const API_BASE =
 
 export async function handleCreateTask(
   formData: CreateTaskPayload,
-  jwtToken: string,
-  walletAddress: string
+  jwtToken: string
 ): Promise<string> {
-  const user = await getUserById(formData._id);
-
-  if (user.owner !== walletAddress) {
-    throw new Error("User data did not match");
-  }
 
   const backendData = {
-    owner: formData._id,
-    title: formData.title,
+    contractId: formData.contractId,
     projectName: formData.projectName,
     objective: formData.objective,
     category: formData.category,
@@ -61,6 +53,7 @@ export async function handleCreateTask(
     skills: formData.skills,
     description: formData.description,
     badges: formData.badges,
+    reward: formData.reward,
   };
 
   const response = await axios.post<{ id: string }>(
@@ -84,19 +77,12 @@ export async function handleCreateTask(
 export async function handleUpdateTask(
   taskId: string,
   formData: UpdateTaskPayload,
-  jwtToken: string,
-  walletAddress: string
+  jwtToken: string
 ) {
-  if (formData._id) {
-    const user = await getUserById(formData._id);
-
-    if (user.owner !== walletAddress) {
-      throw new Error("User data did not match");
-    }
-  }
-
   const backendData = {
-    ...(formData.title !== undefined && { title: formData.title }),
+    ...(formData.contractId !== undefined && {
+      contractId: formData.contractId,
+    }),
     ...(formData.projectName !== undefined && {
       projectName: formData.projectName,
     }),
@@ -123,6 +109,9 @@ export async function handleUpdateTask(
     }),
     ...(formData.badges !== undefined && {
       badges: formData.badges,
+    }),
+    ...(formData.reward !== undefined && {
+      reward: formData.reward,
     }),
   };
 

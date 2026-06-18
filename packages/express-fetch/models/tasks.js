@@ -11,7 +11,7 @@ const milestoneSchema = Joi.object({
 
 // Full task schema for GET/complete data
 export const taskSchema = Joi.object({
-  contractId: Joi.string().uuid().required(),
+  contractId: Joi.string().required(), // Smart contract task ID (uint256 as string)
   projectName: Joi.string().min(1).required(),
   objective: Joi.string().min(1).max(120).required(),
   category: Joi.string()
@@ -47,7 +47,7 @@ export const taskSchema = Joi.object({
 
 // Schema for creating task (without owner and id - will be added by middleware/controller)
 export const createTaskSchema = Joi.object({
-  contractId: Joi.string().uuid().required(),
+  contractId: Joi.string().required(), // Smart contract task ID (uint256 as string)
   projectName: Joi.string().min(1).required(),
   objective: Joi.string().min(1).max(120).required(),
   category: Joi.string()

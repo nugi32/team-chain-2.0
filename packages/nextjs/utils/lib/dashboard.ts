@@ -3,6 +3,7 @@ import { useBalance } from "wagmi";
 import axios from "axios";
 import { getUserById } from "@/utils/lib/express/queries/users";
 import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
+import type { TabType } from "@/components/dashboard/KanbanBoard";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -28,12 +29,12 @@ export enum SubmitStatus {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-export const KANBAN_TABS = [
+export const KANBAN_TABS: readonly TabType[] = [
   "Active",
   "Review",
   "Completed",
-  "Disputed",
-] as const;
+  "Cancelled",
+];
 
 const ETH_PRICE_USD = 3_300;
 
@@ -203,7 +204,7 @@ function resolveTab(task: MergedTask): KanbanTab {
     deadlineAt > 0 &&
     deadlineAt < nowSec
   )
-    return "Disputed";
+    return "Cancelled";
 
   return "Active";
 }
@@ -485,7 +486,7 @@ export function useDashboard(id: string) {
   );
 
   const disputedTasks = useMemo(
-    () => kanbanTasks.filter((t) => t.tab === "Disputed"),
+    () => kanbanTasks.filter((t) => t.tab === "Cancelled"),
     [kanbanTasks],
   );
 

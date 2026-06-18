@@ -26,7 +26,7 @@ interface IJoinRequestLogic {
      * @param taskId Task ID to join
      * @param user Applicant address
      */
-    function __requestJoinTask(uint256 taskId, address user) external payable;
+    function __requestJoinTask(uint256 taskId, address user) external;
 
     /**
      * @notice Withdraws a pending join request

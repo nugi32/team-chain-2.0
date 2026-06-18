@@ -19,7 +19,8 @@ contract TaskLifecycleLogic is ITaskLifecycleLogic {
     IAddressRegistry public addressRegistry;
 
     modifier ctcCall() {
-        if(msg.sender != addressRegistry.__taskComponentsAddr().taskControler) revert TaskLifecycleErr("UnauthorizedCaller");
+        if (msg.sender != addressRegistry.__taskComponentsAddr().taskControler)
+            revert TaskLifecycleErr("UnauthorizedCaller");
         _;
     }
 
@@ -52,29 +53,41 @@ contract TaskLifecycleLogic is ITaskLifecycleLogic {
     /**
      * @notice Creates a new task
      * @dev Only callable from TaskController via CTC
+     * @dev SECURITY FIX C-1: Deduct reward from user balance, not from msg.value
+     * @dev SECURITY FIX NEW-M-2: Validate reward amount to prevent spam
      */
     function __createTask(
         string memory _Title,
         string memory _GithubURL,
         uint128 _DeadlineHours,
         uint128 _MaximumRevision,
+        uint256 _rewardAmount,
         address _user
-    ) external payable override ctcCall returns (uint256 taskId) {
+    ) external override ctcCall returns (uint256 taskId) {
+        // SECURITY FIX NEW-M-2: Enforce minimum reward value
+        if (_rewardAmount == 0) {
+            revert TaskLifecycleErr("ZeroReward");
+        }
+
         (uint256 _taskCounter, ) = _getTaskDataContract().__getGlobalState();
         taskId = _taskCounter;
 
-        uint256 projectValue = ___getProjectValue(
-            _DeadlineHours,
-            _MaximumRevision,
-            msg.value,
-            _user
-        );
+        // SECURITY FIX C-1: Check user has enough balance for reward
+        uint256 userBalance = _getUsersContract().__getUserBalance(_user);
+        if (userBalance < _rewardAmount) {
+            revert TaskLifecycleErr("InsufficientReward");
+        }
+
+        // SECURITY FIX C-1: Deduct reward from user's balance (stored in UsersContract vault)
+        _getUsersContract().__takeUserBalance(_user, _rewardAmount);
+
+        uint256 projectValue = ___getProjectValue(_DeadlineHours, _MaximumRevision, _rewardAmount, _user);
 
         ITaskData.TaskData memory newTask = ITaskData.TaskData({
             status: ITaskData.TaskStatus.Created,
             taskId: taskId,
             value: projectValue,
-            reward: msg.value,
+            reward: _rewardAmount,
             deadlineAt: 0,
             createdAt: block.timestamp,
             creatorStake: 0,
@@ -102,22 +115,36 @@ contract TaskLifecycleLogic is ITaskLifecycleLogic {
     /**
      * @notice Deletes a task
      * @dev Only callable by task creator
+     * @dev SECURITY FIX H-1, H-2: Cannot delete tasks with assigned members due to ctcCall routing
+     * @dev Cross-module calls violate ctcCall invariant - member cancellations must route through TaskController
      */
     function __deleteTask(uint256 _taskId, address _user) external override ctcCall {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(_taskId);
 
-        _getTaskDataContract().__updateTaskStatus(_taskId, ITaskData.TaskStatus.Cancelled);
-        _getTaskDataContract().__updateTaskFlags(_taskId, false, false, t.isRewardClaimed);
-
         if (t.member != address(0)) {
-            // If member assigned, cancel task with penalty logic
-            ICancellationLogic(addressRegistry.__taskComponentsAddr().cancelModule).__cancelByMe(_taskId, _user);
+            // SECURITY FIX H-1: Cannot directly call CancellationLogic here
+            // The ctcCall modifier in CancellationLogic checks msg.sender == taskControler
+            // but msg.sender here is taskLifecycleModule, causing the call to revert
+            // Solution: Require deletion via TaskController.cancelByMe() instead
+            revert TaskLifecycleErr("CannotDeleteTaskWithMember");
         } else {
-            // Return funds if no member assigned
+            // SECURITY FIX H-2: Refund all pending join request stakes before deletion
+            ITaskData.JoinRequestData[] memory requests = _getTaskDataContract().__getJoinRequests(_taskId);
+            for (uint256 i = 0; i < requests.length; i++) {
+                if (requests[i].isPending && !requests[i].hasWithdrawn) {
+                    _getUsersContract().__addUserBalance(requests[i].applicant, requests[i].stakeAmount);
+                }
+            }
+            
+            // Return creator's funds if no member assigned
             _getUsersContract().__addUserBalance(_user, t.reward);
             if (t.creatorStake > 0) {
                 _getUsersContract().__addUserBalance(_user, t.creatorStake);
             }
+            
+            // Update task status to Cancelled
+            _getTaskDataContract().__updateTaskStatus(_taskId, ITaskData.TaskStatus.Cancelled);
+            _getTaskDataContract().__updateTaskFlags(_taskId, false, false, t.isRewardClaimed);
         }
 
         emit TaskLifecycleEvent(_taskId, _user, "TaskDeleted");
@@ -126,34 +153,28 @@ contract TaskLifecycleLogic is ITaskLifecycleLogic {
     /**
      * @notice Activates a task by requiring creator stake
      * @dev Creator must provide stake amount based on task parameters
+     * @dev SECURITY FIX H-5: Ensure task is in Created status before activation
+     * @dev SECURITY FIX C-1: ETH is now pre-deposited in UsersContract, don't expect msg.value
      */
-    function __activateTask(uint256 taskId, address user) external payable override ctcCall {
+    function __activateTask(uint256 taskId, address user) external override ctcCall {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
 
-        uint256 requiredStake = ___getCreatorStake(
-            t.deadlineHours,
-            t.maxRevision,
-            t.reward,
-            user
-        );
+        // SECURITY FIX H-5: Check that task is in Created status to prevent repeated activation
+        if (t.status != ITaskData.TaskStatus.Created) {
+            revert TaskLifecycleErr("InvalidStatus");
+        }
+
+        uint256 requiredStake = ___getCreatorStake(t.deadlineHours, t.maxRevision, t.reward, user);
 
         uint256 userBalance = _getUsersContract().__getUserBalance(user);
-        uint256 fromBalance = userBalance >= requiredStake ? requiredStake : userBalance;
-        uint256 remaining = requiredStake - fromBalance;
-
-        if (msg.value < remaining) {
+        
+        // SECURITY FIX C-1: No msg.value to add - all ETH is already in UsersContract balance
+        if (userBalance < requiredStake) {
             revert TaskLifecycleErr("InsufficientStake");
         }
 
-        // Deduct from internal balance
-        if (fromBalance > 0) {
-            _getUsersContract().__takeUserBalance(user, fromBalance);
-        }
-
-        // Refund excess ETH
-        if (msg.value > remaining) {
-            _getUsersContract().__addUserBalance(user, msg.value - remaining);
-        }
+        // Deduct required stake from user's balance
+        _getUsersContract().__takeUserBalance(user, requiredStake);
 
         _getTaskDataContract().__updateTaskFinancials(taskId, t.value, t.reward, requiredStake, t.memberStake);
         _getTaskDataContract().__updateTaskStatus(taskId, ITaskData.TaskStatus.Active);
@@ -229,7 +250,6 @@ contract TaskLifecycleLogic is ITaskLifecycleLogic {
 
         return (rawValue * 1 ether) / 100;
     }
-
 
     // =============================================================
     // INTERNAL ADDRESS REGISTRY

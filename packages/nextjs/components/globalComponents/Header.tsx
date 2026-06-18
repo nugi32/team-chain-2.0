@@ -83,8 +83,13 @@ const NOTIF_META: Record<NotifType, { icon: React.ReactNode; color: string }> = 
   update: { icon: <Settings className="w-3.5 h-3.5" />, color: "text-purple-400 bg-purple-500/10" },
 };
 
+const userId =
+  typeof window !== "undefined"
+    ? localStorage.getItem("userId")
+    : null;
+
 const NAV_LINKS = [
-  { label: "Dashboard", href: "/dashboard", requiresUserId: true },
+  { label: "Dashboard", href: `/dashboard/${userId}`, requiresUserId: true },
   { label: "Explore", href: "/explore" },
   { label: "How It Works", href: "/howItWorks" },
 ] as const;

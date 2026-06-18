@@ -75,7 +75,6 @@ contract TaskController is
         return ICancellationLogic(addressRegistry.__taskComponentsAddr().cancelModule);
     }
 
-
     // =============================================================
     // MODIFIERS
     // =============================================================
@@ -105,16 +104,15 @@ contract TaskController is
         _;
     }
 
-    modifier onlyOwner {
+    modifier onlyOwner() {
         __onlyOwner(addressRegistry.__accessControlContract());
         _;
     }
 
     modifier onlyUser() {
-        __onlyUser(addressRegistry.__accessControlContract());  
+        __onlyUser(addressRegistry.__accessControlContract());
         _;
     }
-
 
     // =============================================================
     // INITIALIZATION
@@ -123,9 +121,7 @@ contract TaskController is
     /**
      * @notice Initializes the TaskController with all logic contract addresses
      */
-    function initialize(
-        address _registryAddress
-    ) public initializer {
+    function initialize(address _registryAddress) public initializer {
         if (_registryAddress == address(0)) revert systemError("ZeroAddress");
 
         __ReentrancyGuard_init();
@@ -140,19 +136,33 @@ contract TaskController is
 
     /**
      * @notice Creates a new task
+     * @dev SECURITY FIX C-1: Accept ETH to deposit to UsersContract vault first, not to logic module
      */
     function createTask(
         string memory _Title,
         string memory _GithubURL,
         uint128 _DeadlineHours,
         uint128 _MaximumRevision,
+        uint256 _rewardAmount,
         address _user
     ) external payable override whenNotPaused onlyRegistered nonReentrant onlyUser {
-        _getTaskLifecycleLogicContract().__createTask{value: msg.value}(
+        // SECURITY FIX C-2: Ensure caller is the user they claim to be
+        if (msg.sender != _user) revert systemError("CallerMustBeUser");
+
+        // SECURITY FIX C-1: Deposit ETH to UsersContract vault instead of logic module
+        IUsers usersContract = IUsers(addressRegistry.__usersContract());
+        if (msg.value > 0) {
+            (bool success, ) = addressRegistry.__usersContract().call{ value: msg.value }("");
+            if (!success) revert systemError("DepositFailed");
+            usersContract.__addUserBalance(_user, msg.value);
+        }
+
+        _getTaskLifecycleLogicContract().__createTask(
             _Title,
             _GithubURL,
             _DeadlineHours,
             _MaximumRevision,
+            _rewardAmount,
             _user
         );
         emit ControllerEvent("TaskCreated", 0, _user);
@@ -161,43 +171,46 @@ contract TaskController is
     /**
      * @notice Deletes a task
      */
-    function deleteTask(uint256 _taskId, address _user)
-        external
-        override
-        nonReentrant
-        onlyTaskCreator(_taskId)
-        onlyRegistered
-    {
+    function deleteTask(
+        uint256 _taskId,
+        address _user
+    ) external override nonReentrant onlyTaskCreator(_taskId) onlyRegistered {
+        // SECURITY FIX C-2, M-2: Ensure caller is the user they claim to be
+        if (msg.sender != _user) revert systemError("CallerMustBeUser");
+
         _getTaskLifecycleLogicContract().__deleteTask(_taskId, _user);
         emit ControllerEvent("TaskDeleted", _taskId, _user);
     }
 
     /**
      * @notice Activates a task by providing creator stake
+     * @dev SECURITY FIX C-1: Deposit ETH to UsersContract vault first, not to logic module
      */
-    function activateTask(uint256 taskId, address user)
-        external
-        payable
-        override
-        taskExists(taskId)
-        onlyTaskCreator(taskId)
-        nonReentrant
-        whenNotPaused
-    {
-        _getTaskLifecycleLogicContract().__activateTask{value: msg.value}(taskId, user);
+    function activateTask(
+        uint256 taskId,
+        address user
+    ) external payable override taskExists(taskId) onlyTaskCreator(taskId) nonReentrant whenNotPaused {
+        // SECURITY FIX C-2, H-7: Ensure caller is the user they claim to be
+        if (msg.sender != user) revert systemError("CallerMustBeUser");
+
+        // SECURITY FIX C-1: Deposit ETH to UsersContract vault instead of logic module
+        IUsers usersContract = IUsers(addressRegistry.__usersContract());
+        if (msg.value > 0) {
+            (bool success, ) = addressRegistry.__usersContract().call{ value: msg.value }("");
+            if (!success) revert systemError("DepositFailed");
+            usersContract.__addUserBalance(user, msg.value);
+        }
+
+        _getTaskLifecycleLogicContract().__activateTask(taskId, user);
         emit ControllerEvent("TaskActive", taskId, user);
     }
 
     /**
      * @notice Opens registration for task
      */
-    function openRegistration(uint256 taskId)
-        external
-        override
-        taskExists(taskId)
-        onlyTaskCreator(taskId)
-        whenNotPaused
-    {
+    function openRegistration(
+        uint256 taskId
+    ) external override taskExists(taskId) onlyTaskCreator(taskId) whenNotPaused {
         _getTaskLifecycleLogicContract().__openRegistration(taskId);
         emit ControllerEvent("RegistrationOpened", taskId, msg.sender);
     }
@@ -205,13 +218,9 @@ contract TaskController is
     /**
      * @notice Closes registration for task
      */
-    function closeRegistration(uint256 taskId)
-        external
-        override
-        taskExists(taskId)
-        onlyTaskCreator(taskId)
-        whenNotPaused
-    {
+    function closeRegistration(
+        uint256 taskId
+    ) external override taskExists(taskId) onlyTaskCreator(taskId) whenNotPaused {
         _getTaskLifecycleLogicContract().__closeRegistration(taskId);
         emit ControllerEvent("RegistrationClosed", taskId, msg.sender);
     }
@@ -222,29 +231,34 @@ contract TaskController is
 
     /**
      * @notice Requests to join a task
+     * @dev SECURITY FIX C-1: Deposit ETH to UsersContract vault first, not to logic module
      */
-    function requestJoinTask(uint256 taskId, address user)
-        external
-        payable
-        override
-        taskExists(taskId)
-        whenNotPaused
-        onlyRegistered
-        onlyUser
-    {
-        _getTaskJoinRequestContract().__requestJoinTask{value: msg.value}(taskId, user);
+    function requestJoinTask(
+        uint256 taskId,
+        address user
+    ) external payable override taskExists(taskId) whenNotPaused onlyRegistered onlyUser {
+        // SECURITY FIX C-2, C-5: Ensure caller is the user they claim to be
+        if (msg.sender != user) revert systemError("CallerMustBeUser");
+
+        // SECURITY FIX C-1: Deposit ETH to UsersContract vault instead of logic module
+        IUsers usersContract = IUsers(addressRegistry.__usersContract());
+        if (msg.value > 0) {
+            (bool success, ) = addressRegistry.__usersContract().call{ value: msg.value }("");
+            if (!success) revert systemError("DepositFailed");
+            usersContract.__addUserBalance(user, msg.value);
+        }
+
+        _getTaskJoinRequestContract().__requestJoinTask(taskId, user);
         emit ControllerEvent("JoinRequested", taskId, user);
     }
 
     /**
      * @notice Withdraws a pending join request
      */
-    function withdrawJoinRequest(uint256 taskId, address user)
-        external
-        override
-        nonReentrant
-        onlyRegistered
-    {
+    function withdrawJoinRequest(uint256 taskId, address user) external override nonReentrant onlyRegistered onlyUser {
+        // SECURITY FIX C-2: Ensure caller is the user they claim to be
+        if (msg.sender != user) revert systemError("CallerMustBeUser");
+
         _getTaskJoinRequestContract().__withdrawJoinRequest(taskId, user);
         emit ControllerEvent("JoinrequestCancelled", taskId, user);
     }
@@ -252,26 +266,18 @@ contract TaskController is
     /**
      * @notice Approves a join request
      */
-    function approveJoinRequest(uint256 taskId, address applicant)
-        external
-        override
-        taskExists(taskId)
-        onlyTaskCreator(taskId)
-        nonReentrant
-        whenNotPaused
-    {
+    function approveJoinRequest(
+        uint256 taskId,
+        address applicant
+    ) external override taskExists(taskId) onlyTaskCreator(taskId) nonReentrant whenNotPaused {
         _getTaskJoinRequestContract().__approveJoinRequest(taskId, applicant);
         emit ControllerEvent("JoinApproved", taskId, applicant);
     }
 
-    function approveJoinRequestAndRejectOthers(uint256 taskId, address applicant)
-        external
-        override
-        taskExists(taskId)
-        onlyTaskCreator(taskId)
-        nonReentrant
-        whenNotPaused
-    {
+    function approveJoinRequestAndRejectOthers(
+        uint256 taskId,
+        address applicant
+    ) external override taskExists(taskId) onlyTaskCreator(taskId) nonReentrant whenNotPaused {
         _getTaskJoinRequestContract().__approveAndRejectOthers(taskId, applicant);
         emit ControllerEvent("JoinApproved", taskId, applicant);
     }
@@ -279,14 +285,10 @@ contract TaskController is
     /**
      * @notice Rejects a join request
      */
-    function rejectJoinRequest(uint256 taskId, address _applicant)
-        external
-        override
-        taskExists(taskId)
-        onlyTaskCreator(taskId)
-        nonReentrant
-        whenNotPaused
-    {
+    function rejectJoinRequest(
+        uint256 taskId,
+        address _applicant
+    ) external override taskExists(taskId) onlyTaskCreator(taskId) nonReentrant whenNotPaused {
         _getTaskJoinRequestContract().__rejectJoinRequest(taskId, _applicant);
         emit ControllerEvent("JoinRejected", taskId, _applicant);
     }
@@ -303,14 +305,10 @@ contract TaskController is
         string calldata PullRequestURL,
         string calldata Note,
         address user
-    )
-        external
-        override
-        taskExists(taskId)
-        onlyTaskMember(taskId)
-        whenNotPaused
-        onlyUser
-    {
+    ) external override taskExists(taskId) onlyTaskMember(taskId) whenNotPaused onlyUser {
+        // SECURITY FIX C-2: Ensure caller is the user they claim to be
+        if (msg.sender != user) revert systemError("CallerMustBeUser");
+
         _getTaskSubmissionContract().__requestSubmitTask(taskId, PullRequestURL, Note, user);
         emit ControllerEvent("TaskSubmitted", taskId, user);
     }
@@ -323,13 +321,10 @@ contract TaskController is
         string calldata Note,
         string calldata GithubFixedURL,
         address user
-    )
-        external
-        override
-        taskExists(taskId)
-        onlyTaskMember(taskId)
-        whenNotPaused
-        onlyUser {
+    ) external override taskExists(taskId) onlyTaskMember(taskId) whenNotPaused onlyUser {
+        // SECURITY FIX C-2: Ensure caller is the user they claim to be
+        if (msg.sender != user) revert systemError("CallerMustBeUser");
+
         _getTaskSubmissionContract().__reSubmitTask(taskId, Note, GithubFixedURL, user);
         emit ControllerEvent("TaskReSubmitted", taskId, user);
     }
@@ -341,7 +336,7 @@ contract TaskController is
         uint256 taskId,
         string calldata Note,
         uint256 additionalDeadlineHours
-    ) external override whenNotPaused {
+    ) external override onlyTaskCreator(taskId) whenNotPaused {
         _getTaskSubmissionContract().__requestRevision(taskId, Note, additionalDeadlineHours);
         emit ControllerEvent("RevisionRequested", taskId, msg.sender);
     }
@@ -349,14 +344,9 @@ contract TaskController is
     /**
      * @notice Approves a task submission
      */
-    function approveTask(uint256 taskId)
-        external
-        override
-        taskExists(taskId)
-        onlyTaskCreator(taskId)
-        nonReentrant
-        whenNotPaused
-    {
+    function approveTask(
+        uint256 taskId
+    ) external override taskExists(taskId) onlyTaskCreator(taskId) nonReentrant whenNotPaused {
         _getTaskSubmissionContract().__approveTask(taskId);
         emit ControllerEvent("TaskApproved", taskId, msg.sender);
     }
@@ -368,28 +358,24 @@ contract TaskController is
     /**
      * @notice Cancels a task by creator or member
      */
-    function cancelByMe(uint256 taskId, address user)
-        external
-        override
-        taskExists(taskId)
-        nonReentrant
-        onlyUser
-        whenNotPaused
-    {
+    function cancelByMe(
+        uint256 taskId,
+        address user
+    ) external override taskExists(taskId) nonReentrant onlyUser whenNotPaused {
+        // SECURITY FIX C-2: Ensure caller is the user they claim to be
+        if (msg.sender != user) revert systemError("CallerMustBeUser");
+
         _getTaskCancellationContract().__cancelByMe(taskId, user);
         emit ControllerEvent("TaskCancelledByMe", taskId, user);
     }
 
     /**
      * @notice Triggers deadline consequence
+     * @dev SECURITY FIX M-3: Only task creator can trigger deadline
      */
-    function triggerDeadline(uint256 taskId)
-        external
-        override
-        taskExists(taskId)
-        whenNotPaused
-        nonReentrant
-    {
+    function triggerDeadline(
+        uint256 taskId
+    ) external override taskExists(taskId) whenNotPaused nonReentrant onlyTaskCreator(taskId) {
         _getTaskCancellationContract().__triggerDeadline(taskId);
         emit ControllerEvent("DeadlineTriggered", taskId, msg.sender);
     }
@@ -401,28 +387,17 @@ contract TaskController is
     /**
      * @notice Gets join request count for task
      */
-    function getJoinRequestCount(uint256 taskId)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getJoinRequestCount(uint256 taskId) external view override returns (uint256) {
         return _getTaskDataContract().__getJoinRequestCount(taskId);
     }
 
     /**
      * @notice Gets required member stake for task
      */
-    function getMemberRequiredStake(uint256 taskId)
-        public
-        view
-        override
-        taskExists(taskId)
-        returns (uint256)
-    {
+    function getMemberRequiredStake(uint256 taskId) public view override taskExists(taskId) returns (uint256) {
         ITaskData.TaskData memory t = _getTaskDataContract().__getTask(taskId);
-        return (t.reward *
-            IDataContract(addressRegistry.__dataContract()).__getMemberStakeFromRewardPercentage()) / 100;
+        return
+            (t.reward * IDataContract(addressRegistry.__dataContract()).__getMemberStakeFromRewardPercentage()) / 100;
     }
 
     /**
@@ -434,12 +409,7 @@ contract TaskController is
         uint256 rewardWei,
         address Caller
     ) public view override returns (uint256) {
-        return _getTaskLifecycleLogicContract().___getCreatorStake(
-            DeadlineHours,
-            MaximumRevision,
-            rewardWei,
-            Caller
-        );
+        return _getTaskLifecycleLogicContract().___getCreatorStake(DeadlineHours, MaximumRevision, rewardWei, Caller);
     }
 
     /**
@@ -451,12 +421,7 @@ contract TaskController is
         uint256 rewardWei,
         address Caller
     ) public view override returns (uint256) {
-        return _getTaskLifecycleLogicContract().___getProjectValue(
-            DeadlineHours,
-            MaximumRevision,
-            rewardWei,
-            Caller
-        );
+        return _getTaskLifecycleLogicContract().___getProjectValue(DeadlineHours, MaximumRevision, rewardWei, Caller);
     }
 
     // =============================================================
@@ -465,25 +430,23 @@ contract TaskController is
 
     /**
      * @notice Withdraws accumulated protocol fees
+     * @dev SECURITY FIX NEW-H-1: Fees are stored in UsersContract, withdraw from there
      */
-    function withdrawToSystemWallet()
-        external
-        onlyOwner
-        nonReentrant
-        whenNotPaused
-    {
-        (uint256 feeCollected, ) = _getTaskDataContract().__getGlobalState();
+    function withdrawToSystemWallet() external onlyOwner nonReentrant whenNotPaused {
+        (, uint256 feeCollected) = _getTaskDataContract().__getGlobalState();
         if (feeCollected > 0) {
             _getTaskDataContract().__decreaseFee(feeCollected);
-            (bool ok, ) = addressRegistry.__walletContract().call{value: feeCollected}("");
-            if (!ok) revert systemError("WithdrawFailed");
+            IUsers(addressRegistry.__usersContract()).transferFeeToWallet(
+                feeCollected,
+                payable(addressRegistry.__walletContract())
+            );
         }
     }
 
     /**
      * @notice Change address registry
      */
-    function __changeControllerAndModuleAddressRegistry(address newAddress) external override whenNotPaused onlyOwner{
+    function __changeControllerAndModuleAddressRegistry(address newAddress) external override whenNotPaused onlyOwner {
         if (newAddress == address(0)) {
             revert systemError("ZeroAddress");
         }
@@ -500,10 +463,7 @@ contract TaskController is
     /**
      * @notice Pauses the contract
      */
-    function pause(address caller)
-        external
-        onlyOwner
-    {
+    function pause(address caller) external onlyOwner {
         if (caller == address(0)) revert systemError("ZeroAddress");
         _pause();
     }
@@ -511,10 +471,7 @@ contract TaskController is
     /**
      * @notice Unpauses the contract
      */
-    function unpause(address caller)
-        external
-        onlyOwner
-    {
+    function unpause(address caller) external onlyOwner {
         if (caller == address(0)) revert systemError("ZeroAddress");
         _unpause();
     }
@@ -535,13 +492,7 @@ contract TaskController is
     // UPGRADE AUTHORIZATION
     // =============================================================
 
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        view
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function _authorizeUpgrade(address newImplementation) internal view override onlyOwner whenNotPaused {
         if (newImplementation == address(0)) revert systemError("ZeroAddress");
     }
 }
