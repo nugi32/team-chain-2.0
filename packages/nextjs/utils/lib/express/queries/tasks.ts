@@ -3,15 +3,10 @@ import axios from "axios";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 interface Task {
-    _id: string,
+    id: string,
     smartContractId: number,
     title: string,
-    description: {
-        header: string,
-        summary: string,
-        points: string[],
-        footer: string,
-    },
+    description: string,
     picture: string,
     owner: string,
 }
@@ -37,7 +32,7 @@ export async function getTaskBySmartContractId(
 
         const task = tasks.find(
             (task) =>
-                task._id === _id
+                task.id === _id
         );
 
         if (!task) {

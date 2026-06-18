@@ -1,130 +1,163 @@
-import { useState } from "react";
-import { useTaskController, CreateTaskParams } from "@/utils/lib/smartContractWrapper/user/TaskController";
-import { handleCreateTask, type CreateTaskPayload } from "@/utils/lib/express/mutations/tasks";
-import { useAccount } from "wagmi";
-import { getValidJwt } from "@/utils/globalLib/walletAuth";
-import { getTaskBySmartContractId } from "@/utils/lib/express/queries/tasks";
-import { useTaskData } from "@/utils/lib/smartContractWrapper/user/taskData";
+"use client";
 
-/**
- * Smart contract payload for on-chain task creation
- * Includes msg.value as a string to be converted to wei via parseEther()
- */
-export interface SmartContractTaskPayload extends CreateTaskParams {
-    value: string; // Amount in ETH as string, will be parsed to wei
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { readContract } from "@wagmi/core";
+
+import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
+
+import {
+  useTaskController,
+  CreateTaskParams,
+} from "@/utils/lib/smartContractWrapper/user/TaskController";
+
+import {
+  handleCreateTask,
+  type CreateTaskPayload,
+} from "@/utils/lib/express/mutations/tasks";
+
+import { getValidJwt } from "@/utils/globalLib/walletAuth";
+
+export interface SmartContractTaskPayload
+  extends CreateTaskParams {
+  value: string;
 }
 
-/**
- * Express backend payload for off-chain task metadata storage
- */
-export interface BackendTaskPayload extends CreateTaskPayload {}
+export interface BackendTaskPayload
+  extends CreateTaskPayload {}
 
-/**
- * Combined result from both on-chain and off-chain creation
- */
 export interface TaskCreationResult {
-    contractId: string;
-    expressId: string;
-    transactionHash?: string;
+  contractId: string;
+  expressId: string;
 }
 
 export function useTaskCreation() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const { address, isConnected } = useAccount();
-    const { actions, form, user } = useTaskController();
-    const { data } = useTaskData();
+  const [isLoading, setIsLoading] =
+    useState(false);
 
-    /**
-     * Create a task on-chain and store metadata off-chain
-     * @param scPayload - Smart contract parameters (title, githubURL, deadline, revision, value in ETH)
-     * @param backendPayload - Backend parameters (projectName, objective, category, skills, etc.)
-     * @returns TaskCreationResult with contractId (from contract), expressId (from backend), and optional transactionHash
-     */
-    const createTask = async (
-        scPayload: SmartContractTaskPayload,
-        backendPayload: BackendTaskPayload
-    ): Promise<TaskCreationResult> => {
-        setIsLoading(true);
-        setError(null);
+  const [error, setError] =
+    useState<string | null>(null);
 
-        try {
-            if (!isConnected || !address) {
-                throw new Error("Please connect your wallet first.");
-            }
+  const { address, isConnected } =
+    useAccount();
 
-            // Validate both payloads
-            if (!scPayload || !backendPayload) {
-                throw new Error("Both smart contract and backend payloads are required.");
-            }
+  const { actions, form } =
+    useTaskController();
 
-            // Set up smart contract parameters
-            form.setTitle(scPayload.title);
-            form.setGithubUrl(scPayload.githubURL);
-            form.setDeadlineHours(scPayload.deadlineHours);
-            form.setMaxRevision(scPayload.maximumRevision);
-            form.setValue(scPayload.value); // This will be parsed to wei
+  const { data: taskDataContract } =
+    useDeployedContractInfo({
+      contractName: "taskData",
+    });
 
-            // Execute on-chain transaction
-            await actions.handleCreateTask();
+  const createTask = async (
+    scPayload: SmartContractTaskPayload,
+    backendPayload: BackendTaskPayload
+  ): Promise<TaskCreationResult> => {
+    setIsLoading(true);
+    setError(null);
 
-            // After on-chain creation succeeds, get the taskId from contract data
-            // The task counter represents the number of tasks, so the latest task ID = counter - 1
-            let taskId: string | null = null;
-            let retries = 0;
-            const maxRetries = 30; // 30 attempts with 1s delay = 30 seconds max wait
+    try {
+      if (!isConnected || !address) {
+        throw new Error(
+          "Please connect your wallet first."
+        );
+      }
 
-            while (!taskId && retries < maxRetries) {
-                if (data?.taskCounter !== undefined && data?.task !== undefined) {
-                    const onchainTaskLength = data.taskCounter;
+      if (!taskDataContract) {
+        throw new Error(
+          "TaskData contract not loaded."
+        );
+      }
 
-                    if (typeof onchainTaskLength === 'number' && onchainTaskLength > 0) {
-                        const task = data.task;
-                        if (task && task.creator === address && task.taskId !== undefined) {
-                            taskId = task.taskId.toString();
-                            break;
-                        }
-                    }
-                }
+      // --------------------------
+      // Execute transaction with params
+      // (pass params directly to avoid React state race condition)
+      // --------------------------
 
-                // Wait before retrying
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                retries++;
-            }
+      await actions.handleCreateTask({
+        title: scPayload.title,
+        githubUrl: scPayload.githubURL,
+        deadlineHours: scPayload.deadlineHours,
+        maxRevision: scPayload.maximumRevision,
+        value: scPayload.value,
+      });
 
-            if (!taskId) {
-                throw new Error("Failed to retrieve task ID from contract. Please try again.");
-            }
+      // --------------------------
+      // Read fresh counter
+      // --------------------------
 
-            // Get JWT token for backend authentication
-            const jwt = await getValidJwt(address);
+      const freshCounter =
+        await readContract(
+          wagmiConfig,
+          {
+            address:
+              taskDataContract.address,
+            abi: taskDataContract.abi,
+            functionName:
+              "taskCounter",
+          }
+        );
 
-            // Pass contractId (on-chain taskId) to backend
-            const backendPayloadWithContractId: typeof backendPayload = {
-                ...backendPayload,
-                contractId: taskId,
-            };
+      const contractId = (
+        BigInt(
+          freshCounter.toString()
+        ) - 1n
+      ).toString();
 
-            // Store metadata off-chain with the on-chain task ID
-            const expressId = await handleCreateTask(backendPayloadWithContractId, jwt);
+      console.log(
+        "Fresh Counter:",
+        freshCounter.toString()
+      );
 
-            setIsLoading(false);
-            return { 
-                contractId: taskId,
-                expressId 
-            };
+      console.log(
+        "Created Task ID:",
+        contractId
+      );
 
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Failed to create task";
-            setError(errorMessage);
-            setIsLoading(false);
-            throw err;
-        }
-    };
+      // --------------------------
+      // JWT
+      // --------------------------
 
-    return {
-        createTask,
-        isLoading,
-        error,
-    };
+      const jwt =
+        await getValidJwt(address);
+
+      // --------------------------
+      // Store in Express
+      // --------------------------
+
+      const payload = {
+        ...backendPayload,
+        contractId,
+      };
+
+      const expressId =
+        await handleCreateTask(
+          payload,
+          jwt
+        );
+
+      return {
+        contractId,
+        expressId,
+      };
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to create task";
+
+      setError(message);
+
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    createTask,
+    isLoading,
+    error,
+  };
 }

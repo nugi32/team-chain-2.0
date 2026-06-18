@@ -188,7 +188,13 @@ export const useTaskController = () => {
 
     const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "TaskController" });
 
-    const handleCreateTask = async () => {
+    const handleCreateTask = async (params?: {
+        title?: string;
+        githubUrl?: string;
+        deadlineHours?: bigint;
+        maxRevision?: bigint;
+        value?: string;
+    }) => {
         try {
             // IMPORTANT: Always pass connectedAddress to ensure msg.sender matches _user parameter
             // The contract validates: if (msg.sender != _user) revert systemError("CallerMustBeUser");
@@ -197,11 +203,18 @@ export const useTaskController = () => {
                 throw new Error("User not connected");
             }
 
+            // Use provided params or fall back to state
+            const finalTitle = params?.title ?? title;
+            const finalGithubUrl = params?.githubUrl ?? githubUrl;
+            const finalDeadlineHours = params?.deadlineHours ?? deadlineHours;
+            const finalMaxRevision = params?.maxRevision ?? maxRevision;
+            const finalValue = params?.value ?? value;
+
             await writeContractAsync(
                 {
                     functionName: "createTask",
-                    args: [title, githubUrl, deadlineHours, maxRevision, parseEther(value), userAddress],
-                    value: parseEther(value),
+                    args: [finalTitle, finalGithubUrl, finalDeadlineHours, finalMaxRevision, parseEther(finalValue), userAddress],
+                    value: parseEther(finalValue),
                 },
                 {
                     onBlockConfirmation: (txnReceipt) => {

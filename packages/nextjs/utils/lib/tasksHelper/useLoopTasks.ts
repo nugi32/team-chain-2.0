@@ -19,10 +19,11 @@ export enum TaskStatus {
   Cancelled,
 }
 
-export const useTasks = (creatorAddress?: string) => {
+export const useLoopTasks = (creatorAddress?: string, memberAddress?: string) => {
   const { address: connectedAddress } = useAccount();
 
   const creator = creatorAddress ?? connectedAddress;
+  const member = memberAddress ?? connectedAddress;
 
   const [tasks, setTasks] = useState<any[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
@@ -75,6 +76,21 @@ export const useTasks = (creatorAddress?: string) => {
     );
   }, [tasks, creator]);
 
+  const memberTasks = useMemo(() => {
+    if (!member) return [];
+
+    return tasks.filter(
+      task =>
+        task.member?.toLowerCase() === member.toLowerCase()
+    );
+  }, [tasks, member]);
+
+  const latestMemberTask = useMemo(() => {
+    return memberTasks.length
+      ? memberTasks[memberTasks.length - 1]
+      : null;
+  }, [memberTasks]);
+
   const latestCreatorTask = useMemo(() => {
     return creatorTasks.length
       ? creatorTasks[creatorTasks.length - 1]
@@ -121,6 +137,9 @@ export const useTasks = (creatorAddress?: string) => {
 
     creatorTasks,
     latestCreatorTask,
+
+    memberTasks,
+    latestMemberTask,
 
     createdTasks,
     activeTasks,

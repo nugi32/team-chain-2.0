@@ -17,7 +17,8 @@ const scaffoldConfig = {
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 4000)
-  pollingInterval: 3000,
+  // Reduced to 6000 to avoid rate limiting on public RPC endpoints
+  pollingInterval: 6000,
 
   // This is ours Alchemy's default API key.
   // You can get your own at https://dashboard.alchemyapi.io
@@ -28,8 +29,8 @@ const scaffoldConfig = {
   // If you want to use a different RPC for a specific network, you can add it here.
   // The key is the chain ID, and the value is the HTTP RPC URL
   rpcOverrides: {
-    // Use a reliable public RPC for Sepolia to avoid rate limits
-    [chains.sepolia.id]: "https://eth-sepolia-public.unifra.io",
+    // Use Alchemy as the primary RPC for better reliability and rate limits
+    [chains.sepolia.id]: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || "cR4WnXePioePZ5fFrnSiR"}`,
   },
 
   // This is ours WalletConnect's default project ID.
