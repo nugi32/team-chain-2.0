@@ -3,12 +3,21 @@ import axios from "axios";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 interface Task {
-    id: string,
-    smartContractId: number,
-    title: string,
-    description: string,
-    picture: string,
-    owner: string,
+  _id: string;
+  id: string;
+  contractId: string;
+  projectName: string;
+  objective: string;
+  category: string;
+  effort: string;
+  minReputation: string;
+  roles: string[];
+  skills: string[];
+  description: string;
+  badges: string[];
+  milestones: unknown | null; // replace with a proper type if known
+  stakeRequired: string;
+  owner: string;
 }
 
 export async function getAllTasks() {

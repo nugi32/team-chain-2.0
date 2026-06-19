@@ -26,9 +26,17 @@ export interface CompleteTaskOutput {
 
     // Express data
     expressId: string;
-    title: string;
+    projectName: string;
+    objective: string;
+    category: string;
+    effort: string;
+    minReputation: string;
+    roles: string[];
+    skills: string[];
     description: string;
-    picture: string;
+    badges: string[];
+    milestones: unknown | null;
+    stakeRequired: string;
     owner: string;
 }
 
@@ -105,9 +113,17 @@ export const useGetCompleteTasks = (address?: string) => {
 
                                 // Express
                                 expressId: dbTask.id,
-                                title: dbTask.title,
+                                projectName: dbTask.projectName,
+                                objective: dbTask.objective,
+                                category: dbTask.category,
+                                effort: dbTask.effort,
+                                minReputation: dbTask.minReputation,
+                                roles: dbTask.roles,
+                                skills: dbTask.skills,
                                 description: dbTask.description,
-                                picture: dbTask.picture,
+                                badges: dbTask.badges,
+                                milestones: dbTask.milestones,
+                                stakeRequired: dbTask.stakeRequired,
                                 owner: dbTask.owner,
                             };
 

@@ -1,39 +1,25 @@
 "use client";
 
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 
 import KanbanBoard from "@/components/dashboard/KanbanBoard";
 import RightSidebar from "@/components/dashboard/RightSidebar";
 import TopStats from "@/components/dashboard/TopStats";
 import GreetingHeader from "@/components/dashboard/GreetingHeader";
-import ReputationActivity from "@/components/dashboard/ReputationActivity";
 import FinancialSummary from "@/components/dashboard/FinancialSummary";
-
-import {
-  useDashboard,
-  KANBAN_TABS,
-  type KanbanTab,
-} from "@/utils/lib/dashboard";
+import { useDashboardUserData } from "@/utils/lib/dashboard";
 
 export default function DashboardPage() {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : (params.id ?? "");
 
   const {
-    user,
-    walletAddress,
-    balanceData,
-    kanbanTasks,
-    activeTasks,
-    reviewTasks,
-    activity,
-    transactions,
-    loading,
+    loadingUser: loading,
     error,
-  } = useDashboard(id);
-
-    useEffect(() => {
+  } = useDashboardUserData(id);
+/*
+  useEffect(() => {
     console.group("=== DASHBOARD DATA ===");
 
     console.log("id:", id);
@@ -62,9 +48,7 @@ export default function DashboardPage() {
     loading,
     error,
   ]);
-
-
-  const [kanbanTab, setKanbanTab] = useState<KanbanTab>("Active");
+*/
 
   if (loading) {
     return (
@@ -76,22 +60,15 @@ export default function DashboardPage() {
     );
   }
 
-  if (error || !user) {
+  if (error) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <p className="text-red-400 text-sm">
-          {error ?? "Failed to load dashboard."}
+          { error.message || "Failed to load dashboard." }
         </p>
       </div>
     );
   }
-
-  const deadlineTasks = [...activeTasks, ...reviewTasks].slice(0, 4);
-
-  const liveBalance =
-    balanceData != null
-      ? Number(balanceData.formatted)
-      : user.availableBalance;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -105,37 +82,19 @@ export default function DashboardPage() {
       />
 
       <main className="relative max-w-[1440px] mx-auto px-4 md:px-6 py-8">
-        <GreetingHeader user={user} />
+        <GreetingHeader id={id} />
 
-        <TopStats user={user} />
+        <TopStats id={id} />
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-6 mb-6">
-          <KanbanBoard
-            tabs={KANBAN_TABS}
-            activeTab={kanbanTab}
-            onTabChange={setKanbanTab}
-            tasks={kanbanTasks}
-          />
+   
 
-          <RightSidebar
-            walletAddress={walletAddress ?? ""}
-            chain="Ethereum"
-            availableBalance={liveBalance}
-            activeStake={user.activeStake}
-            deadlines={deadlineTasks}
-          />
+          <RightSidebar id={id}/>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <ReputationActivity activities={activity} />
 
-          <FinancialSummary
-            availableBalance={liveBalance}
-            activeStake={user.activeStake}
-            totalEarned={user.totalEarned}
-            pendingRewards={user.pendingRewards}
-            transactions={transactions}
-          />
+          <FinancialSummary/>
         </div>
       </main>
     </div>

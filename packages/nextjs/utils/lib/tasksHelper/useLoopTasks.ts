@@ -10,13 +10,13 @@ import {
 ///home/tsunugi/projects/team-chain-2.0/packages/nextjs/services/web3/wagmiConfig.tsx
 
 export enum TaskStatus {
-  NonExistent,
-  Created,
-  Active,
-  OpenRegistration,
-  InProgres,
-  Completed,
-  Cancelled,
+    NonExistent = 0,
+    Created = 1,
+    Active = 2,
+    OpenRegistration = 3,
+    InProgres = 4,
+    Completed = 5,
+    Cancelled = 6,
 }
 
 export const useLoopTasks = (creatorAddress?: string, memberAddress?: string) => {

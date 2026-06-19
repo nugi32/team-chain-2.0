@@ -84,10 +84,11 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handleRegister = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         functionName: "Register",
         args: [registerGitHubURL, registerUser || connectedAddress],
       });
+      return hash;
     } catch (e) {
       console.error("Error registering user", e);
       throw e;
@@ -96,10 +97,11 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handleUnregister = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         functionName: "Unregister",
         args: [unregisterUser || connectedAddress],
       });
+      return hash;
     } catch (e) {
       console.error("Error unregistering user", e);
       throw e;
@@ -108,11 +110,12 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handleDeposit = async () => {
     try {
-      await writeContractAsync({
-        functionName: "deposit",
+      const hash = await writeContractAsync({
+        functionName: "depositUserFund",
         args: [depositUser || connectedAddress],
         value: depositAmount,
       });
+      return hash;
     } catch (e) {
       console.error("Error withdrawing all funds", e);
       throw e;
@@ -121,10 +124,11 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handleWithdrawUserFund = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         functionName: "withdrawUserFund",
         args: [withdrawFundUser || connectedAddress, withdrawAmount],
       });
+      return hash;
     } catch (e) {
       console.error("Error withdrawing funds", e);
       throw e;
@@ -133,10 +137,11 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handleWithdrawAllUserFund = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         functionName: "withdrawAllUserFund",
         args: [withdrawAllUser || connectedAddress],
       });
+      return hash;
     } catch (e) {
       console.error("Error withdrawing all funds", e);
       throw e;
@@ -145,10 +150,11 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handleChangeAddressRegistry = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         functionName: "__changeAddressRegistry",
         args: [newRegistryAddress],
       });
+      return hash;
     } catch (e) {
       console.error("Error changing address registry", e);
       throw e;
@@ -157,9 +163,10 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handlePause = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         functionName: "pause"
       });
+      return hash;
     } catch (e) {
       console.error("Error pausing contract", e);
       throw e;
@@ -168,9 +175,10 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const handleUnpause = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         functionName: "unpause"
       });
+      return hash;
     } catch (e) {
       console.error("Error unpausing contract", e);
       throw e;
