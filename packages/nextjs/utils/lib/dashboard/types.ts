@@ -1,3 +1,4 @@
+//utils/lib/dashboard/types.ts
 import { CompleteTaskOutput } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
 import { TaskStatus } from "@/utils/lib/tasksHelper/useLoopTasks";
 
@@ -65,6 +66,30 @@ export enum TaskRole {
     member = 1,
 }
 
+export enum UserTask {
+    None,
+    Request,
+    Accepted,
+    Rejected,
+    Cancelled
+}
+
+export type JoinRequestData = {
+    applicant: string;
+    stakeAmount: bigint;
+    status: UserTask;
+    isPending: boolean;
+    hasWithdrawn: boolean;
+}
+
+export type TaskSubmitData = {
+    githubURL: string;
+    note: string;
+    address: string;
+    status: SubmitStatus;
+    revisionTime: bigint;
+    newDeadline: bigint;
+}
 //========================================================
 // User Section
 //========================================================
@@ -130,27 +155,52 @@ export const ALL_TABS = KANBAN_TABS;
 
 export type KanbanTask = {
     id: string;
+    contractId: number;
+
     tab: TabType;
-    projectTitle: string;
     role: TaskRole;
-    taskValue: number;
-    taskValueUSD: number;
+
+    projectTitle: string;
+    category: string;
+
+    reward: number;
+    rewardUSD: number;
+
     deadline: string;
+    daysLeft: number;
+    isOverdue: boolean;
+
     progress: number;
+
+    counterpartyName?: string;
+
     tags: string[];
+
+    // SC Data
+    joinRequest?: JoinRequestData[];
+    joinRequestCount?: number;
+
+    submitContent?: TaskSubmitData;
 };
 
 export interface KanbanBoardProps {
     tabs: readonly TabType[];
     activeTab: TabType;
     onTabChange: (tab: TabType) => void;
-    tasks: CompleteTaskOutput[];
+    tasks: KanbanTask[];
+    onView?: (task: KanbanTask) => void;
+    onActivate?: (task: KanbanTask) => void;
+    onCloseRegistration?: (task: KanbanTask) => void;
+    onViewRequests?: (task: KanbanTask) => void;
+    onJoinRequest?: (task: KanbanTask) => void;
+    onSubmit?: (task: KanbanTask) => void;
+    onApprove?: (task: KanbanTask) => void;
 }
 
 export interface TabSelectorProps {
     activeTab: TabType;
     onTabChange: (tab: TabType) => void;
-    tasks: CompleteTaskOutput[];
+    tasks: KanbanTask[];
     showAllTabs?: boolean;
 }
 
@@ -159,24 +209,24 @@ export interface TabSelectorProps {
 //========================================================
 
 export interface UserStats {
-  // offchain
-  name: string;
-  walletAddress: string;
-  role: string;
-  skills: string[];
-  github: string;
-  profilePicture: string;
-  // onchain
-  reputation: bigint;
-  totalTasksCreated: bigint;
-  totalTasksCompleted: bigint;
-  totalTasksFailed: bigint;
-  balance: bigint;
-  isRegistered: boolean;
-  exists: boolean;
-  GitProfile: string;
-  // computed
-  successRate: number;
-  tier: "Bronze" | "Silver" | "Gold" | "Platinum";
-  formattedBalance: string;
+    // offchain
+    name: string;
+    walletAddress: string;
+    role: string;
+    skills: string[];
+    github: string;
+    profilePicture: string;
+    // onchain
+    reputation: bigint;
+    totalTasksCreated: bigint;
+    totalTasksCompleted: bigint;
+    totalTasksFailed: bigint;
+    balance: bigint;
+    isRegistered: boolean;
+    exists: boolean;
+    GitProfile: string;
+    // computed
+    successRate: number;
+    tier: "Bronze" | "Silver" | "Gold" | "Platinum";
+    formattedBalance: string;
 }

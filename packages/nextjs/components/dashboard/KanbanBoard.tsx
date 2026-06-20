@@ -3,48 +3,35 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Layers, Filter } from "lucide-react";
 
 import SectionHeading from "./SectionHeading";
-import TaskCard from "./TaskCard";
+import TaskCard from "./DashboardTaskComponets/TaskCard";
 
-import type {
-  TabType,
-  KanbanBoardProps,
-} from "@/utils/lib/dashboard";
+import type { TabType, KanbanBoardProps } from "@/utils/lib/dashboard";
 
 export default function KanbanBoard({
   tabs,
   activeTab,
   onTabChange,
   tasks,
+  onView,
+  onActivate,
+  onCloseRegistration,
+  onViewRequests,
+  onJoinRequest,
+  onSubmit,
+  onApprove,
 }: KanbanBoardProps) {
-  const visibleTasks = tasks.filter(
-    (t) => t.tab === activeTab,
-  );
+  const visibleTasks = tasks.filter((t) => t.tab === activeTab);
 
   const getTabColor = (tab: TabType) => {
     switch (tab) {
-      case "Created":
-        return "bg-slate-500/20 text-slate-400";
-
-      case "Active":
-        return "bg-blue-500/20 text-blue-400";
-
-      case "OpenRegistration":
-        return "bg-indigo-500/20 text-indigo-400";
-
-      case "InProgres":
-        return "bg-cyan-500/20 text-cyan-400";
-
-      case "Review":
-        return "bg-amber-500/20 text-amber-400";
-
-      case "Completed":
-        return "bg-emerald-500/20 text-emerald-400";
-
-      case "Cancelled":
-        return "bg-red-500/20 text-red-400";
-
-      default:
-        return "bg-gray-500/20 text-gray-400";
+      case "Created": return "bg-slate-500/20 text-slate-400";
+      case "Active": return "bg-blue-500/20 text-blue-400";
+      case "OpenRegistration": return "bg-indigo-500/20 text-indigo-400";
+      case "InProgres": return "bg-cyan-500/20 text-cyan-400";
+      case "Review": return "bg-amber-500/20 text-amber-400";
+      case "Completed": return "bg-emerald-500/20 text-emerald-400";
+      case "Cancelled": return "bg-red-500/20 text-red-400";
+      default: return "bg-gray-500/20 text-gray-400";
     }
   };
 
@@ -63,9 +50,7 @@ export default function KanbanBoard({
 
       <div className="flex gap-1 mb-4 p-1 rounded-2xl bg-gray-900 border border-gray-800 w-fit flex-wrap">
         {tabs.map((tab) => {
-          const count = tasks.filter(
-            (t) => t.tab === tab,
-          ).length;
+          const count = tasks.filter((t) => t.tab === tab).length;
 
           return (
             <button
@@ -79,13 +64,7 @@ export default function KanbanBoard({
               ].join(" ")}
             >
               {tab}
-
-              <span
-                className={[
-                  "ml-1.5 text-[10px] rounded-full px-1.5 py-0.5",
-                  getTabColor(tab),
-                ].join(" ")}
-              >
+              <span className={["ml-1.5 text-[10px] rounded-full px-1.5 py-0.5", getTabColor(tab)].join(" ")}>
                 {count}
               </span>
             </button>
@@ -107,13 +86,18 @@ export default function KanbanBoard({
               <TaskCard
                 key={task.id}
                 task={task}
+                onView={onView}
+                onActivate={onActivate}
+                onCloseRegistration={onCloseRegistration}
+                onViewRequests={onViewRequests}
+                onJoinRequest={onJoinRequest}
+                onSubmit={onSubmit}
+                onApprove={onApprove}
               />
             ))
           ) : (
             <div className="col-span-2 rounded-2xl border border-dashed border-gray-800 bg-gray-900/50 p-10 text-center">
-              <p className="text-sm text-gray-600">
-                No tasks in this column
-              </p>
+              <p className="text-sm text-gray-600">No tasks in this column</p>
             </div>
           )}
         </motion.div>

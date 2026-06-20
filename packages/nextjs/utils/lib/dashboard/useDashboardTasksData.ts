@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useGetCompleteTasks } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
 import { getUserById } from "@/utils/lib/express/queries/users";
-
+import { useTaskController } from "../smartContractWrapper/user/TaskController";
+//utils/lib/dashboard
 /*
 export interface CompleteTaskOutput {
     // Smart contract data

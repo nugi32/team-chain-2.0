@@ -1,15 +1,29 @@
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useState } from "react";
 
-export const useTaskData = (taskId?: number, options?: { user?: string; index?: number }) => {
+export const useTaskData = (
+  taskId?: number,
+  options?: { user?: string; index?: number }
+) => {
   const { address: connectedAddress } = useAccount();
+
   const user = options?.user ?? connectedAddress;
   const index = options?.index;
+
+  const [id, setId] = useState<bigint | undefined>(
+    taskId !== undefined ? BigInt(taskId) : undefined
+  );
+
+  const taskArg =
+    taskId !== undefined
+      ? BigInt(taskId)
+      : id ?? 0n;
 
   const { data: task, isLoading: isTaskLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTask",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg],
   });
 
   const { data: taskCounter, isLoading: isTaskCounterLoading } = useScaffoldReadContract({
@@ -25,85 +39,85 @@ export const useTaskData = (taskId?: number, options?: { user?: string; index?: 
   const { data: taskStatus, isLoading: isTaskStatusLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskStatus",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: taskParticipants, isLoading: isTaskParticipantsLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskParticipants",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined],
+    args: [taskArg],
   });
 
   const { data: taskFinancials, isLoading: isTaskFinancialsLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskFinancials",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: taskMetadata, isLoading: isTaskMetadataLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskMetadata",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: taskFlags, isLoading: isTaskFlagsLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskFlags",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: joinRequests, isLoading: isJoinRequestsLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequests",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: joinRequestByIndex, isLoading: isJoinRequestByIndexLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequestByIndex",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined, index !== undefined ? BigInt(index) : undefined]
+    args: [taskArg, index !== undefined ? BigInt(index) : undefined]
   });
 
   const { data: joinRequestCount, isLoading: isJoinRequestCountLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequestCount",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: hasPendingRequest, isLoading: isHasPendingRequestLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__hasPendingRequest",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined, user]
+    args: [taskArg, user]
   });
 
   const { data: joinRequestByUser, isLoading: isJoinRequestByUserLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequestByUser",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined, user]
+    args: [taskArg, user]
   });
 
   const { data: taskSubmit, isLoading: isTaskSubmitLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskSubmit",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: submitStatus, isLoading: isSubmitStatusLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getSubmitStatus",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: submitContent, isLoading: isSubmitContentLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getSubmitContent",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: submitRevision, isLoading: isSubmitRevisionLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getSubmitRevision",
-    args: [taskId !== undefined ? BigInt(taskId) : undefined]
+    args: [taskArg]
   });
 
   const { data: globalState, isLoading: isGlobalStateLoading } = useScaffoldReadContract({
@@ -137,6 +151,10 @@ export const useTaskData = (taskId?: number, options?: { user?: string; index?: 
       submitRevision,
       globalState,
       addressRegistry,
+    },
+
+    form: {
+      setId,
     },
 
     loading: {
