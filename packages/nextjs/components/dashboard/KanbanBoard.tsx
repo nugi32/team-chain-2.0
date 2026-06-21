@@ -19,6 +19,10 @@ export default function KanbanBoard({
   onJoinRequest,
   onSubmit,
   onApprove,
+  onOpenRegistration,
+  onDelete,
+  onRequestRevision,
+  onCancel,
 }: KanbanBoardProps) {
   const visibleTasks = tasks.filter((t) => t.tab === activeTab);
 
@@ -85,14 +89,8 @@ export default function KanbanBoard({
             visibleTasks.map((task) => (
               <TaskCard
                 key={task.id}
+                id={task.id}
                 task={task}
-                onView={onView}
-                onActivate={onActivate}
-                onCloseRegistration={onCloseRegistration}
-                onViewRequests={onViewRequests}
-                onJoinRequest={onJoinRequest}
-                onSubmit={onSubmit}
-                onApprove={onApprove}
               />
             ))
           ) : (

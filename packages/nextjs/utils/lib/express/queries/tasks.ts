@@ -41,19 +41,18 @@ export async function getTaskBySmartContractId(
 
         const task = tasks.find(
             (task) =>
-                task.id === _id
+                task.contractId === _id
         );
 
         if (!task) {
-            console.error("task not found");
+            // Silently return undefined if task not found - this is expected during data loading
+            return undefined;
         }
 
         return task; //Type 'Task | undefined' is not assignable to type 'Task'.Type 'undefined' is not assignable to type 'Task'.
     } catch (err) {
-        console.error(
-            `error while fetching task by ID, error message: ${err}`
-        );
-        throw err;
+        // Silently handle errors during task fetching - return undefined
+        return undefined;
     }
 }
 

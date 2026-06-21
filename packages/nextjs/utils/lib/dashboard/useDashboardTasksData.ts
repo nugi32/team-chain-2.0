@@ -4,6 +4,7 @@ import { getUserById } from "@/utils/lib/express/queries/users";
 import { useTaskController } from "../smartContractWrapper/user/TaskController";
 //utils/lib/dashboard
 /*
+this hook return something like this
 export interface CompleteTaskOutput {
     // Smart contract data
     smartContractId: number;

@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
 import { readContract } from "@wagmi/core";
 
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
@@ -7,26 +6,24 @@ import {
   useDeployedContractInfo,
   useScaffoldReadContract,
 } from "~~/hooks/scaffold-eth";
+import { getTaskBySmartContractId } from "@/utils/lib/express/queries/tasks";
 ///home/tsunugi/projects/team-chain-2.0/packages/nextjs/services/web3/wagmiConfig.tsx
 
 export enum TaskStatus {
-    NonExistent = 0,
-    Created = 1,
-    Active = 2,
-    OpenRegistration = 3,
-    InProgres = 4,
-    Completed = 5,
-    Cancelled = 6,
+  NonExistent = 0,
+  Created = 1,
+  Active = 2,
+  OpenRegistration = 3,
+  InProgres = 4,
+  Completed = 5,
+  Cancelled = 6,
 }
 
-export const useLoopTasks = (creatorAddress?: string, memberAddress?: string) => {
-  const { address: connectedAddress } = useAccount();
-
-  const creator = creatorAddress ?? connectedAddress;
-  const member = memberAddress ?? connectedAddress;
-
+export const useLoopTasks = () => {
   const [tasks, setTasks] = useState<any[]>([]);
+  const [validTasks, setValidTasks] = useState<any[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
+  const [isLoadingValidTasks, setIsLoadingValidTasks] = useState(false);
 
   const { data: contractData } = useDeployedContractInfo({
     contractName: "taskData",
@@ -38,6 +35,7 @@ export const useLoopTasks = (creatorAddress?: string, memberAddress?: string) =>
       functionName: "taskCounter",
     });
 
+  // Fetch tasks from contract
   useEffect(() => {
     const fetchTasks = async () => {
       if (!contractData || taskCounter === undefined) return;
@@ -67,94 +65,51 @@ export const useLoopTasks = (creatorAddress?: string, memberAddress?: string) =>
     fetchTasks();
   }, [contractData, taskCounter]);
 
-  const creatorTasks = useMemo(() => {
-    if (!creator) return [];
+  // Fetch valid tasks whenever tasks changes
+  useEffect(() => {
+    const fetchValidTasks = async () => {
+      if (!tasks.length) {
+        setValidTasks([]);
+        return;
+      }
 
-    return tasks.filter(
-      task =>
-        task.creator?.toLowerCase() === creator.toLowerCase()
-    );
-  }, [tasks, creator]);
+      setIsLoadingValidTasks(true);
 
-  const memberTasks = useMemo(() => {
-    if (!member) return [];
+      try {
+        const results = await Promise.all(
+          tasks.map(async task => {
+            const dbTask = await getTaskBySmartContractId(
+              task.taskId.toString()
+            );
 
-    return tasks.filter(
-      task =>
-        task.member?.toLowerCase() === member.toLowerCase()
-    );
-  }, [tasks, member]);
+            return dbTask ? task : null;
+          })
+        );
 
-  const latestMemberTask = useMemo(() => {
-    return memberTasks.length
-      ? memberTasks[memberTasks.length - 1]
-      : null;
-  }, [memberTasks]);
+        setValidTasks(results.filter(Boolean));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoadingValidTasks(false);
+      }
+    };
 
-  const latestCreatorTask = useMemo(() => {
-    return creatorTasks.length
-      ? creatorTasks[creatorTasks.length - 1]
-      : null;
-  }, [creatorTasks]);
-
-  const getTasksByStatus = (status: TaskStatus) => {
-    return tasks.filter(task => Number(task.status) === status);
-  };
-
-  const createdTasks = useMemo(
-    () => getTasksByStatus(TaskStatus.Created),
-    [tasks]
-  );
-
-  const activeTasks = useMemo(
-    () => getTasksByStatus(TaskStatus.Active),
-    [tasks]
-  );
-
-  const openRegistrationTasks = useMemo(
-    () => getTasksByStatus(TaskStatus.OpenRegistration),
-    [tasks]
-  );
-
-  const inProgressTasks = useMemo(
-    () => getTasksByStatus(TaskStatus.InProgres),
-    [tasks]
-  );
-
-  const completedTasks = useMemo(
-    () => getTasksByStatus(TaskStatus.Completed),
-    [tasks]
-  );
-
-  const cancelledTasks = useMemo(
-    () => getTasksByStatus(TaskStatus.Cancelled),
-    [tasks]
-  );
+    fetchValidTasks();
+  }, [tasks]);
 
   return {
     taskCounter,
     tasks,
-
-    creatorTasks,
-    latestCreatorTask,
-
-    memberTasks,
-    latestMemberTask,
-
-    createdTasks,
-    activeTasks,
-    openRegistrationTasks,
-    inProgressTasks,
-    completedTasks,
-    cancelledTasks,
-
-    getTasksByStatus,
+    validTasks,
 
     loading: {
       taskCounter: isTaskCounterLoading,
       tasks: isLoadingTasks,
+      validTasks: isLoadingValidTasks,
       isLoading:
-        isTaskCounterLoading || isLoadingTasks,
+        isTaskCounterLoading ||
+        isLoadingTasks ||
+        isLoadingValidTasks,
     },
   };
 };

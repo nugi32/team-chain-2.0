@@ -188,13 +188,27 @@ export interface KanbanBoardProps {
     activeTab: TabType;
     onTabChange: (tab: TabType) => void;
     tasks: KanbanTask[];
+
+    // Button-rule handlers, by tab:
+    // Created      -> creator: onActivate
+    // Active       -> creator: onOpenRegistration, onDelete
+    // OpenRegistration -> creator: onViewRequests, onCloseRegistration, onDelete
+    // InProgres    -> member: onSubmit | everyone: onCancel
+    // Review       -> creator: onRequestRevision | member: onSubmit | everyone: onCancel
+    // Completed/Cancelled -> view only
     onView?: (task: KanbanTask) => void;
     onActivate?: (task: KanbanTask) => void;
+    onOpenRegistration?: (task: KanbanTask) => void;
     onCloseRegistration?: (task: KanbanTask) => void;
     onViewRequests?: (task: KanbanTask) => void;
-    onJoinRequest?: (task: KanbanTask) => void;
+    onDelete?: (task: KanbanTask) => void;
     onSubmit?: (task: KanbanTask) => void;
+    onRequestRevision?: (task: KanbanTask) => void;
+    onCancel?: (task: KanbanTask) => void;
     onApprove?: (task: KanbanTask) => void;
+
+    // kept for backward compatibility — not driven by the current button rules
+    onJoinRequest?: (task: KanbanTask) => void;
 }
 
 export interface TabSelectorProps {

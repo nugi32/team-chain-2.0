@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { TaskStatus, useLoopTasks } from "@/utils/lib/tasksHelper/useLoopTasks";
 import { getTaskBySmartContractId } from "@/utils/lib/express/queries/tasks";
+import { useAccount } from "wagmi";
 
 //packages/nextjs/utils/lib/tasksHelper/useGetCompleteTasks.ts
 export interface CompleteTaskOutput {
@@ -41,7 +42,11 @@ export interface CompleteTaskOutput {
 }
 
 export const useGetCompleteTasks = (address?: string) => {
-    const { tasks, taskCounter, loading } = useLoopTasks(address);
+    const { validTasks, taskCounter, loading } = useLoopTasks();
+      const { address: connectedAddress } = useAccount();
+
+    const creator = address ?? connectedAddress;
+    const member = address ?? connectedAddress;
 
     const [completeTasks, setCompleteTasks] = useState<
         CompleteTaskOutput[]
@@ -52,7 +57,7 @@ export const useGetCompleteTasks = (address?: string) => {
 
     useEffect(() => {
         const loadCompleteTasks = async () => {
-            if (!tasks.length) {
+            if (!validTasks.length) {
                 setCompleteTasks([]);
                 return;
             }
@@ -60,11 +65,13 @@ export const useGetCompleteTasks = (address?: string) => {
             setIsLoadingCompleteTasks(true);
 
             try {
+                console.log("Valid tasks to process:", validTasks);
                 const mergedTasks = await Promise.all(
-                    tasks.map(async task => {
+                    validTasks.map(async task => {
                         try {
+                            console.log(task);
                             const dbTask = await getTaskBySmartContractId(
-                                String(task.taskId)
+                                (task.taskId).toString()
                             );
 
                             if (!dbTask) {
@@ -79,7 +86,7 @@ export const useGetCompleteTasks = (address?: string) => {
 
                                 const dbTask =
                                     await getTaskBySmartContractId(
-                                        String(task.taskId)
+                                        (task.taskId).toString()
                                     );
 
                                 console.log(
@@ -139,21 +146,21 @@ export const useGetCompleteTasks = (address?: string) => {
                     })
                 );
 
-                const validTasks = mergedTasks.filter(
+                const validTasksCheck = mergedTasks.filter(
                     (
                         task
                     ): task is CompleteTaskOutput =>
                         task !== null
                 );
 
-                setCompleteTasks(validTasks);
+                setCompleteTasks(validTasksCheck);
             } finally {
                 setIsLoadingCompleteTasks(false);
             }
         };
 
         loadCompleteTasks();
-    }, [tasks]);
+    }, [validTasks]);
 
     const getTasksByStatus = (status: TaskStatus) => {
         return completeTasks.filter(
@@ -192,17 +199,31 @@ export const useGetCompleteTasks = (address?: string) => {
     );
 
     const creatorTasks = useMemo(() => {
-        if (!address) return [];
+        if (!creator) return [];
 
-        return completeTasks.filter(
+        return validTasks.filter(
             task =>
-                task.creator.toLowerCase() ===
-                address.toLowerCase()
+                task.creator?.toLowerCase() === creator.toLowerCase()
         );
-    }, [completeTasks, address]);
+    }, [validTasks, creator]);
+
+    const memberTasks = useMemo(() => {
+        if (!member) return [];
+
+        return validTasks.filter(
+            task =>
+                task.member?.toLowerCase() === member.toLowerCase()
+        );
+    }, [validTasks, member]);
+
+    const latestMemberTask = useMemo(() => {
+        return memberTasks.length
+            ? memberTasks[memberTasks.length - 1]
+            : null;
+    }, [memberTasks]);
 
     const latestCreatorTask = useMemo(() => {
-        return creatorTasks.length > 0
+        return creatorTasks.length
             ? creatorTasks[creatorTasks.length - 1]
             : null;
     }, [creatorTasks]);

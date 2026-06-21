@@ -129,9 +129,9 @@ export default function Step4({
           Your task is live and visible to workers on the marketplace. You'll receive a notification when the first application arrives.
         </p>
         <div className="flex gap-2">
-          <button className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-800 text-xs text-gray-400 hover:text-white hover:border-gray-700 transition-colors">
+          <Link href={`/dashboard/${localStorage.getItem("userId")}`} className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-800 text-xs text-gray-400 hover:text-white hover:border-gray-700 transition-colors">
             View task <ArrowUpRight className="w-3 h-3" />
-          </button>
+          </Link>
           <button className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-colors"
             onClick={() => window.location.reload()}>
             Create another

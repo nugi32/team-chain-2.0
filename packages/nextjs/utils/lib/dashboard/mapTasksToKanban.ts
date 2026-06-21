@@ -53,9 +53,28 @@ export const mapTaskToKanbanTask = async (
 
   const taskId = Number(task.smartContractId);
 
-  const joinRequests = getTaskDataHook.data.getTaskJoinRequest(taskId);
-  const joinRequestCount = getTaskDataHook.data.getTaskJoinRequestCount(taskId);
-  const submitContent = getTaskDataHook.data.getTaskSubmitContent(taskId);
+  // Safely get task data with error handling for data that may not be loaded yet
+  let joinRequests;
+  let joinRequestCount;
+  let submitContent;
+
+  try {
+    joinRequests = getTaskDataHook.data.getTaskJoinRequest(taskId);
+  } catch (err) {
+    joinRequests = undefined;
+  }
+
+  try {
+    joinRequestCount = getTaskDataHook.data.getTaskJoinRequestCount(taskId);
+  } catch (err) {
+    joinRequestCount = undefined;
+  }
+
+  try {
+    submitContent = getTaskDataHook.data.getTaskSubmitContent(taskId);
+  } catch (err) {
+    submitContent = undefined;
+  }
 
   return {
     id: String(task.smartContractId),
