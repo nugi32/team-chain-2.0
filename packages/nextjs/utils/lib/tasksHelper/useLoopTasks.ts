@@ -22,6 +22,7 @@ export enum TaskStatus {
 export const useLoopTasks = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [validTasks, setValidTasks] = useState<any[]>([]);
+  const [openRegistrationTasks, setOpenRegistrationTasks] = useState<any[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
   const [isLoadingValidTasks, setIsLoadingValidTasks] = useState(false);
 
@@ -97,10 +98,51 @@ export const useLoopTasks = () => {
     fetchValidTasks();
   }, [tasks]);
 
+  useEffect(() => {
+    const fetchValidTasks = async () => {
+      if (!tasks.length) {
+        setValidTasks([]);
+        setOpenRegistrationTasks([]);
+        return;
+      }
+
+      setIsLoadingValidTasks(true);
+
+      try {
+        const results = await Promise.all(
+          tasks.map(async task => {
+            const dbTask = await getTaskBySmartContractId(
+              task.taskId.toString()
+            );
+
+            return dbTask ? task : null;
+          })
+        );
+
+        const valid = results.filter(Boolean);
+
+        setValidTasks(valid);
+
+        const openRegistrations = valid.filter(
+          task => Number(task.status) === TaskStatus.OpenRegistration
+        );
+
+        setOpenRegistrationTasks(openRegistrations);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoadingValidTasks(false);
+      }
+    };
+
+    fetchValidTasks();
+  }, [tasks]);
+
   return {
     taskCounter,
     tasks,
     validTasks,
+    openRegistrationTasks,
 
     loading: {
       taskCounter: isTaskCounterLoading,

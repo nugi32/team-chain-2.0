@@ -41,65 +41,19 @@ export async function getUserByAddress(
 
         const users = await getAllUsers();
 
-        console.log("=== INPUT ADDRESS ===");
-        console.log("raw:", walletAddress);
-        console.log("json:", JSON.stringify(walletAddress));
-        console.log("type:", typeof walletAddress);
-        console.log("length:", walletAddress.length);
-
-        const normalizedInput = String(walletAddress)
+        const normalizedInput = walletAddress
             .trim()
             .replace(/\s/g, "")
             .toLowerCase();
 
-        console.log("normalized:", normalizedInput);
-
-        console.log("=== USERS ===");
-        console.log(users);
-
-        users.forEach((user, index) => {
-            const dbAddress = String(user.walletAddress);
-            const normalizedDb = dbAddress
-                .trim()
-                .replace(/\s/g, "")
-                .toLowerCase();
-
-            console.log(`\n=== USER ${index} ===`);
-            console.log("db raw:", dbAddress);
-            console.log("db json:", JSON.stringify(dbAddress));
-            console.log("db type:", typeof user.walletAddress);
-            console.log("db length:", dbAddress.length);
-
-            console.log("db normalized:", normalizedDb);
-            console.log("input normalized:", normalizedInput);
-
-            console.log(
-                "equal:",
-                normalizedDb === normalizedInput
-            );
-
-            console.log(
-                "char codes db:",
-                [...dbAddress].map((c) => c.charCodeAt(0))
-            );
-
-            console.log(
-                "char codes input:",
-                [...walletAddress].map((c) => c.charCodeAt(0))
-            );
-        });
-
         const user = users.find((user) => {
-            const dbAddress = String(user.walletAddress)
+            const normalizedDb = user.walletAddress
                 .trim()
                 .replace(/\s/g, "")
                 .toLowerCase();
 
-            return dbAddress === normalizedInput;
+            return normalizedDb === normalizedInput;
         });
-
-        console.log("=== MATCHED USER ===");
-        console.log(user);
 
         if (!user) {
             throw new Error("user not found");

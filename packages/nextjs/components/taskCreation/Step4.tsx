@@ -46,11 +46,15 @@ export default function Step4({
 
   /**
    * Convert FormData to SmartContractTaskPayload
-   * Maps deadline (days as string) to hours (bigint)
+   * Maps deadline (ISO date string) to hours (bigint)
    * Converts reward amount to value (ETH as string)
    */
   const buildSmartContractPayload = (): SmartContractTaskPayload => {
-    const deadlineHours = BigInt(parseInt(data.deadline) * 24);
+    // Calculate hours from date: (date - now) / 3,600,000 ms/hour
+    const deadlineMs = data.deadline ? new Date(data.deadline).getTime() - Date.now() : null;
+    const deadlineHours = deadlineMs !== null && deadlineMs > 3_600_000
+      ? BigInt(Math.ceil(deadlineMs / 3_600_000))
+      : BigInt(0);
     const maxRevisions = BigInt(parseInt(data.maxRevisions) || 1);
 
     return {

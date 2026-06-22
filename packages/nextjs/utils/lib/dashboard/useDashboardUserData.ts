@@ -57,15 +57,10 @@ export const useDashboardUserData = (address?: string, id?: string) => {
         const load = async () => {
             setLoadingStats(true);
             try {
-                console.log("1. before getUserByAddress");
 
                 const offchain = await getUserByAddress(walletAddress);
 
-                console.log("2. offchain loaded", offchain);
-
                 const raw = contractUser?.userData as readonly unknown[] | undefined;
-
-                console.log("3. raw onchain data", raw);
 
                 const onchain = raw
                     ? {
@@ -80,16 +75,9 @@ export const useDashboardUserData = (address?: string, id?: string) => {
                     }
                     : null;
 
-                console.log("4. parsed onchain", onchain);;
-
-
                 const completed = Number(onchain?.totalTasksCompleted ?? 0n);
                 const failed = Number(onchain?.totalTasksFailed ?? 0n);
                 const total = completed + failed;
-
-                console.log("5. completed", completed);
-                console.log("6. failed", failed);
-
 
                 setUser({
                     ...offchain,
@@ -107,7 +95,6 @@ export const useDashboardUserData = (address?: string, id?: string) => {
                     tier: getTier(Number(onchain?.reputation ?? 0n)),
                     formattedBalance: onchain?.balance ? formatEther(onchain.balance) : "0.0",
                 } as UserStats);
-                console.log("7. setUser success");
             } catch (err) {
                 console.error("LOAD ERROR", err);
                 setError(err instanceof Error ? err : new Error(String(err)));
