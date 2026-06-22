@@ -349,6 +349,8 @@ export const getParsedErrorWithAllAbis = (error: any, chainId: AllowedChainIds):
     const signatureMatch = originalParsedError.match(/0x[a-fA-F0-9]{8}/);
     const signature = signatureMatch ? signatureMatch[0] : "";
 
+    console.log("[Error Lookup] Found unrecognized error signature:", signature);
+
     if (!signature) {
       return originalParsedError;
     }
@@ -356,6 +358,8 @@ export const getParsedErrorWithAllAbis = (error: any, chainId: AllowedChainIds):
     try {
       // Get all deployed contracts for the current chain
       const chainContracts = deployedContractsData[chainId as keyof typeof deployedContractsData];
+
+      console.log("[Error Lookup] Chain ID:", chainId, "Has contracts:", !!chainContracts);
 
       if (!chainContracts) {
         return originalParsedError;
@@ -378,6 +382,10 @@ export const getParsedErrorWithAllAbis = (error: any, chainId: AllowedChainIds):
               const hash = keccak256(toHex(errorSignature));
               const errorSelector = hash.slice(0, 10); // 0x + 8 chars = 10 total
 
+              if (errorSelector === signature) {
+                console.log("[Error Lookup] Found matching error:", errorName, "from", contractName, "signature:", errorSignature);
+              }
+
               errorLookup[errorSelector] = {
                 name: errorName,
                 contract: contractName,
@@ -388,13 +396,19 @@ export const getParsedErrorWithAllAbis = (error: any, chainId: AllowedChainIds):
         }
       });
 
+      console.log("[Error Lookup] Total errors found in lookup table:", Object.keys(errorLookup).length);
+      console.log("[Error Lookup] Looking for signature:", signature);
+      console.log("[Error Lookup] Available signatures:", Object.keys(errorLookup).slice(0, 10));
+
       // Check if we can find the error in our lookup
       const errorInfo = errorLookup[signature];
       if (errorInfo) {
+        console.log("[Error Lookup] SUCCESS - Found error:", errorInfo);
         return `Contract function execution reverted with the following reason:\n${errorInfo.signature} from ${errorInfo.contract} contract`;
       }
 
       // If not found in simple lookup, provide a helpful message with context
+      console.log("[Error Lookup] FAILED - Error signature not found in lookup table");
       return `${originalParsedError}\n\nThis error occurred when calling a function that internally calls another contract. Check the contract that your function calls internally for more details.`;
     } catch (lookupError) {
       console.log("Failed to create error lookup table:", lookupError);

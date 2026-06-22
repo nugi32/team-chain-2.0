@@ -32,7 +32,6 @@ export default function KanbanBoard({
       case "Active": return "bg-blue-500/20 text-blue-400";
       case "OpenRegistration": return "bg-indigo-500/20 text-indigo-400";
       case "InProgres": return "bg-cyan-500/20 text-cyan-400";
-      case "Review": return "bg-amber-500/20 text-amber-400";
       case "Completed": return "bg-emerald-500/20 text-emerald-400";
       case "Cancelled": return "bg-red-500/20 text-red-400";
       default: return "bg-gray-500/20 text-gray-400";

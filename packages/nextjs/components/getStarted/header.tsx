@@ -10,7 +10,7 @@ import { GitBranch } from "lucide-react";
 ────────────────────────────────────── */
 export const GetStartedHeader = () => {
     return (
-        <header className="relative border-b border-gray-800 bg-gray-950/80 backdrop-blur-md sticky top-0 z-40 overflow-hidden">
+        <header className="relative border-b border-gray-800 bg-gray-950/80 backdrop-blur-md sticky top-0 z-40">
 
             {/* Subtle indigo dot-grid */}
             <div

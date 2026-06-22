@@ -24,13 +24,37 @@ export type UpdateAccountPayload = Partial<CreateAccountPayload>;
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
+// Helper function to compute keccak256 hash (same as smart contract)
+async function computeGitHashForDebug(githubUrl: string): Promise<string> {
+    // This is just for debugging - shows what hash the contract will compute
+    console.log('[DEBUG] GitHub URL being registered:', githubUrl);
+    try {
+        // Try to use web3.js if available, otherwise just log the URL for manual checking
+        const web3Module = await import('web3').catch(() => null);
+        if (web3Module) {
+            const { keccak256 } = web3Module.default.utils;
+            const hash = keccak256(githubUrl);
+            console.log('[DEBUG] keccak256 hash of GitHub URL:', hash);
+            return hash;
+        }
+    } catch (e) {
+        console.log('[DEBUG] Could not compute hash, but GitHub URL is:', githubUrl);
+    }
+    return '';
+}
+
 export async function handleCreateAccount(
     formData: CreateAccountPayload,
     jwtToken: string,
     walletAddress: string
 ): Promise<string> {
+    console.log('=== CREATING ACCOUNT ===');
     console.log('Creating account with data:', formData);
-    console.log(jwtToken);
+    console.log('GitHub URL:', formData.github);
+    
+    // Compute and log the hash for debugging
+    await computeGitHashForDebug(formData.github);
+    console.log('JWT Token provided:', !!jwtToken);
 
     // Map role from lowercase to capitalized format expected by backend
     const roleMap: Record<string, string> = {
@@ -54,6 +78,7 @@ export async function handleCreateAccount(
 
     try {
         console.log('[handleCreateAccount] Sending POST to:', `${API_BASE}/api/users`);
+        console.log('[handleCreateAccount] GitHub URL in payload:', backendData.github);
         const response = await axios.post<{ id: string }>(
             `${API_BASE}/api/users`,
             backendData,

@@ -65,23 +65,28 @@ export const useGetCompleteTasks = (address?: string) => {
             setIsLoadingCompleteTasks(true);
 
             try {
-                console.log("Valid tasks to process:", validTasks);
+                console.log(
+                    `[useGetCompleteTasks] Valid tasks to process: ${validTasks.length} tasks`,
+                    validTasks.map((t) => `Task #${t.taskId}`)
+                );
                 const mergedTasks = await Promise.all(
-                    validTasks.map(async task => {
+                    validTasks.map(async (task) => {
                         try {
-                            console.log(task);
+                            console.log(
+                                `[useGetCompleteTasks] Processing Task #${task.taskId}:`,
+                                task
+                            );
                             const dbTask = await getTaskBySmartContractId(
                                 (task.taskId).toString()
                             );
 
                             if (!dbTask) {
                                 console.warn(
-                                    `No database task found for smart contract task ${task.taskId}`
+                                    `[useGetCompleteTasks] No database task found for smart contract task #${task.taskId}`
                                 );
 
                                 console.log(
-                                    "SC ID:",
-                                    String(task.taskId)
+                                    `[useGetCompleteTasks] SC Task ID: #${String(task.taskId)}`
                                 );
 
                                 const dbTask =
@@ -90,7 +95,7 @@ export const useGetCompleteTasks = (address?: string) => {
                                     );
 
                                 console.log(
-                                    "DB RESULT:",
+                                    `[useGetCompleteTasks] DB RESULT for Task #${task.taskId}:`,
                                     dbTask
                                 );
                                 return null;
@@ -137,7 +142,7 @@ export const useGetCompleteTasks = (address?: string) => {
                             return completeTask;
                         } catch (error) {
                             console.error(
-                                `Failed to load task ${task.taskId}`,
+                                `[useGetCompleteTasks] Failed to load Task #${task.taskId}:`,
                                 error
                             );
 

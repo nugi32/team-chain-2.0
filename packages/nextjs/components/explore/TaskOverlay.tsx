@@ -1,17 +1,22 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
     X, CircleDot, Lock, DollarSign, Clock, Calendar,
     ExternalLink, Zap, ArrowRight, Code, GitBranch,
-    User, Link2, Trophy, CheckCircle2,
+    User, Link2, Trophy, CheckCircle2, Loader2,
 } from "lucide-react";
 
 import { CompleteTaskOutput, CreatorProfile, TaskStatus } from "./types";
-import { useDashboardUserData } from "@/utils/lib/dashboard/useDashboardUserData";
+import { useDashboardUserData } from "@/utils/lib/dashboard";
 import SkillTag from "./SkillTag";
+import { useGetTaskUtils } from "@/utils/lib/helper/useGetTaskUtils";
+import { useDashboardTaskActions } from "@/utils/lib/dashboard";
+import { useAccount } from "wagmi";
+import { notification } from "@/utils/scaffold-eth";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 // ─────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -69,6 +74,17 @@ const statusLabel = (status?: TaskStatus): string => {
 
 const shortAddr = (addr?: string): string =>
     addr && addr !== ZERO_ADDRESS ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : "";
+
+/** Validate a GitHub URL — rejects placeholder junk like "sfsdfs" */
+const isValidUrl = (url?: string): boolean => {
+    if (!url) return false;
+    try {
+        const u = new URL(url);
+        return u.protocol === "https:" || u.protocol === "http:";
+    } catch {
+        return false;
+    }
+};
 
 /**
  * `description` in CompleteTaskOutput is stored as a plain string.
@@ -269,14 +285,26 @@ export default function TaskOverlay({
     onClose: () => void;
 }) {
     const router = useRouter();
+    const { address, isConnected } = useAccount();
 
-    // Resolve creator address — always computed so the hook call below is unconditional
+    // All hooks must be called unconditionally (Rules of Hooks)
+    const { getMemberRequiredStake } = useGetTaskUtils();
+    const { actions } = useDashboardTaskActions();
+
+    // Read member stake percentage from contract directly to avoid state timing issues
+    const { data: stakePercentage } = useScaffoldReadContract({
+        contractName: "dataContract",
+        functionName: "__getMemberStakeFromRewardPercentage",
+    });
+
+    const [joining, setJoining] = useState(false);
+
+    // Resolve creator address unconditionally
     const creatorAddress =
         task?.creator && task.creator !== ZERO_ADDRESS
             ? task.creator
             : task?.owner ?? undefined;
 
-    // Always called (Rules of Hooks) — useDashboardUserData handles undefined gracefully
     const { user: creator, loadingUser: loadingCreator } =
         useDashboardUserData(creatorAddress);
 
@@ -287,25 +315,74 @@ export default function TaskOverlay({
         return () => window.removeEventListener("keydown", h);
     }, [onClose]);
 
-    // Parse task description (may be JSON-encoded or plain string)
+    // Parse description
     const desc = useMemo(
         () => (task?.description ? parseDescription(task.description) : null),
         [task?.description],
     );
 
-    const deadlineDays      = daysUntil(task?.deadlineAt);
-    const hasAssignedMember = task?.member && task.member !== ZERO_ADDRESS;
-    const headerSubtitle    =
-        creator?.name ?? shortAddr(task?.creator) ?? task?.owner ?? "Unknown creator";
+    // ── handleJoin ──────────────────────────────────────────────
+    const handleJoin = useCallback(async () => {
+        // Guard: task must exist at call time
+        if (!task) return;
 
-    // Safe display name — falls back to on-chain title field if projectName missing
-    const displayName =
+        if (!isConnected || !address) {
+            notification.error("Please connect your wallet to join the task.");
+            return;
+        }
+
+        // Guard: prevent creator from joining their own task
+        if (creatorAddress && address.toLowerCase() === creatorAddress.toLowerCase()) {
+            notification.error("You cannot join your own task.");
+            return;
+        }
+
+        // Guard: stake percentage must be loaded from contract
+        if (stakePercentage === undefined) {
+            notification.error("Unable to load stake requirements. Please try again.");
+            return;
+        }
+
+        const taskId = BigInt(task.smartContractId ?? 0);
+
+        setJoining(true);
+        try {
+            // Calculate stake directly from task reward and percentage to avoid state timing issues
+            // Formula: (reward * percentage) / 100
+            const reward = BigInt(task.reward ?? 0);
+            const percentage = BigInt(stakePercentage);
+            const stake = (reward * percentage) / BigInt(100);
+            
+            console.log("[handleJoin] Calculated stake:", {
+                taskId: taskId.toString(),
+                reward: reward.toString(),
+                percentage: percentage.toString(),
+                stake: stake.toString(),
+                address,
+            });
+            
+            await actions.requestJoinTask(taskId, stake, address);
+            notification.success("Join request submitted!");
+            onClose();
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : "Transaction failed";
+            notification.error(msg);
+        } finally {
+            setJoining(false);
+        }
+    }, [task, isConnected, address, creatorAddress, stakePercentage, actions, onClose]);
+
+    // Derived display values — safe even when task is null
+    const deadlineDays      = daysUntil(task?.deadlineAt);
+    const hasAssignedMember = Boolean(task?.member && task.member !== ZERO_ADDRESS);
+    const isCreator         = Boolean(address && creatorAddress && address.toLowerCase() === creatorAddress.toLowerCase());
+    const headerSubtitle    = creator?.name ?? shortAddr(task?.creator) ?? task?.owner ?? "Unknown creator";
+    const displayName       =
         task?.projectName ||
         (task as any)?.title ||
         (task?.smartContractId ? `Task #${task.smartContractId}` : "Task");
-
-    // Safe skills / roles
-    const skills = task?.skills ?? [];
+    const skills            = task?.skills ?? [];
+    const hasValidGithub    = isValidUrl(task?.githubURL);
 
     return (
         <AnimatePresence>
@@ -358,13 +435,13 @@ export default function TaskOverlay({
                         {/* Body */}
                         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
 
-                            {/* Status + GitHub */}
+                            {/* Status + GitHub chip */}
                             <div className="flex flex-wrap gap-2 items-center">
                                 <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] font-medium ${statusStyles(task.status)}`}>
                                     <CircleDot className="w-2.5 h-2.5" />
                                     {statusLabel(task.status)}
                                 </span>
-                                {task.githubURL && task.githubURL !== "sfsdfs" && (
+                                {hasValidGithub && (
                                     <a
                                         href={task.githubURL}
                                         target="_blank"
@@ -554,28 +631,44 @@ export default function TaskOverlay({
 
                         {/* Footer */}
                         <div className="px-6 py-4 border-t border-gray-800 space-y-2.5">
-                            <div className="flex gap-2">
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
-                                >
-                                    Apply <ArrowRight className="w-4 h-4" />
-                                </motion.button>
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
-                                >
-                                    <Zap className="w-4 h-4" /> Stake & Join
-                                </motion.button>
-                            </div>
-                            <button
-                                onClick={() => router.push(`/tasks/${task.expressId ?? task.smartContractId}`)}
-                                className="w-full py-2 text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center justify-center gap-1.5"
+                            <motion.button
+                                whileHover={{ scale: joining || isCreator ? 1 : 1.02 }}
+                                whileTap={{ scale: joining || isCreator ? 1 : 0.98 }}
+                                onClick={handleJoin}
+                                disabled={joining || isCreator}
+                                className={`w-full py-2.5 rounded-xl text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${
+                                    isCreator
+                                        ? "bg-gray-700 cursor-not-allowed opacity-50"
+                                        : "bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                }`}
                             >
-                                <ExternalLink className="w-3.5 h-3.5" /> Open Full Details
-                            </button>
+                                {joining ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Submitting…
+                                    </>
+                                ) : isCreator ? (
+                                    <>
+                                        <Lock className="w-4 h-4" /> You Created This Task
+                                    </>
+                                ) : (
+                                    <>
+                                        <Zap className="w-4 h-4" /> Stake & Join
+                                    </>
+                                )}
+                            </motion.button>
+
+                            {/* Only render the GitHub link when URL is actually valid */}
+                            {hasValidGithub && (
+                                <a
+                                    href={task.githubURL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-2 text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center justify-center gap-1.5"
+                                >
+                                    <ExternalLink className="w-3.5 h-3.5" /> Open GitHub Details
+                                </a>
+                            )}
                         </div>
                     </motion.aside>
                 </>
@@ -583,3 +676,4 @@ export default function TaskOverlay({
         </AnimatePresence>
     );
 }
+

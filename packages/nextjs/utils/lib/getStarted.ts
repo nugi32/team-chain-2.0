@@ -19,7 +19,7 @@ export function useCreateAccount() {
     setError(null);
 
     try {
-      // Smart contract registration
+      // Smart contract registration - pass parameters directly to avoid state closure issue
       console.log("[createAccount] Starting Register transaction for:", data.github);
 
       const existingUser = await getStartedFindUserByAddress(address);
@@ -33,15 +33,10 @@ export function useCreateAccount() {
         return accountId;
       }
 
-      // Set the form values
-      form.setRegisterGitHubURL(data.github);
-      form.setRegisterUser(address);
-
-      // Call the action handler
-      await actions.handleRegister();
+      // Call the action handler with parameters directly (no state setting needed)
+      console.log("[createAccount] Calling handleRegister with GitHub URL:", data.github, "and address:", address);
+      await actions.handleRegister(data.github, address);
       console.log("[createAccount] Register transaction succeeded");
-
-
 
       const jwt = await getValidJwt(address);
       const accountId = await handleCreateAccount(data, jwt, address);

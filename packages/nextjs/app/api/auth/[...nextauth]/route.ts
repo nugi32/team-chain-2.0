@@ -7,24 +7,29 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
     maxAge: 60,
+    updateAge: 30,
   },
 
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
+      allowDangerousEmailAccountLinking: false,
     }),
   ],
 
   callbacks: {
-    async jwt({ token, profile }) {
-      if (profile) {
+    async jwt({ token, profile, account }) {
+      // If this is a new sign-in (has profile), update the token
+      if (profile && account) {
         const githubProfile = profile as any;
 
         token.username = githubProfile.login;
         token.email = githubProfile.email;
         token.name = githubProfile.name;
         token.avatar = githubProfile.avatar_url;
+        // Add timestamp to help invalidate old sessions
+        token.iat = Math.floor(Date.now() / 1000);
       }
 
       return token;

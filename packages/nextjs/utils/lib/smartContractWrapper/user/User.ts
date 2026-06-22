@@ -82,11 +82,24 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
 
   const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "UsersContract" });
 
-  const handleRegister = async () => {
+  const handleRegister = async (githubUrl?: string, userAddress?: string) => {
     try {
+      // Use provided parameters if available, otherwise fall back to state values
+      const gitUrl = githubUrl ?? registerGitHubURL;
+      const userAddr = userAddress ?? (registerUser || connectedAddress);
+      
+      if (!gitUrl) {
+        throw new Error("GitHub URL is required for registration");
+      }
+      if (!userAddr) {
+        throw new Error("User address is required for registration");
+      }
+      
+      console.log("[handleRegister] Registering with GitHub URL:", gitUrl, "and address:", userAddr);
+      
       const hash = await writeContractAsync({
         functionName: "Register",
-        args: [registerGitHubURL, registerUser || connectedAddress],
+        args: [gitUrl, userAddr],
       });
       return hash;
     } catch (e) {

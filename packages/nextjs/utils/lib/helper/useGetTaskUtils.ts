@@ -41,7 +41,7 @@ const taskInfo: {
 }
 */
 
-const useGetTaskUtils = (id?: bigint) => {
+export const useGetTaskUtils = (id?: bigint) => {
     const { task, data, form, user } = useTaskController();
     const {
         data: taskDataState,

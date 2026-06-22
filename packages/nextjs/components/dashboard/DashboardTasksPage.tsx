@@ -13,8 +13,8 @@ export default function DashboardTasksPage({ id }: { id: string }) {
   const taskDataHook = useGetTaskData();
 
   const [activeTab, setActiveTab] = useState<TabType>("Active");
-
   const [kanbanTasks, setKanbanTasks] = useState<KanbanTask[]>([]);
+  const [isLoadingKanban, setIsLoadingKanban] = useState(false);
 
   useEffect(() => {
     // Skip loading if tasks are empty or still loading
@@ -25,17 +25,30 @@ export default function DashboardTasksPage({ id }: { id: string }) {
 
     async function loadTasks() {
       try {
+        setIsLoadingKanban(true);
+        console.debug("[Dashboard] Starting to map tasks to kanban format", {
+          taskCount: tasks.length,
+          walletAddress,
+        });
+
         const mapped = await mapTasksToKanbanTasks(tasks, taskDataHook, walletAddress);
+        
+        console.warn("[Dashboard] Successfully mapped tasks to kanban", {
+          mappedCount: mapped,
+        });
         setKanbanTasks(mapped);
       } catch (err) {
-        console.error("Error mapping tasks to kanban:", err);
+        console.error("[Dashboard] Error mapping tasks to kanban:", err);
         setKanbanTasks([]);
+      } finally {
+        setIsLoadingKanban(false);
       }
     }
 
     loadTasks();
-    // Only depend on tasks and walletAddress - taskDataHook changes too frequently due to form.setId calls
-    // and causes infinite renders. The hook itself is stable in reference within the component.
+    // Only depend on tasks and walletAddress - taskDataHook shouldn't be a direct dependency
+    // because it changes too frequently due to form.setId calls during mapping.
+    // The hook instance is stable, but its internal state changes during task mapping.
   }, [tasks, walletAddress]);
 
   const handleActivate = useCallback((task: KanbanTask) => console.log("activate", task.contractId), []);
@@ -46,7 +59,7 @@ export default function DashboardTasksPage({ id }: { id: string }) {
   const handleApprove = useCallback((task: KanbanTask) => console.log("approve", task.contractId), []);
   const handleView = useCallback((task: KanbanTask) => console.log("view", task.contractId), []);
 
-  if (DashboardLoading || loading.isLoading) {
+  if (DashboardLoading || loading.isLoading || isLoadingKanban) {
     return <div className="text-gray-500 text-sm p-6">Loading tasks…</div>;
   }
 

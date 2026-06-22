@@ -137,7 +137,6 @@ export type TabType =
     | "Active"
     | "OpenRegistration"
     | "InProgres"
-    | "Review"
     | "Completed"
     | "Cancelled";
 
@@ -146,7 +145,6 @@ export const KANBAN_TABS: readonly TabType[] = [
     "Active",
     "OpenRegistration",
     "InProgres",
-    "Review",
     "Completed",
     "Cancelled",
 ];

@@ -230,13 +230,23 @@ const cleanLinkedInUrl = (url: string) => {
 
 export default function ProfileForm() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { address, isConnected } = useAccount();
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const { createAccount } = useCreateAccount();
+  const [sessionCleared, setSessionCleared] = useState(false);
 
   useEffect(() => { initCachedToken(); }, []);
+
+  // Clear form when session changes to ensure we're using the latest GitHub data
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      setSessionCleared(true);
+    } else if (status === "authenticated" && session?.user?.username) {
+      setSessionCleared(false);
+    }
+  }, [status, session?.user?.username]);
 
   const disabled = false;
 
@@ -267,6 +277,7 @@ export default function ProfileForm() {
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lastSubmittedGithubUri, setLastSubmittedGithubUri] = useState<string | null>(null);
 
   // ── Auto-fill from GitHub session ─────────────────────────────────────────
   useEffect(() => {
@@ -276,8 +287,12 @@ export default function ProfileForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, avatarPreview]);
 
+  // Clear localStorage on mount to ensure fresh state
   useEffect(() => {
-    localStorage.clear();
+    // Only clear if we're at the starting state
+    if (!name && !linkedin && !roleValue && selectedSkills.length === 0) {
+      localStorage.clear();
+    }
   }, []);
 
   // ── Derived session values ────────────────────────────────────────────────
@@ -290,7 +305,13 @@ export default function ProfileForm() {
   const email = session?.user?.email ?? null;
 
   const isGithubLinked = !!githubUsername;
-
+  // ── Debug logging for GitHub changes ─────────────────────────
+  useEffect(() => {
+    if (githubUri) {
+      console.log("[DEBUG] GitHub URI changed to:", githubUri);
+      console.log("[DEBUG] GitHub Username:", githubUsername);
+    }
+  }, [githubUri, githubUsername]);
   // ── Validation ────────────────────────────────────────────────────────────
   const errors: Record<string, string> = {};
 
@@ -423,7 +444,8 @@ export default function ProfileForm() {
         skills: selectedSkills,
       };
 
-      console.log("[handleSubmit] Calling createAccount with:", formData);
+      console.log("[handleSubmit] Form submission data:", formData);
+      console.log("[handleSubmit] Calling createAccount with GitHub URL:", githubUri);
       const accountId = await createAccount(formData, address);
 
       if (!accountId) throw new Error("No ID returned from account creation");
@@ -438,7 +460,25 @@ export default function ProfileForm() {
         ? error.message
         : "Failed to create account. Please try again.";
 
-      notification.error(errorMessage);
+      console.error("[handleSubmit] Full error details:", {
+        message: errorMessage,
+        error,
+        githubUri,
+        address,
+      });
+
+      // Check if error is about duplicate GitHub URL
+      if (errorMessage.includes("GitProfileAlreadyUsed") || errorMessage.includes("already")) {
+        notification.error(
+          `This GitHub profile is already registered. GitHub URL: ${githubUri}`
+        );
+      } else if (errorMessage.includes("AlreadyRegistered")) {
+        notification.error(
+          "This wallet address is already registered with a different account. Please use a different wallet."
+        );
+      } else {
+        notification.error(errorMessage);
+      }
       setIsSubmitting(false);
     }
   };
@@ -623,7 +663,34 @@ export default function ProfileForm() {
                     </div>
                   </div>
                   <button
-                    onClick={() => signOut({ callbackUrl: "/getStarted" })}
+                    onClick={async () => {
+                      console.log("[Change Button] Clearing session and form...");
+                      // Clear all form state first
+                      setName("");
+                      setLinkedin("");
+                      setRoleValue("");
+                      setDescHeader("");
+                      setDescSummary("");
+                      setDescPoints([""]);
+                      setDescFooter("");
+                      setSelectedSkills([]);
+                      setAvatarPreview(null);
+                      setTouched({});
+                      
+                      // Clear localStorage
+                      localStorage.clear();
+                      
+                      // Sign out and redirect
+                      console.log("[Change Button] Signing out...");
+                      await signOut({ redirect: false });
+                      
+                      // Wait a moment for signOut to complete
+                      await new Promise(resolve => setTimeout(resolve, 500));
+                      
+                      // Force page reload to clear session cache
+                      console.log("[Change Button] Reloading page...");
+                      window.location.href = "/getStarted";
+                    }}
                     type="button"
                     className="text-xs text-gray-500 hover:text-gray-300 transition-colors underline underline-offset-2"
                   >

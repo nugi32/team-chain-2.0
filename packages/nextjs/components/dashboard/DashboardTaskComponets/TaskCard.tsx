@@ -18,6 +18,7 @@ import {
 import type { CompleteTaskOutput } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
 // NOTE: adjust this import to wherever useGetTaskUtils actually lives in your project.
 import useGetTaskUtils from "@/utils/lib/helper/useGetTaskUtils";
+import { useGetTaskData } from "@/utils/lib/dashboard/useGetTaskData";
 import { formatEther, parseEther } from "viem";
 
 const ROLE_STYLES: Record<TaskRole, string> = {
@@ -149,7 +150,26 @@ function JoinRequestsModal({ task, busy, onAccept, onReject, onClose }: {
   onReject: (applicant: string) => void;
   onClose: () => void;
 }) {
-  const requests = task.joinRequest ?? [];
+  const {
+    data: {
+      getTaskData,
+      getTaskStatus,
+      getTaskParticipants,
+      getTaskFinancials,
+      getTaskMetadata,
+      getTaskFlags,
+      getTaskJoinRequest,
+      getTaskJoinRequestsByIndex,
+      getTaskJoinRequestCount,
+      getTaskSubmit,
+      getTaskSubmitStatus,
+      getTaskSubmitContent,
+      getTaskSubmitRevision,
+    },
+    loading,
+    lastRequestedTaskId,
+  } = useGetTaskData();
+  const requests = getTaskJoinRequest(task.contractId) || [];
   return (
     <Modal title={`Join requests (${requests.length})`} onClose={onClose}>
       {requests.length === 0 ? (
@@ -161,7 +181,7 @@ function JoinRequestsModal({ task, busy, onAccept, onReject, onClose }: {
               <p className="text-xs font-mono text-indigo-300 truncate">{req.applicant}</p>
               <div className="flex items-center justify-between text-[11px] text-gray-500">
                 <span>Stake: {formatWeiSafe(req.stakeAmount)} ETH</span>
-                <span>{REQUEST_STATUS_LABEL[req.status]}</span>
+
               </div>
               {req.isPending && !req.hasWithdrawn && (
                 <div className="flex gap-2 pt-1">
@@ -196,7 +216,26 @@ function SubmissionModal({ task, busy, onApprove, onRequestRevision, onClose }: 
   onRequestRevision: () => void;
   onClose: () => void;
 }) {
-  const submission = task.submitContent;
+  const {
+    data: {
+      getTaskData,
+      getTaskStatus,
+      getTaskParticipants,
+      getTaskFinancials,
+      getTaskMetadata,
+      getTaskFlags,
+      getTaskJoinRequest,
+      getTaskJoinRequestsByIndex,
+      getTaskJoinRequestCount,
+      getTaskSubmit,
+      getTaskSubmitStatus,
+      getTaskSubmitContent,
+      getTaskSubmitRevision,
+    },
+    loading,
+    lastRequestedTaskId,
+  } = useGetTaskData();
+  const submission = getTaskSubmit(task.contractId);
   return (
     <Modal title="Submitted work" onClose={onClose}>
       {!submission || submission.status === SubmitStatus.NoneStatus ? (
@@ -223,9 +262,8 @@ function SubmissionModal({ task, busy, onApprove, onRequestRevision, onClose }: 
             <p className="text-xs text-gray-300">{submission.note || "—"}</p>
           </div>
           <div className="flex items-center justify-between text-[11px] text-gray-500">
-            <span>{SUBMIT_STATUS_LABEL[submission.status]}</span>
             {submission.newDeadline > 0n && (
-              <span>New deadline: {new Date(Number(submission.newDeadline) * 1000).toLocaleDateString()}</span>
+              <span>deadline: {new Date(Number(submission.newDeadline) * 1000).toLocaleDateString()}</span>
             )}
           </div>
           {submission.status === SubmitStatus.Pending && (
@@ -396,8 +434,28 @@ export default function TaskCard({ id, task }: TaskCardProps) {
   const [overlay, setOverlay] = useState<OverlayState>(null);
   const [busyKey, setBusyKey] = useState<string | null>(null);
 
+  const {
+    data: {
+      getTaskData,
+      getTaskStatus,
+      getTaskParticipants,
+      getTaskFinancials,
+      getTaskMetadata,
+      getTaskFlags,
+      getTaskJoinRequest,
+      getTaskJoinRequestsByIndex,
+      getTaskJoinRequestCount,
+      getTaskSubmit,
+      getTaskSubmitStatus,
+      getTaskSubmitContent,
+      getTaskSubmitRevision,
+    },
+    loading,
+    lastRequestedTaskId,
+  } = useGetTaskData();
+
   const isOwner = task.role === TaskRole.creator;
-  const submitStatus = task.submitContent?.status;
+  const submitStatus = getTaskSubmitStatus(task.contractId) as SubmitStatus;
   const isBusy = busyKey !== null;
   const taskIdBig = BigInt(task.contractId);
 
@@ -426,6 +484,11 @@ export default function TaskCard({ id, task }: TaskCardProps) {
       setBusyKey(null);
     }
   };
+
+  useEffect(() => {
+    console.log("Task data:", task);
+    console.log("Join request count:", task.joinRequestCount);
+  }, []);
 
   const handleOpenRegistration = () => runAction("openRegistration", () => actions.openRegistration(taskIdBig));
   const handleCloseRegistration = () => runAction("closeRegistration", () => actions.closeRegistration(taskIdBig));
@@ -567,14 +630,14 @@ export default function TaskCard({ id, task }: TaskCardProps) {
 
           {task.tab === "Created" && isOwner && (
             <>
-            <button
-              onClick={() => setOverlay("activateForm")}
-              className="text-[10px] text-blue-300 hover:text-blue-200 border border-blue-500/30 hover:border-blue-500/60 bg-blue-500/10 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
-            >
-              <Rocket className="w-3 h-3" /> Activate
-            </button>
+              <button
+                onClick={() => setOverlay("activateForm")}
+                className="text-[10px] text-blue-300 hover:text-blue-200 border border-blue-500/30 hover:border-blue-500/60 bg-blue-500/10 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
+              >
+                <Rocket className="w-3 h-3" /> Activate
+              </button>
 
-            <button
+              <button
                 disabled={isBusy}
                 onClick={handleDelete}
                 className="text-[10px] text-red-300 hover:text-red-200 border border-red-500/30 hover:border-red-500/60 bg-red-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
@@ -582,116 +645,165 @@ export default function TaskCard({ id, task }: TaskCardProps) {
                 {busyKey === "delete" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
                 Delete
               </button>
-              </>
+            </>
           )}
 
-        {task.tab === "Active" && isOwner && (
-          <>
-            <button
-              disabled={isBusy}
-              onClick={handleOpenRegistration}
-              className="text-[10px] text-violet-300 hover:text-violet-200 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
-            >
-              {busyKey === "openRegistration" ? <Loader2 className="w-3 h-3 animate-spin" /> : <DoorOpen className="w-3 h-3" />}
-              Open Registration
-            </button>
-            <button
-              disabled={isBusy}
-              onClick={handleDelete}
-              className="text-[10px] text-red-300 hover:text-red-200 border border-red-500/30 hover:border-red-500/60 bg-red-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
-            >
-              {busyKey === "delete" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
-              Delete
-            </button>
-          </>
-        )}
-
-        {task.tab === "OpenRegistration" && isOwner && (
-          <>
-            <button
-              onClick={() => setOverlay("requests")}
-              className="text-[10px] text-indigo-300 hover:text-indigo-200 border border-indigo-500/30 hover:border-indigo-500/60 bg-indigo-500/10 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
-            >
-              <Users className="w-3 h-3" /> Requests
-              {!!task.joinRequestCount && (
-                <span className="ml-0.5 rounded-full bg-indigo-500/30 px-1.5 text-[9px]">{task.joinRequestCount}</span>
-              )}
-            </button>
-            <button
-              disabled={isBusy}
-              onClick={handleCloseRegistration}
-              className="text-[10px] text-gray-400 hover:text-white border border-gray-700 hover:border-gray-600 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
-            >
-              {busyKey === "closeRegistration" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Lock className="w-3 h-3" />}
-              Close
-            </button>
-            <button
-              disabled={isBusy}
-              onClick={handleDelete}
-              className="text-[10px] text-red-300 hover:text-red-200 border border-red-500/30 hover:border-red-500/60 bg-red-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
-            >
-              {busyKey === "delete" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
-              Delete
-            </button>
-          </>
-        )}
-
-        {task.tab === "InProgres" && (
-          <>
-            {!isOwner && (submitStatus === undefined || submitStatus === SubmitStatus.NoneStatus) && (
+          {task.tab === "Active" && isOwner && (
+            <>
               <button
-                onClick={() => setOverlay("submitForm")}
+                disabled={isBusy}
+                onClick={handleOpenRegistration}
+                className="text-[10px] text-violet-300 hover:text-violet-200 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
+              >
+                {busyKey === "openRegistration" ? <Loader2 className="w-3 h-3 animate-spin" /> : <DoorOpen className="w-3 h-3" />}
+                Open Registration
+              </button>
+              <button
+                disabled={isBusy}
+                onClick={handleDelete}
+                className="text-[10px] text-red-300 hover:text-red-200 border border-red-500/30 hover:border-red-500/60 bg-red-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
+              >
+                {busyKey === "delete" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                Delete
+              </button>
+            </>
+          )}
+
+          {task.tab === "OpenRegistration" && isOwner && (
+            <>
+              <button
+                onClick={() => setOverlay("requests")}
                 className="text-[10px] text-indigo-300 hover:text-indigo-200 border border-indigo-500/30 hover:border-indigo-500/60 bg-indigo-500/10 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
               >
-                <Send className="w-3 h-3" /> Submit
+                <Users className="w-3 h-3" /> Requests
+                {!!task.joinRequestCount && (
+                  <span className="ml-0.5 rounded-full bg-indigo-500/30 px-1.5 text-[9px]">{task.joinRequestCount}</span>
+                )}
               </button>
-            )}
-            <button
-              disabled={isBusy}
-              onClick={handleCancel}
-              className="text-[10px] text-orange-300 hover:text-orange-200 border border-orange-500/30 hover:border-orange-500/60 bg-orange-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
-            >
-              {busyKey === "cancel" ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
-              Cancel
-            </button>
-          </>
-        )}
+              <button
+                disabled={isBusy}
+                onClick={handleCloseRegistration}
+                className="text-[10px] text-gray-400 hover:text-white border border-gray-700 hover:border-gray-600 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
+              >
+                {busyKey === "closeRegistration" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Lock className="w-3 h-3" />}
+                Close
+              </button>
+              <button
+                disabled={isBusy}
+                onClick={handleDelete}
+                className="text-[10px] text-red-300 hover:text-red-200 border border-red-500/30 hover:border-red-500/60 bg-red-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
+              >
+                {busyKey === "delete" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                Delete
+              </button>
+            </>
+          )}
 
-        {task.tab === "Review" && (
-          <>
-            {isOwner && (
+          {task.tab === "InProgres" && (
+            <>
+              {/* MEMBER */}
+              {!isOwner && (
+                <>
+                  {(submitStatus === undefined ||
+                    submitStatus === SubmitStatus.NoneStatus) &&
+                    !getTaskSubmit(task.contractId) && (
+                      <button
+                        onClick={() => setOverlay("submitForm")}
+                        className="text-[10px] text-indigo-300 hover:text-indigo-200 border border-indigo-500/30 hover:border-indigo-500/60 bg-indigo-500/10 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
+                      >
+                        <Send className="w-3 h-3" />
+                        Submit
+                      </button>
+                    )}
+
+                  {submitStatus === SubmitStatus.Pending && (
+                    <span className="text-[10px] text-amber-300 border border-amber-500/30 bg-amber-500/10 rounded-lg px-2 py-1 flex items-center gap-1">
+                      Pending Review
+                    </span>
+                  )}
+
+                  {submitStatus === SubmitStatus.RevisionNeeded && (
+                    <>
+                      <span className="text-[10px] text-orange-300 border border-orange-500/30 bg-orange-500/10 rounded-lg px-2 py-1 flex items-center gap-1">
+                        In Revision
+                      </span>
+
+                      <button
+                        onClick={() => setOverlay("submitForm")}
+                        className="text-[10px] text-amber-300 hover:text-amber-200 border border-amber-500/30 hover:border-amber-500/60 bg-amber-500/10 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
+                      >
+                        <Send className="w-3 h-3" />
+                        Resubmit
+                      </button>
+                    </>
+                  )}
+
+                  {submitStatus === SubmitStatus.Accepted && (
+                    <span className="text-[10px] text-green-300 border border-green-500/30 bg-green-500/10 rounded-lg px-2 py-1 flex items-center gap-1">
+                      Accepted
+                    </span>
+                  )}
+                </>
+              )}
+
+              {/* CANCEL */}
               <button
-                onClick={() => setOverlay("submission")}
-                className={[
-                  "text-[10px] border rounded-lg px-2 py-1 transition-colors flex items-center gap-1",
-                  submitStatus === SubmitStatus.Pending
-                    ? "text-amber-300 border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20"
-                    : "text-gray-400 border-gray-700 hover:border-gray-600",
-                ].join(" ")}
+                disabled={isBusy}
+                onClick={handleCancel}
+                className="text-[10px] text-orange-300 hover:text-orange-200 border border-orange-500/30 hover:border-orange-500/60 bg-orange-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
               >
-                <RotateCcw className="w-3 h-3" /> Review Submission
+                {busyKey === "cancel" ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <XCircle className="w-3 h-3" />
+                )}
+                Cancel
               </button>
-            )}
-            {!isOwner && submitStatus === SubmitStatus.RevisionNeeded && (
-              <button
-                onClick={() => setOverlay("submitForm")}
-                className="text-[10px] text-amber-300 hover:text-amber-200 border border-amber-500/30 hover:border-amber-500/60 bg-amber-500/10 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
-              >
-                <Send className="w-3 h-3" /> Resubmit
-              </button>
-            )}
-            <button
-              disabled={isBusy}
-              onClick={handleCancel}
-              className="text-[10px] text-orange-300 hover:text-orange-200 border border-orange-500/30 hover:border-orange-500/60 bg-orange-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
-            >
-              {busyKey === "cancel" ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
-              Cancel
-            </button>
-          </>
-        )}
+
+              {/* OWNER */}
+              {isOwner && (
+                <>
+                  {submitStatus === SubmitStatus.NoneStatus && (
+                    <span className="text-[10px] text-gray-400 border border-gray-700 rounded-lg px-2 py-1 flex items-center gap-1">
+                      No Submission
+                    </span>
+                  )}
+
+                  {submitStatus === SubmitStatus.Pending && (
+                    <button
+                      onClick={() => setOverlay("submission")}
+                      className="text-[10px] text-amber-300 border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg px-2 py-1 transition-colors flex items-center gap-1"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      Review Submission
+
+                      {!!getTaskSubmit(task.contractId) && (
+                        <span className="ml-0.5 rounded-full bg-amber-500/80 px-1.5 text-[9px]">
+                          1
+                        </span>
+                      )}
+                    </button>
+                  )}
+
+                  {submitStatus === SubmitStatus.RevisionNeeded && (
+                    <span className="text-[10px] text-orange-300 border border-orange-500/30 bg-orange-500/10 rounded-lg px-2 py-1 flex items-center gap-1">
+                      <RotateCcw className="w-3 h-3" />
+                      In Revision
+                    </span>
+                  )}
+
+                  {submitStatus === SubmitStatus.Accepted && (
+                    <span className="text-[10px] text-green-300 border border-green-500/30 bg-green-500/10 rounded-lg px-2 py-1 flex items-center gap-1">
+                      Accepted
+                    </span>
+                  )}
+                </>
+              )}
+            </>
+          )}
+
+        </div>
       </div>
-    </div>
     </div >
   );
 }
