@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "local": "nodemon api/index.js"
+    "local": "nodemon api/index.js",
+    "build": "echo 'No build needed for Node.js serverless functions'",
+    "start": "node api/index.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

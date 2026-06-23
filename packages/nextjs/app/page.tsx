@@ -22,6 +22,9 @@ import {
   Zap,
 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+import { Suspense } from "react";
+import ScrollHandler from "@/components/global/ScrollHandler";
+import FadeInSection from "@/components/global/FadeInSection";
 
 // ── Design tokens (matched to existing app style) ──────────────────────────
 const C = {
@@ -567,49 +570,49 @@ const HOW_STEPS: Array<{
   body: string;
   accent: string;
 }> = [
-  {
-    num: "01",
-    icon: <Link2 size={20} />,
-    title: "Connect & Register",
-    body: "Link your GitHub account to create your on-chain profile. A small gas fee registers your identity. No KYC, no separate account.",
-    accent: C.purple,
-  },
-  {
-    num: "02",
-    icon: <ClipboardList size={20} />,
-    title: "Browse & Apply",
-    body: "Explore open tasks filtered by skills, stake size, and deadline. Any registered developer can apply — open registration by default.",
-    accent: C.cyan,
-  },
-  {
-    num: "03",
-    icon: <Lock size={20} />,
-    title: "Stake & Commit",
-    body: "Lock ETH into escrow to signal commitment and protect the team from abandonment. Both creators and workers have skin in the game.",
-    accent: C.amber,
-  },
-  {
-    num: "04",
-    icon: <Clock size={20} />,
-    title: "Complete the Work",
-    body: "Work through milestones and submit progress for creator review. Work is tracked on-chain with submission hashes.",
-    accent: C.green,
-  },
-  {
-    num: "05",
-    icon: <CheckCircle2 size={20} />,
-    title: "Review & Accept",
-    body: "The task creator reviews the submission. If accepted, the smart contract releases payment automatically — no invoices, no chasing.",
-    accent: C.cyan,
-  },
-  {
-    num: "06",
-    icon: <Trophy size={20} />,
-    title: "Earn Rewards & Reputation",
-    body: "Stake is returned plus your reward. Reputation score updates on-chain permanently — building a verifiable record for future work.",
-    accent: C.purple,
-  },
-];
+    {
+      num: "01",
+      icon: <Link2 size={20} />,
+      title: "Connect & Register",
+      body: "Link your GitHub account to create your on-chain profile. A small gas fee registers your identity. No KYC, no separate account.",
+      accent: C.purple,
+    },
+    {
+      num: "02",
+      icon: <ClipboardList size={20} />,
+      title: "Browse & Apply",
+      body: "Explore open tasks filtered by skills, stake size, and deadline. Any registered developer can apply — open registration by default.",
+      accent: C.cyan,
+    },
+    {
+      num: "03",
+      icon: <Lock size={20} />,
+      title: "Stake & Commit",
+      body: "Lock ETH into escrow to signal commitment and protect the team from abandonment. Both creators and workers have skin in the game.",
+      accent: C.amber,
+    },
+    {
+      num: "04",
+      icon: <Clock size={20} />,
+      title: "Complete the Work",
+      body: "Work through milestones and submit progress for creator review. Work is tracked on-chain with submission hashes.",
+      accent: C.green,
+    },
+    {
+      num: "05",
+      icon: <CheckCircle2 size={20} />,
+      title: "Review & Accept",
+      body: "The task creator reviews the submission. If accepted, the smart contract releases payment automatically — no invoices, no chasing.",
+      accent: C.cyan,
+    },
+    {
+      num: "06",
+      icon: <Trophy size={20} />,
+      title: "Earn Rewards & Reputation",
+      body: "Stake is returned plus your reward. Reputation score updates on-chain permanently — building a verifiable record for future work.",
+      accent: C.purple,
+    },
+  ];
 
 function HowItWorks() {
   return (
@@ -758,43 +761,43 @@ const FEATURES: Array<{
   body: string;
   accent: string;
 }> = [
-  {
-    icon: <FaGithub size={18} />,
-    title: "GitHub-Native Workflow",
-    body: "No new tools to learn. Create tasks that map to your repos. Your GitHub history IS your reputation.",
-    accent: C.purple,
-  },
-  {
-    icon: <Lock size={18} />,
-    title: "Trustless Escrow",
-    body: "ETH is locked in smart contracts — not held by any company. Funds release only when work is accepted.",
-    accent: C.cyan,
-  },
-  {
-    icon: <Star size={18} />,
-    title: "On-Chain Reputation",
-    body: "Every task completion updates your score permanently on-chain. No fake reviews, no black-box ratings.",
-    accent: C.amber,
-  },
-  {
-    icon: <ShieldAlert size={18} />,
-    title: "Penalty & Stake System",
-    body: "Workers stake ETH before joining. Missed deadlines or abandoned work trigger penalties automatically.",
-    accent: C.red,
-  },
-  {
-    icon: <Globe size={18} />,
-    title: "Open Task Registry",
-    body: "All tasks are public and joinable. No gatekeeping, no approval queues. The blockchain is the arbiter.",
-    accent: C.green,
-  },
-  {
-    icon: <BarChart2 size={18} />,
-    title: "Transparent Metrics",
-    body: "Success rate, tasks completed, stake history — all public, all verifiable. On-chain by design.",
-    accent: "#F472B6",
-  },
-];
+    {
+      icon: <FaGithub size={18} />,
+      title: "GitHub-Native Workflow",
+      body: "No new tools to learn. Create tasks that map to your repos. Your GitHub history IS your reputation.",
+      accent: C.purple,
+    },
+    {
+      icon: <Lock size={18} />,
+      title: "Trustless Escrow",
+      body: "ETH is locked in smart contracts — not held by any company. Funds release only when work is accepted.",
+      accent: C.cyan,
+    },
+    {
+      icon: <Star size={18} />,
+      title: "On-Chain Reputation",
+      body: "Every task completion updates your score permanently on-chain. No fake reviews, no black-box ratings.",
+      accent: C.amber,
+    },
+    {
+      icon: <ShieldAlert size={18} />,
+      title: "Penalty & Stake System",
+      body: "Workers stake ETH before joining. Missed deadlines or abandoned work trigger penalties automatically.",
+      accent: C.red,
+    },
+    {
+      icon: <Globe size={18} />,
+      title: "Open Task Registry",
+      body: "All tasks are public and joinable. No gatekeeping, no approval queues. The blockchain is the arbiter.",
+      accent: C.green,
+    },
+    {
+      icon: <BarChart2 size={18} />,
+      title: "Transparent Metrics",
+      body: "Success rate, tasks completed, stake history — all public, all verifiable. On-chain by design.",
+      accent: "#F472B6",
+    },
+  ];
 
 function FeaturesGrid() {
   return (
@@ -1307,25 +1310,45 @@ function DeveloperNote() {
 export default function HomePage() {
   return (
     <>
+      <Suspense fallback={null}>
+        <ScrollHandler />
+      </Suspense>
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       />
 
       <div style={{ background: C.bg, color: C.text, fontFamily: "Inter, system-ui, sans-serif" }}>
-        <HeroSection />
+        <FadeInSection>
+          <HeroSection />
+        </FadeInSection>
 
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-          <TestnetWarning />
+          <FadeInSection>
+            <TestnetWarning />
+          </FadeInSection>
         </div>
 
         <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${C.border}, transparent)` }} />
+        <FadeInSection>
+          <HowItWorks />
+        </FadeInSection>
 
-        <HowItWorks />
-        <FeaturesGrid />
-        <ExplorePreview />
-        <GetStartedCTA />
-        <DeveloperNote />
+        <FadeInSection>
+          <FeaturesGrid />
+        </FadeInSection>
+
+        <FadeInSection>
+          <ExplorePreview />
+        </FadeInSection>
+
+        <FadeInSection>
+          <GetStartedCTA />
+        </FadeInSection>
+
+        <FadeInSection>
+          <DeveloperNote />
+        </FadeInSection>
       </div>
     </>
   );
