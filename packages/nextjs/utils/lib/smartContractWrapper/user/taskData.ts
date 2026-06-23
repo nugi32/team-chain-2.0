@@ -1,24 +1,16 @@
+import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { useState } from "react";
 
-export const useTaskData = (
-  taskId?: number,
-  options?: { user?: string; index?: number }
-) => {
+export const useTaskData = (taskId?: number, options?: { user?: string; index?: number }) => {
   const { address: connectedAddress } = useAccount();
 
   const user = options?.user ?? connectedAddress;
   const index = options?.index;
 
-  const [id, setId] = useState<bigint | undefined>(
-    taskId !== undefined ? BigInt(taskId) : undefined
-  );
+  const [id, setId] = useState<bigint | undefined>(taskId !== undefined ? BigInt(taskId) : undefined);
 
-  const taskArg =
-    taskId !== undefined
-      ? BigInt(taskId)
-      : id ?? 0n;
+  const taskArg = taskId !== undefined ? BigInt(taskId) : (id ?? 0n);
 
   const { data: task, isLoading: isTaskLoading } = useScaffoldReadContract({
     contractName: "taskData",
@@ -28,18 +20,18 @@ export const useTaskData = (
 
   const { data: taskCounter, isLoading: isTaskCounterLoading } = useScaffoldReadContract({
     contractName: "taskData",
-    functionName: "taskCounter"
+    functionName: "taskCounter",
   });
 
   const { data: feeCollected, isLoading: isFeeCollectedLoading } = useScaffoldReadContract({
     contractName: "taskData",
-    functionName: "feeCollected"
+    functionName: "feeCollected",
   });
 
   const { data: taskStatus, isLoading: isTaskStatusLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskStatus",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: taskParticipants, isLoading: isTaskParticipantsLoading } = useScaffoldReadContract({
@@ -51,83 +43,83 @@ export const useTaskData = (
   const { data: taskFinancials, isLoading: isTaskFinancialsLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskFinancials",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: taskMetadata, isLoading: isTaskMetadataLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskMetadata",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: taskFlags, isLoading: isTaskFlagsLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskFlags",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: joinRequests, isLoading: isJoinRequestsLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequests",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: joinRequestByIndex, isLoading: isJoinRequestByIndexLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequestByIndex",
-    args: [taskArg, index !== undefined ? BigInt(index) : undefined]
+    args: [taskArg, index !== undefined ? BigInt(index) : undefined],
   });
 
   const { data: joinRequestCount, isLoading: isJoinRequestCountLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequestCount",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: hasPendingRequest, isLoading: isHasPendingRequestLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__hasPendingRequest",
-    args: [taskArg, user]
+    args: [taskArg, user],
   });
 
   const { data: joinRequestByUser, isLoading: isJoinRequestByUserLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getJoinRequestByUser",
-    args: [taskArg, user]
+    args: [taskArg, user],
   });
 
   const { data: taskSubmit, isLoading: isTaskSubmitLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getTaskSubmit",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: submitStatus, isLoading: isSubmitStatusLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getSubmitStatus",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: submitContent, isLoading: isSubmitContentLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getSubmitContent",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: submitRevision, isLoading: isSubmitRevisionLoading } = useScaffoldReadContract({
     contractName: "taskData",
     functionName: "__getSubmitRevision",
-    args: [taskArg]
+    args: [taskArg],
   });
 
   const { data: globalState, isLoading: isGlobalStateLoading } = useScaffoldReadContract({
     contractName: "taskData",
-    functionName: "__getGlobalState"
+    functionName: "__getGlobalState",
   });
 
   const { data: addressRegistry, isLoading: isAddressRegistryLoading } = useScaffoldReadContract({
     contractName: "taskData",
-    functionName: "addressRegistry"
+    functionName: "addressRegistry",
   });
 
   return {

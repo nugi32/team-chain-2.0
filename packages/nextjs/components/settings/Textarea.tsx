@@ -13,7 +13,7 @@ export default function Textarea({ value, onChange, placeholder, rows = 3, maxLe
     <div className="relative rounded-xl border border-gray-800 bg-gray-900 focus-within:border-indigo-500/50 transition-colors">
       <textarea
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
         maxLength={maxLength}

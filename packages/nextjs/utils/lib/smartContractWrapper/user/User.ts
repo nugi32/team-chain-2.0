@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAccount } from "wagmi";
 import { keccak256, stringToBytes } from "viem";
+import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
@@ -22,62 +22,60 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
   const [depositUser, setDepositUser] = useState("");
   const [depositAmount, setDepositAmount] = useState<bigint>(0n);
 
-  const gitHash = githubUrl
-    ? keccak256(stringToBytes(githubUrl))
-    : undefined;
+  const gitHash = githubUrl ? keccak256(stringToBytes(githubUrl)) : undefined;
 
   const { data: userData, isLoading: isUserDataLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "Users",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: totalTasksCreated, isLoading: isTotalTasksCreatedLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "__getTotalTasksCreated",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: totalTasksCompleted, isLoading: isTotalTasksCompletedLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "__getTotalTasksCompleted",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: totalTasksFailed, isLoading: isTotalTasksFailedLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "__getTotalTasksFailed",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: reputation, isLoading: isReputationLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "__getUserReputation",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: balance, isLoading: isBalanceLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "__getUserBalance",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: isRegistered, isLoading: isIsRegisteredLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "__isRegistered",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: gitProfile, isLoading: isGitProfileLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "__getUserGitProfile",
-    args: [targetUser]
+    args: [targetUser],
   });
 
   const { data: usedGitURL, isLoading: isUsedGitURLLoading } = useScaffoldReadContract({
     contractName: "UsersContract",
     functionName: "usedGitURL",
-    args: [gitHash]
+    args: [gitHash],
   });
 
   const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "UsersContract" });
@@ -87,16 +85,16 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       // Use provided parameters if available, otherwise fall back to state values
       const gitUrl = githubUrl ?? registerGitHubURL;
       const userAddr = userAddress ?? (registerUser || connectedAddress);
-      
+
       if (!gitUrl) {
         throw new Error("GitHub URL is required for registration");
       }
       if (!userAddr) {
         throw new Error("User address is required for registration");
       }
-      
+
       console.log("[handleRegister] Registering with GitHub URL:", gitUrl, "and address:", userAddr);
-      
+
       const hash = await writeContractAsync({
         functionName: "Register",
         args: [gitUrl, userAddr],
@@ -177,7 +175,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
   const handlePause = async () => {
     try {
       const hash = await writeContractAsync({
-        functionName: "pause"
+        functionName: "pause",
       });
       return hash;
     } catch (e) {
@@ -189,7 +187,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
   const handleUnpause = async () => {
     try {
       const hash = await writeContractAsync({
-        functionName: "unpause"
+        functionName: "unpause",
       });
       return hash;
     } catch (e) {
@@ -248,7 +246,7 @@ export const useUsersContract = (userAddress?: string, githubUrl?: string) => {
       setNewRegistryAddress,
 
       setDepositUser,
-      setDepositAmount
+      setDepositAmount,
     },
 
     actions: {

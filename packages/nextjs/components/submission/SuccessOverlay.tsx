@@ -24,13 +24,12 @@ export default function SuccessOverlay({ milestone, onClose }: SuccessOverlayPro
         </div>
         <h2 className="text-xl font-bold text-white mb-2">Submission Sent!</h2>
         <p className="text-sm text-gray-400 mb-2 leading-relaxed">
-          Your progress on{" "}
-          <span className="text-white font-medium">Milestone {milestone}</span> has been submitted
-          for peer review.
+          Your progress on <span className="text-white font-medium">Milestone {milestone}</span> has been submitted for
+          peer review.
         </p>
         <p className="text-[11px] text-gray-500 mb-6">
-          Reviewers will evaluate and respond within 24–48h. You'll receive a notification once
-          approved or if changes are requested.
+          Reviewers will evaluate and respond within 24–48h. You'll receive a notification once approved or if changes
+          are requested.
         </p>
         <div className="space-y-2.5">
           <button

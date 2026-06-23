@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
 interface RepEvent {
   event: string;
@@ -15,7 +15,7 @@ export default function ReputationTable({
   filter,
   onFilterChange,
 }: {
-  events: RepEvent[];
+  events: readonly RepEvent[];
   filter: "all" | "up" | "down";
   onFilterChange: (f: "all" | "up" | "down") => void;
 }) {
@@ -65,23 +65,41 @@ export default function ReputationTable({
                     className="border-b border-gray-800/60 hover:bg-gray-800/30 transition-colors"
                   >
                     <td className="px-5 py-3">
-                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${
-                        e.direction === "up" ? "bg-emerald-500/10" : "bg-red-500/10"
-                      }`}>
-                        {e.direction === "up" ? <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" /> : <ArrowDownRight className="w-3.5 h-3.5 text-red-400" />}
+                      <div
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center ${
+                          e.direction === "up" ? "bg-emerald-500/10" : "bg-red-500/10"
+                        }`}
+                      >
+                        {e.direction === "up" ? (
+                          <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
+                        ) : (
+                          <ArrowDownRight className="w-3.5 h-3.5 text-red-400" />
+                        )}
                       </div>
                     </td>
                     <td className="px-3 py-3 text-gray-300">{e.event}</td>
                     <td className="px-3 py-3">
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
-                        e.category === "Completion" ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" :
-                        e.category === "Social" ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/5" :
-                        e.category === "Dispute" ? "text-amber-400 border-amber-500/20 bg-amber-500/5" :
-                        e.category === "Decay" ? "text-purple-400 border-purple-500/20 bg-purple-500/5" :
-                        "text-red-400 border-red-500/20 bg-red-500/5"
-                      }`}>{e.category}</span>
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
+                          e.category === "Completion"
+                            ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5"
+                            : e.category === "Social"
+                              ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/5"
+                              : e.category === "Dispute"
+                                ? "text-amber-400 border-amber-500/20 bg-amber-500/5"
+                                : e.category === "Decay"
+                                  ? "text-purple-400 border-purple-500/20 bg-purple-500/5"
+                                  : "text-red-400 border-red-500/20 bg-red-500/5"
+                        }`}
+                      >
+                        {e.category}
+                      </span>
                     </td>
-                    <td className={`px-5 py-3 text-right font-mono font-semibold ${e.direction === "up" ? "text-emerald-400" : "text-red-400"}`}>{e.delta}</td>
+                    <td
+                      className={`px-5 py-3 text-right font-mono font-semibold ${e.direction === "up" ? "text-emerald-400" : "text-red-400"}`}
+                    >
+                      {e.delta}
+                    </td>
                   </motion.tr>
                 ))}
               </AnimatePresence>

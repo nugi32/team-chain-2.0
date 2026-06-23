@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { readContract } from "@wagmi/core";
-
-import { wagmiConfig } from "~~/services/web3/wagmiConfig";
-import {
-  useDeployedContractInfo,
-  useScaffoldReadContract,
-} from "~~/hooks/scaffold-eth";
 import { getTaskBySmartContractId } from "@/utils/lib/express/queries/tasks";
+import { readContract } from "@wagmi/core";
+import { useDeployedContractInfo, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+
 ///home/tsunugi/projects/team-chain-2.0/packages/nextjs/services/web3/wagmiConfig.tsx
 
 export enum TaskStatus {
@@ -30,11 +27,10 @@ export const useLoopTasks = () => {
     contractName: "taskData",
   });
 
-  const { data: taskCounter, isLoading: isTaskCounterLoading } =
-    useScaffoldReadContract({
-      contractName: "taskData",
-      functionName: "taskCounter",
-    });
+  const { data: taskCounter, isLoading: isTaskCounterLoading } = useScaffoldReadContract({
+    contractName: "taskData",
+    functionName: "taskCounter",
+  });
 
   // Fetch tasks from contract
   useEffect(() => {
@@ -51,8 +47,8 @@ export const useLoopTasks = () => {
               abi: contractData.abi,
               functionName: "__getTask",
               args: [BigInt(i)],
-            })
-          )
+            }),
+          ),
         );
 
         setTasks(results);
@@ -79,12 +75,10 @@ export const useLoopTasks = () => {
       try {
         const results = await Promise.all(
           tasks.map(async task => {
-            const dbTask = await getTaskBySmartContractId(
-              task.taskId.toString()
-            );
+            const dbTask = await getTaskBySmartContractId(task.taskId.toString());
 
             return dbTask ? task : null;
-          })
+          }),
         );
 
         setValidTasks(results.filter(Boolean));
@@ -111,21 +105,17 @@ export const useLoopTasks = () => {
       try {
         const results = await Promise.all(
           tasks.map(async task => {
-            const dbTask = await getTaskBySmartContractId(
-              task.taskId.toString()
-            );
+            const dbTask = await getTaskBySmartContractId(task.taskId.toString());
 
             return dbTask ? task : null;
-          })
+          }),
         );
 
         const valid = results.filter(Boolean);
 
         setValidTasks(valid);
 
-        const openRegistrations = valid.filter(
-          task => Number(task.status) === TaskStatus.OpenRegistration
-        );
+        const openRegistrations = valid.filter(task => Number(task.status) === TaskStatus.OpenRegistration);
 
         setOpenRegistrationTasks(openRegistrations);
       } catch (err) {
@@ -148,10 +138,7 @@ export const useLoopTasks = () => {
       taskCounter: isTaskCounterLoading,
       tasks: isLoadingTasks,
       validTasks: isLoadingValidTasks,
-      isLoading:
-        isTaskCounterLoading ||
-        isLoadingTasks ||
-        isLoadingValidTasks,
+      isLoading: isTaskCounterLoading || isLoadingTasks || isLoadingValidTasks,
     },
   };
 };

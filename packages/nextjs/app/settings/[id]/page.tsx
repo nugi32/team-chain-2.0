@@ -1,14 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  User, Lock, Wallet, Bell, Shield,
-  AlertTriangle, ChevronRight,
-} from "lucide-react";
-
-import ProfileSection from "@/components/settings/ProfileSection";
 import DangerSection from "@/components/settings/DangerSection";
+import ProfileSection from "@/components/settings/ProfileSection";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertTriangle, Bell, ChevronRight, Lock, Shield, User, Wallet } from "lucide-react";
 
 /*
 import AccountSection from "@/components/settings/AccountSection";
@@ -17,9 +13,10 @@ import NotificationsSection from "@/components/settings/NotificationsSection";
 import PrivacySection from "@/components/settings/PrivacySection";
  */
 
-type Section = "profile" |
-  //"account" | "wallet" | "notifications" | "privacy" | 
-  "danger";
+type Section =
+  | "profile"
+  //"account" | "wallet" | "notifications" | "privacy" |
+  | "danger";
 
 const NAV: { id: Section; icon: React.ReactNode; label: string; danger?: boolean }[] = [
   { id: "profile", icon: <User className="w-3.5 h-3.5" />, label: "Profile" },
@@ -49,13 +46,10 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-8">
-
         {/* Page heading */}
         <div className="mb-8">
           <h1 className="text-lg font-bold text-white tracking-tight">Settings</h1>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Manage your profile, security, and on-chain identity.
-          </p>
+          <p className="text-xs text-gray-500 mt-0.5">Manage your profile, security, and on-chain identity.</p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-6">

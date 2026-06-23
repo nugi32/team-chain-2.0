@@ -2,26 +2,21 @@
 
 import { useParams } from "next/navigation";
 import DashboardTasksPage from "@/components/dashboard/DashboardTasksPage";
+import GreetingHeader from "@/components/dashboard/GreetingHeader";
 import RightSidebar from "@/components/dashboard/RightSidebar";
 import TopStats from "@/components/dashboard/TopStats";
-import GreetingHeader from "@/components/dashboard/GreetingHeader";
 import { useDashboardUserData } from "@/utils/lib/dashboard";
 
 export default function DashboardPage() {
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : (params.id ?? "");
 
-  const {
-    loadingUser: loading,
-    error,
-  } = useDashboardUserData(id);
+  const { loadingUser: loading, error } = useDashboardUserData(id);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-400 text-sm animate-pulse">
-          Loading dashboard…
-        </p>
+        <p className="text-gray-400 text-sm animate-pulse">Loading dashboard…</p>
       </div>
     );
   }
@@ -29,9 +24,7 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <p className="text-red-400 text-sm">
-          {error.message || "Failed to load dashboard."}
-        </p>
+        <p className="text-red-400 text-sm">{error.message || "Failed to load dashboard."}</p>
       </div>
     );
   }
@@ -55,7 +48,6 @@ export default function DashboardPage() {
           <DashboardTasksPage id={id} />
           <RightSidebar id={id} />
         </div>
-
       </main>
     </div>
   );

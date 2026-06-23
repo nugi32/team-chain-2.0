@@ -1,29 +1,30 @@
 import React from "react";
 import {
-  Users, Shield, Star, Flame,
+Users, Shield, Star, Flame,
 } from "lucide-react";
 import SectionHeading from "./SectionHeading";
 
 interface Collaborator {
-  name: string;
-  handle: string;
-  initials: string;
-  trust: number;
-  projects: number;
-  color: string;
+name: string;
+handle: string;
+initials: string;
+trust: number;
+projects: number;
+color: string;
 }
 
 export default function TeamCollaboration({
-  collaborators,
+collaborators,
 }: {
-  collaborators: Collaborator[];
+collaborators: Collaborator[];
 }) {
-  return (
-    <div className="md:col-span-1">
-      <SectionHeading
-        icon={<Users className="w-3.5 h-3.5 text-gray-400" />}
-        title="Team & Collaboration"
-      />
+return (
+
+<div className="md:col-span-1">
+<SectionHeading
+icon={<Users className="w-3.5 h-3.5 text-gray-400" />}
+title="Team & Collaboration"
+/>
 
       {/* Frequent collaborators */}
       <p className="text-[10px] text-gray-600 uppercase tracking-wider font-medium mb-2 px-1">
@@ -128,5 +129,6 @@ export default function TeamCollaboration({
         ))}
       </div>
     </div>
-  );
+
+);
 }

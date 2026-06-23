@@ -1,4 +1,4 @@
-import {getUserById} from "@/utils/lib/express/queries/users"; 
+import { getUserById } from "@/utils/lib/express/queries/users";
 
 type UserResponse = {
   profilePicture: string;
@@ -17,7 +17,6 @@ export async function handleFetchUserHeader(_id: string) {
       githubUrl: response.github,
       email: response.email,
     } as UserResponse;
-    
   } catch (err) {
     throw new Error("Unexpected error occurred");
   }

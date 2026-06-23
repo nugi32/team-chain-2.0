@@ -1,55 +1,47 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Upload,
-  Mail,
-  CheckCircle2,
-  User,
-  Wallet,
-  AlertCircle,
-  Plus,
-  Trash2,
-  ChevronDown,
-  FileText,
-  AlignLeft,
-  Type,
-  Link2,
-  ArrowLeft,
-  Code2,
-  Layers,
-  Cpu,
-  Smartphone,
-  Database,
-  Cloud,
-  Paintbrush,
-  X,
-} from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { signIn, signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
-
 import Field from "@/components/getStarted/Field";
 import { GetStartedHeader } from "@/components/getStarted/header";
-import { useCreateAccount } from "@/utils/lib/getStarted";
-
-import type { Role } from "@/utils/lib/express/mutations/users";
-
-import { useAccount } from "wagmi";
 import { initCachedToken } from "@/utils/globalLib/walletAuth";
+import type { Role } from "@/utils/lib/express/mutations/users";
+import { useCreateAccount } from "@/utils/lib/getStarted";
+import { type SkillCategory, skills } from "@/utils/lib/helper/skills";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertCircle,
+  AlignLeft,
+  ArrowLeft,
+  CheckCircle2,
+  ChevronDown,
+  Cloud,
+  Code2,
+  Cpu,
+  Database,
+  FileText,
+  Layers,
+  Link2,
+  Mail,
+  Paintbrush,
+  Plus,
+  Smartphone,
+  Trash2,
+  Type,
+  Upload,
+  User,
+  Wallet,
+  X,
+} from "lucide-react";
+import { signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useAccount } from "wagmi";
 import { notification } from "~~/utils/scaffold-eth";
-
-import { skills, type SkillCategory } from "@/utils/lib/helper/skills";
-
 
 // ─── Category meta ────────────────────────────────────────────────────────────
 
-const categoryMeta: Record<
-  SkillCategory,
-  { label: string; Icon: React.ComponentType<{ className?: string }> }
-> = {
+const categoryMeta: Record<SkillCategory, { label: string; Icon: React.ComponentType<{ className?: string }> }> = {
   language: { label: "Languages", Icon: Code2 },
   frontend: { label: "Frontend", Icon: Layers },
   backend: { label: "Backend", Icon: Cpu },
@@ -59,9 +51,7 @@ const categoryMeta: Record<
   design: { label: "Tools", Icon: Paintbrush },
 };
 
-const categoryOrder: SkillCategory[] = [
-  "language", "frontend", "backend", "mobile", "database", "devops", "design",
-];
+const categoryOrder: SkillCategory[] = ["language", "frontend", "backend", "mobile", "database", "devops", "design"];
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -74,7 +64,12 @@ const roleOptions = [
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const isValidUri = (v: string) => {
-  try { new URL(v); return true; } catch { return false; }
+  try {
+    new URL(v);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 // ─── Skills Selector ─────────────────────────────────────────────────────────
@@ -88,24 +83,20 @@ interface SkillsSelectorProps {
 function SkillsSelector({ selected, onChange, error }: SkillsSelectorProps) {
   const [activeCategory, setActiveCategory] = useState<SkillCategory>("language");
 
-  const toggle = (id: string) =>
-    onChange(
-      selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id]
-    );
+  const toggle = (id: string) => onChange(selected.includes(id) ? selected.filter(s => s !== id) : [...selected, id]);
 
-  const visibleSkills = skills.filter((s) => s.category === activeCategory);
+  const visibleSkills = skills.filter(s => s.category === activeCategory);
 
-  const countFor = (cat: SkillCategory) =>
-    skills.filter((s) => s.category === cat && selected.includes(s.id)).length;
+  const countFor = (cat: SkillCategory) => skills.filter(s => s.category === cat && selected.includes(s.id)).length;
 
   // Selected pill display (all selected)
-  const selectedSkillObjects = skills.filter((s) => selected.includes(s.id));
+  const selectedSkillObjects = skills.filter(s => selected.includes(s.id));
 
   return (
     <div className="space-y-4">
       {/* Category tabs */}
       <div className="flex flex-wrap gap-1.5">
-        {categoryOrder.map((cat) => {
+        {categoryOrder.map(cat => {
           const { label, Icon } = categoryMeta[cat];
           const count = countFor(cat);
           const isActive = activeCategory === cat;
@@ -127,9 +118,7 @@ function SkillsSelector({ selected, onChange, error }: SkillsSelectorProps) {
                 <span
                   className={[
                     "rounded-full px-1.5 py-0 text-[10px] font-semibold",
-                    isActive
-                      ? "bg-indigo-500/30 text-indigo-200"
-                      : "bg-gray-800 text-gray-400",
+                    isActive ? "bg-indigo-500/30 text-indigo-200" : "bg-gray-800 text-gray-400",
                   ].join(" ")}
                 >
                   {count}
@@ -150,7 +139,7 @@ function SkillsSelector({ selected, onChange, error }: SkillsSelectorProps) {
           transition={{ duration: 0.15 }}
           className="flex flex-wrap gap-2"
         >
-          {visibleSkills.map((skill) => {
+          {visibleSkills.map(skill => {
             const isSelected = selected.includes(skill.id);
             return (
               <button
@@ -164,9 +153,7 @@ function SkillsSelector({ selected, onChange, error }: SkillsSelectorProps) {
                     : "border-gray-800 bg-gray-950 text-gray-400 hover:border-gray-700 hover:text-gray-200 hover:bg-gray-900",
                 ].join(" ")}
               >
-                {isSelected && (
-                  <span className="mr-1 text-indigo-400">✓</span>
-                )}
+                {isSelected && <span className="mr-1 text-indigo-400">✓</span>}
                 {skill.name}
               </button>
             );
@@ -182,7 +169,7 @@ function SkillsSelector({ selected, onChange, error }: SkillsSelectorProps) {
           </p>
           <div className="flex flex-wrap gap-1.5">
             <AnimatePresence>
-              {selectedSkillObjects.map((s) => (
+              {selectedSkillObjects.map(s => (
                 <motion.span
                   key={s.id}
                   initial={{ opacity: 0, scale: 0.85 }}
@@ -237,7 +224,9 @@ export default function ProfileForm() {
   const { createAccount } = useCreateAccount();
   const [sessionCleared, setSessionCleared] = useState(false);
 
-  useEffect(() => { initCachedToken(); }, []);
+  useEffect(() => {
+    initCachedToken();
+  }, []);
 
   // Clear form when session changes to ensure we're using the latest GitHub data
   useEffect(() => {
@@ -282,7 +271,7 @@ export default function ProfileForm() {
   // ── Auto-fill from GitHub session ─────────────────────────────────────────
   useEffect(() => {
     if (!session?.user) return;
-    if (session.user.name) setName((prev) => (prev ? prev : session.user!.name!));
+    if (session.user.name) setName(prev => (prev ? prev : session.user!.name!));
     if (session.user.image && !avatarPreview) setAvatarPreview(session.user.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, avatarPreview]);
@@ -298,9 +287,7 @@ export default function ProfileForm() {
   // ── Derived session values ────────────────────────────────────────────────
   const githubUsername = session?.user?.username;
 
-  const githubUri = githubUsername
-    ? `https://github.com/${githubUsername}`
-    : null;
+  const githubUri = githubUsername ? `https://github.com/${githubUsername}` : null;
 
   const email = session?.user?.email ?? null;
 
@@ -326,14 +313,12 @@ export default function ProfileForm() {
   if (touched.descSummary && descSummary.length > 200) errors.descSummary = "Summary must be 200 characters or fewer.";
   if (touched.descFooter && descFooter.length > 100) errors.descFooter = "Footer must be 100 characters or fewer.";
 
-  const invalidPoints = descPoints.filter((p) => p.trim().length > 0 && p.trim().length < 3);
-  if (touched.descPoints && invalidPoints.length > 0)
-    errors.descPoints = "Each point must be at least 3 characters.";
-  if (touched.descPoints && descPoints.filter((p) => p.trim()).length === 0)
+  const invalidPoints = descPoints.filter(p => p.trim().length > 0 && p.trim().length < 3);
+  if (touched.descPoints && invalidPoints.length > 0) errors.descPoints = "Each point must be at least 3 characters.";
+  if (touched.descPoints && descPoints.filter(p => p.trim()).length === 0)
     errors.descPoints = "At least one point is required.";
 
-  if (touched.skills && selectedSkills.length === 0)
-    errors.skills = "Please select at least one skill.";
+  if (touched.skills && selectedSkills.length === 0) errors.skills = "Please select at least one skill.";
 
   const profilePictureUri = avatarPreview ?? null;
 
@@ -347,21 +332,21 @@ export default function ProfileForm() {
     descHeader.trim().length >= 3 &&
     descSummary.length <= 200 &&
     descFooter.length <= 100 &&
-    descPoints.filter((p) => p.trim().length >= 3).length >= 1 &&
+    descPoints.filter(p => p.trim().length >= 3).length >= 1 &&
     selectedSkills.length >= 1;
 
   // ── Styles ────────────────────────────────────────────────────────────────
-  const inputBase = "w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-sm text-white outline-none placeholder-gray-600 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
+  const inputBase =
+    "w-full rounded-2xl border border-gray-800 bg-gray-950 px-4 py-3 text-sm text-white outline-none placeholder-gray-600 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
   const inputError = "border-rose-500 focus:border-rose-500 focus:ring-rose-500/20";
   const errMsg = "text-xs text-rose-400 mt-1.5 flex items-center gap-1";
 
-  const touch = (key: string) => setTouched((t) => ({ ...t, [key]: true }));
+  const touch = (key: string) => setTouched(t => ({ ...t, [key]: true }));
 
   // ── Points helpers ────────────────────────────────────────────────────────
-  const addPoint = () => setDescPoints((p) => [...p, ""]);
-  const removePoint = (i: number) => setDescPoints((p) => p.filter((_, idx) => idx !== i));
-  const updatePoint = (i: number, v: string) =>
-    setDescPoints((p) => p.map((x, idx) => (idx === i ? v : x)));
+  const addPoint = () => setDescPoints(p => [...p, ""]);
+  const removePoint = (i: number) => setDescPoints(p => p.filter((_, idx) => idx !== i));
+  const updatePoint = (i: number, v: string) => setDescPoints(p => p.map((x, idx) => (idx === i ? v : x)));
 
   // ── Countdown + redirect helper ──────────────────────────────────────────
   const startCountdownRedirect = (targetPath: string, onCancel: () => void) => {
@@ -373,9 +358,13 @@ export default function ProfileForm() {
     const toastId = notification.info(
       <div className="flex flex-col gap-3 min-w-[250px]">
         <div className="text-sm leading-6">
-          Account created successfully!<br />
+          Account created successfully!
+          <br />
           Redirecting to dashboard in{" "}
-          <span id="redirect-countdown" className="font-bold text-indigo-400">{countdown}</span>s…
+          <span id="redirect-countdown" className="font-bold text-indigo-400">
+            {countdown}
+          </span>
+          s…
         </div>
         <button
           className="rounded-xl border border-red-500 bg-red-500/10 px-3 py-2 text-sm hover:bg-red-500/20 transition"
@@ -391,7 +380,7 @@ export default function ProfileForm() {
           Cancel Redirect
         </button>
       </div>,
-      { duration: 6000 }
+      { duration: 6000 },
     );
 
     interval = setInterval(() => {
@@ -402,17 +391,29 @@ export default function ProfileForm() {
 
     timeout = setTimeout(() => {
       clearInterval(interval);
-      if (!cancelled) { notification.remove(toastId); router.push(targetPath); }
+      if (!cancelled) {
+        notification.remove(toastId);
+        router.push(targetPath);
+      }
     }, 5000);
 
-    return () => { clearInterval(interval); clearTimeout(timeout); };
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
   };
 
   // ── Form submission ───────────────────────────────────────────────────────
   const handleSubmit = async () => {
     setTouched({
-      name: true, github: true, linkedin: true, role: true,
-      descHeader: true, descSummary: true, descPoints: true, descFooter: true,
+      name: true,
+      github: true,
+      linkedin: true,
+      role: true,
+      descHeader: true,
+      descSummary: true,
+      descPoints: true,
+      descFooter: true,
       skills: true,
     });
 
@@ -438,7 +439,7 @@ export default function ProfileForm() {
         description: {
           header: descHeader.trim(),
           summary: descSummary.trim(),
-          points: descPoints.filter((p) => p.trim().length >= 3),
+          points: descPoints.filter(p => p.trim().length >= 3),
           footer: descFooter.trim(),
         },
         skills: selectedSkills,
@@ -456,9 +457,7 @@ export default function ProfileForm() {
     } catch (error) {
       console.error("[handleSubmit] Account creation failed:", error);
 
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Failed to create account. Please try again.";
+      const errorMessage = error instanceof Error ? error.message : "Failed to create account. Please try again.";
 
       console.error("[handleSubmit] Full error details:", {
         message: errorMessage,
@@ -469,12 +468,10 @@ export default function ProfileForm() {
 
       // Check if error is about duplicate GitHub URL
       if (errorMessage.includes("GitProfileAlreadyUsed") || errorMessage.includes("already")) {
-        notification.error(
-          `This GitHub profile is already registered. GitHub URL: ${githubUri}`
-        );
+        notification.error(`This GitHub profile is already registered. GitHub URL: ${githubUri}`);
       } else if (errorMessage.includes("AlreadyRegistered")) {
         notification.error(
-          "This wallet address is already registered with a different account. Please use a different wallet."
+          "This wallet address is already registered with a different account. Please use a different wallet.",
         );
       } else {
         notification.error(errorMessage);
@@ -487,8 +484,8 @@ export default function ProfileForm() {
 
   return (
     <>
-    <div className="mb-10">
-      <GetStartedHeader />
+      <div className="mb-10">
+        <GetStartedHeader />
       </div>
       <div
         className={[
@@ -519,8 +516,8 @@ export default function ProfileForm() {
             </div>
             <h1 className="text-3xl font-bold tracking-tight">Create Your Account</h1>
             <p className="text-sm text-gray-400 mt-2 leading-relaxed max-w-lg">
-              Set up your on-chain identity. Wallet connection is required upfront — a small gas fee
-              will be charged to register your profile on-chain.
+              Set up your on-chain identity. Wallet connection is required upfront — a small gas fee will be charged to
+              register your profile on-chain.
             </p>
           </motion.div>
 
@@ -550,13 +547,7 @@ export default function ProfileForm() {
                   </div>
                 )}
               </button>
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarUpload}
-              />
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
               {avatarPreview && session?.user?.image === avatarPreview && (
                 <p className="text-[10px] text-gray-600 mt-1 text-center">from GitHub</p>
               )}
@@ -571,13 +562,16 @@ export default function ProfileForm() {
                     type="text"
                     placeholder="Your full name"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={e => setName(e.target.value)}
                     onBlur={() => touch("name")}
                     className={[inputBase, "pl-11", errors.name ? inputError : ""].join(" ")}
                   />
                 </div>
                 {errors.name && (
-                  <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.name}</p>
+                  <p className={errMsg}>
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.name}
+                  </p>
                 )}
               </Field>
             </div>
@@ -590,8 +584,11 @@ export default function ProfileForm() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setRoleOpen((o) => !o)}
-                onBlur={() => { touch("role"); setTimeout(() => setRoleOpen(false), 150); }}
+                onClick={() => setRoleOpen(o => !o)}
+                onBlur={() => {
+                  touch("role");
+                  setTimeout(() => setRoleOpen(false), 150);
+                }}
                 className={[
                   "w-full rounded-2xl border px-4 py-3 text-sm text-left flex items-center justify-between transition-colors",
                   errors.role
@@ -601,8 +598,10 @@ export default function ProfileForm() {
                       : "border-gray-800 bg-gray-950 text-gray-600",
                 ].join(" ")}
               >
-                {roleOptions.find((opt) => opt.value === roleValue)?.label || "Select a role…"}
-                <ChevronDown className={["w-4 h-4 text-gray-500 transition-transform", roleOpen ? "rotate-180" : ""].join(" ")} />
+                {roleOptions.find(opt => opt.value === roleValue)?.label || "Select a role…"}
+                <ChevronDown
+                  className={["w-4 h-4 text-gray-500 transition-transform", roleOpen ? "rotate-180" : ""].join(" ")}
+                />
               </button>
 
               <AnimatePresence>
@@ -614,11 +613,15 @@ export default function ProfileForm() {
                     transition={{ duration: 0.15 }}
                     className="absolute z-20 mt-1.5 w-full rounded-2xl border border-gray-700 bg-gray-900 shadow-xl overflow-hidden"
                   >
-                    {roleOptions.map((opt) => (
+                    {roleOptions.map(opt => (
                       <li key={opt.value}>
                         <button
                           type="button"
-                          onMouseDown={() => { setRoleValue(opt.value); setRoleOpen(false); touch("role"); }}
+                          onMouseDown={() => {
+                            setRoleValue(opt.value);
+                            setRoleOpen(false);
+                            touch("role");
+                          }}
                           className={[
                             "w-full px-4 py-3 text-sm text-left hover:bg-indigo-500/10 hover:text-indigo-300 transition-colors",
                             roleValue === opt.value ? "text-indigo-300 bg-indigo-500/10" : "text-gray-300",
@@ -633,7 +636,10 @@ export default function ProfileForm() {
               </AnimatePresence>
             </div>
             {errors.role && (
-              <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.role}</p>
+              <p className={errMsg}>
+                <AlertCircle className="w-3 h-3" />
+                {errors.role}
+              </p>
             )}
           </Field>
 
@@ -657,7 +663,8 @@ export default function ProfileForm() {
                       {githubUri && <p className="text-xs text-gray-500 font-mono mt-0.5">{githubUri}</p>}
                       {email && (
                         <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                          <Mail className="w-3 h-3" />{email}
+                          <Mail className="w-3 h-3" />
+                          {email}
                         </p>
                       )}
                     </div>
@@ -676,17 +683,17 @@ export default function ProfileForm() {
                       setSelectedSkills([]);
                       setAvatarPreview(null);
                       setTouched({});
-                      
+
                       // Clear localStorage
                       localStorage.clear();
-                      
+
                       // Sign out and redirect
                       console.log("[Change Button] Signing out...");
                       await signOut({ redirect: false });
-                      
+
                       // Wait a moment for signOut to complete
                       await new Promise(resolve => setTimeout(resolve, 500));
-                      
+
                       // Force page reload to clear session cache
                       console.log("[Change Button] Reloading page...");
                       window.location.href = "/getStarted";
@@ -719,7 +726,10 @@ export default function ProfileForm() {
                     Connect GitHub Account
                   </button>
                   {errors.github && (
-                    <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.github}</p>
+                    <p className={errMsg}>
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.github}
+                    </p>
                   )}
                 </motion.div>
               )}
@@ -736,13 +746,16 @@ export default function ProfileForm() {
                 type="url"
                 placeholder="https://linkedin.com/in/yourhandle"
                 value={linkedin}
-                onChange={(e) => setLinkedin(e.target.value)}
+                onChange={e => setLinkedin(e.target.value)}
                 onBlur={() => touch("linkedin")}
                 className={[inputBase, "pl-11", errors.linkedin ? inputError : ""].join(" ")}
               />
             </div>
             {errors.linkedin && (
-              <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.linkedin}</p>
+              <p className={errMsg}>
+                <AlertCircle className="w-3 h-3" />
+                {errors.linkedin}
+              </p>
             )}
           </Field>
 
@@ -765,7 +778,7 @@ export default function ProfileForm() {
                     maxLength={100}
                     placeholder="e.g. Full-Stack Developer & Open-Source Contributor"
                     value={descHeader}
-                    onChange={(e) => setDescHeader(e.target.value)}
+                    onChange={e => setDescHeader(e.target.value)}
                     onBlur={() => touch("descHeader")}
                     className={[inputBase, "pl-11", errors.descHeader ? inputError : ""].join(" ")}
                   />
@@ -774,7 +787,10 @@ export default function ProfileForm() {
                   </span>
                 </div>
                 {errors.descHeader && (
-                  <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descHeader}</p>
+                  <p className={errMsg}>
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.descHeader}
+                  </p>
                 )}
               </Field>
 
@@ -786,16 +802,17 @@ export default function ProfileForm() {
                     rows={3}
                     placeholder="A short summary about yourself and what you bring to the team…"
                     value={descSummary}
-                    onChange={(e) => setDescSummary(e.target.value)}
+                    onChange={e => setDescSummary(e.target.value)}
                     onBlur={() => touch("descSummary")}
                     className={[inputBase, "resize-none", errors.descSummary ? inputError : ""].join(" ")}
                   />
-                  <span className="absolute right-4 bottom-3 text-xs text-gray-600">
-                    {descSummary.length}/200
-                  </span>
+                  <span className="absolute right-4 bottom-3 text-xs text-gray-600">{descSummary.length}/200</span>
                 </div>
                 {errors.descSummary && (
-                  <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descSummary}</p>
+                  <p className={errMsg}>
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.descSummary}
+                  </p>
                 )}
               </Field>
 
@@ -819,7 +836,7 @@ export default function ProfileForm() {
                             maxLength={100}
                             placeholder={`Point ${i + 1}`}
                             value={point}
-                            onChange={(e) => updatePoint(i, e.target.value)}
+                            onChange={e => updatePoint(i, e.target.value)}
                             onBlur={() => touch("descPoints")}
                             className={[inputBase, "pl-10", errors.descPoints ? inputError : ""].join(" ")}
                           />
@@ -847,7 +864,10 @@ export default function ProfileForm() {
                   </button>
                 </div>
                 {errors.descPoints && (
-                  <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descPoints}</p>
+                  <p className={errMsg}>
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.descPoints}
+                  </p>
                 )}
               </Field>
 
@@ -860,7 +880,7 @@ export default function ProfileForm() {
                     maxLength={100}
                     placeholder="e.g. Open to remote roles worldwide"
                     value={descFooter}
-                    onChange={(e) => setDescFooter(e.target.value)}
+                    onChange={e => setDescFooter(e.target.value)}
                     onBlur={() => touch("descFooter")}
                     className={[inputBase, "pl-11", errors.descFooter ? inputError : ""].join(" ")}
                   />
@@ -869,7 +889,10 @@ export default function ProfileForm() {
                   </span>
                 </div>
                 {errors.descFooter && (
-                  <p className={errMsg}><AlertCircle className="w-3 h-3" />{errors.descFooter}</p>
+                  <p className={errMsg}>
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.descFooter}
+                  </p>
                 )}
               </Field>
             </div>
@@ -891,7 +914,10 @@ export default function ProfileForm() {
             <div className="rounded-2xl border border-gray-800 bg-gray-950/60 p-5">
               <SkillsSelector
                 selected={selectedSkills}
-                onChange={(ids) => { setSelectedSkills(ids); touch("skills"); }}
+                onChange={ids => {
+                  setSelectedSkills(ids);
+                  touch("skills");
+                }}
                 error={errors.skills}
               />
             </div>
@@ -903,11 +929,9 @@ export default function ProfileForm() {
           <div className="flex items-center gap-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 px-4 py-3 mb-6 text-xs text-gray-400 leading-relaxed">
             <Wallet className="w-4 h-4 text-indigo-400 flex-shrink-0" />
             <span>
-              Submitting this form will prompt a{" "}
-              <span className="text-indigo-300 font-medium">wallet signature</span> to register your
-              profile on-chain. A gas fee of approximately{" "}
-              <span className="text-white font-medium">$0.01–$0.05</span> will be deducted from your
-              connected wallet.
+              Submitting this form will prompt a <span className="text-indigo-300 font-medium">wallet signature</span>{" "}
+              to register your profile on-chain. A gas fee of approximately{" "}
+              <span className="text-white font-medium">$0.01–$0.05</span> will be deducted from your connected wallet.
             </span>
           </div>
 

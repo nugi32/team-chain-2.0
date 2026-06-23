@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { getValidJwt } from "@/utils/globalLib/walletAuth";
-import {
-  handleCreateAccount,
-  type CreateAccountPayload,
-} from "@/utils/lib/express/mutations/users";
-import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
-import { decodeSmartContractError } from "@/utils/lib/helper/smartCotntractErrDecoder";
+import { type CreateAccountPayload, handleCreateAccount } from "@/utils/lib/express/mutations/users";
 import { getStartedFindUserByAddress } from "@/utils/lib/express/queries/users";
+import { decodeSmartContractError } from "@/utils/lib/helper/smartCotntractErrDecoder";
+import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
 
 export function useCreateAccount() {
   const { form, actions, user } = useUsersContract();
@@ -24,7 +21,7 @@ export function useCreateAccount() {
 
       const existingUser = await getStartedFindUserByAddress(address);
 
-      if (user.isRegistered && (!existingUser)) {
+      if (user.isRegistered && !existingUser) {
         const jwt = await getValidJwt(address);
         const accountId = await handleCreateAccount(data, jwt, address);
 

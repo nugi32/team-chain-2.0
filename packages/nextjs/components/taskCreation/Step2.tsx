@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import Hint from "./Hint";
 import Label from "./Label";
 import TextInput from "./TextInput";
-import Hint from "./Hint";
 import type { FormData } from "./types";
-import { useTaskController } from "@/utils/lib/smartContractWrapper/user/TaskController";
 import { useWalletAddress } from "@/hooks/scaffold-eth";
+import { useTaskController } from "@/utils/lib/smartContractWrapper/user/TaskController";
 import { formatEther, parseEther } from "ethers";
+import { motion } from "framer-motion";
 
 const EFFORT_OPTIONS = ["< 4 hrs", "4–8 hrs", "1–3 days", "1 week", "2+ weeks"];
 
@@ -20,13 +20,7 @@ function safeParseEther(value: string | undefined): bigint | undefined {
   }
 }
 
-export default function Step2({
-  data,
-  set,
-}: {
-  data: FormData;
-  set: (k: keyof FormData, v: unknown) => void;
-}) {
+export default function Step2({ data, set }: { data: FormData; set: (k: keyof FormData, v: unknown) => void }) {
   const { walletAddress } = useWalletAddress();
 
   // ─── useTaskController replaces useTaskLifecycleLogic ──────────────────────
@@ -38,13 +32,9 @@ export default function Step2({
   // ─── Derive args from FormData ──────────────────────────────────────────────
   const deadlineMs = data.deadline ? new Date(data.deadline).getTime() - Date.now() : null;
   const deadlineHours =
-    deadlineMs !== null && deadlineMs > 3_600_000
-      ? BigInt(Math.ceil(deadlineMs / 3_600_000))
-      : undefined;
+    deadlineMs !== null && deadlineMs > 3_600_000 ? BigInt(Math.ceil(deadlineMs / 3_600_000)) : undefined;
 
-  const maximumRevision = data.maxRevisions
-    ? BigInt(parseInt(data.maxRevisions))
-    : undefined;
+  const maximumRevision = data.maxRevisions ? BigInt(parseInt(data.maxRevisions)) : undefined;
 
   const memberReward = safeParseEther(data.reward);
 
@@ -69,13 +59,13 @@ export default function Step2({
   }, [walletAddress]);
 
   // ─── Map hook outputs to the same shape as old useTaskLifecycleLogic ────────
-  const creatorRequiredStake = contractData.creatorStake;            // bigint | undefined
-  const isTaskLoading        = loading.isCreatorStakeLoading;        // boolean
-  const stakeError           = null;                                  // not exposed by useTaskController
-  const contractFound        = true;                                  // scaffold handles missing contracts
-  const enabled              = !!walletAddress && !!deadlineHours && !!maximumRevision && !!memberReward;
+  const creatorRequiredStake = contractData.creatorStake; // bigint | undefined
+  const isTaskLoading = loading.isCreatorStakeLoading; // boolean
+  const stakeError = null; // not exposed by useTaskController
+  const contractFound = true; // scaffold handles missing contracts
+  const enabled = !!walletAddress && !!deadlineHours && !!maximumRevision && !!memberReward;
   // isStuck: all args ready, not loading, but still no result → call reverted silently
-  const isStuck              = enabled && !isTaskLoading && creatorRequiredStake === undefined;
+  const isStuck = enabled && !isTaskLoading && creatorRequiredStake === undefined;
 
   // ─── Derived display values ─────────────────────────────────────────────────
   const missingArg = !walletAddress
@@ -90,13 +80,9 @@ export default function Step2({
 
   const reward = parseFloat(data.reward || "0");
 
-  const requiredStake =
-    creatorRequiredStake != null
-      ? parseFloat(formatEther(creatorRequiredStake)).toFixed(4)
-      : null;
+  const requiredStake = creatorRequiredStake != null ? parseFloat(formatEther(creatorRequiredStake)).toFixed(4) : null;
 
-  const totalValue =
-    requiredStake != null ? (reward + parseFloat(requiredStake)).toFixed(4) : null;
+  const totalValue = requiredStake != null ? (reward + parseFloat(requiredStake)).toFixed(4) : null;
 
   // ─── Stake field display ────────────────────────────────────────────────────
   const StakeValue = () => {
@@ -104,11 +90,7 @@ export default function Step2({
       return <span className="text-xs text-gray-600">Fill all fields first</span>;
     }
     if (!contractFound) {
-      return (
-        <span className="text-xs text-red-400">
-          Contract not found — check deployedContracts.ts
-        </span>
-      );
+      return <span className="text-xs text-red-400">Contract not found — check deployedContracts.ts</span>;
     }
     if (isTaskLoading) {
       return (
@@ -122,11 +104,7 @@ export default function Step2({
       return <span className="text-xs text-red-400">Contract error — see console</span>;
     }
     if (isStuck) {
-      return (
-        <span className="text-xs text-orange-400">
-          Call reverted silently — check contract logs
-        </span>
-      );
+      return <span className="text-xs text-orange-400">Call reverted silently — check contract logs</span>;
     }
     return <span>Ξ {requiredStake ?? "0"}</span>;
   };
@@ -165,22 +143,12 @@ export default function Step2({
       {/* ── Row 1: Reward + Required stake ── */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
-          <Label hint="Total payout on successful delivery.">
-            Reward / payout (ETH) *
-          </Label>
-          <TextInput
-            value={data.reward}
-            onChange={(v) => set("reward", v)}
-            placeholder="0.0"
-            type="number"
-            prefix="Ξ"
-          />
+          <Label hint="Total payout on successful delivery.">Reward / payout (ETH) *</Label>
+          <TextInput value={data.reward} onChange={v => set("reward", v)} placeholder="0.0" type="number" prefix="Ξ" />
         </div>
 
         <div>
-          <Label hint="Required by the smart contract based on the reward amount.">
-            Required stake
-          </Label>
+          <Label hint="Required by the smart contract based on the reward amount.">Required stake</Label>
           <div className="flex h-11 items-center rounded-xl border border-gray-800 bg-gray-900/60 px-4 font-medium text-amber-300">
             <StakeValue />
           </div>
@@ -195,11 +163,8 @@ export default function Step2({
           animate={{ opacity: 1, height: "auto" }}
           className="grid grid-cols-3 gap-3"
         >
-          {summaryCards.map((card) => (
-            <div
-              key={card.label}
-              className="rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-center"
-            >
+          {summaryCards.map(card => (
+            <div key={card.label} className="rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-center">
               <p className={["text-sm font-bold", card.color].join(" ")}>{card.value}</p>
               <p className="mt-0.5 text-[10px] text-gray-600">{card.label}</p>
             </div>
@@ -212,7 +177,7 @@ export default function Step2({
         <div>
           <Label>Estimated effort</Label>
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-            {EFFORT_OPTIONS.map((e) => (
+            {EFFORT_OPTIONS.map(e => (
               <button
                 key={e}
                 type="button"
@@ -232,11 +197,7 @@ export default function Step2({
 
         <div>
           <Label>Deadline *</Label>
-          <TextInput
-            value={data.deadline}
-            onChange={(v) => set("deadline", v)}
-            type="date"
-          />
+          <TextInput value={data.deadline} onChange={v => set("deadline", v)} type="date" />
           <Hint>
             {deadlineMs !== null && deadlineMs <= 3_600_000 && data.deadline
               ? "⚠ Deadline must be at least 1 hour in the future."
@@ -246,15 +207,9 @@ export default function Step2({
 
         <div>
           <Label hint="Maximum number of revision requests allowed.">Max revisions</Label>
-          <TextInput
-            value={data.maxRevisions}
-            onChange={(v) => set("maxRevisions", v)}
-            placeholder="3"
-            type="number"
-          />
+          <TextInput value={data.maxRevisions} onChange={v => set("maxRevisions", v)} placeholder="3" type="number" />
           <Hint>
-            Set how many revision rounds the worker must accommodate before the task can
-            be accepted or disputed.
+            Set how many revision rounds the worker must accommodate before the task can be accepted or disputed.
           </Hint>
         </div>
       </div>

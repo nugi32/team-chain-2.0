@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import type { TabKey } from "./types";
+import { motion } from "framer-motion";
 
 interface Tab {
   key: TabKey;
@@ -31,7 +31,10 @@ export default function Tabs({ tabs, activeTab, onTabChange }: TabsProps) {
             </span>
           )}
           {activeTab === t.key && (
-            <motion.div layoutId="tab-indicator" className="absolute inset-x-0 -bottom-px h-0.5 bg-indigo-500 rounded-full" />
+            <motion.div
+              layoutId="tab-indicator"
+              className="absolute inset-x-0 -bottom-px h-0.5 bg-indigo-500 rounded-full"
+            />
           )}
         </button>
       ))}

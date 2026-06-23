@@ -1,9 +1,8 @@
 // ============================================================================
 // EXAMPLES: Reading Contract Data with and without Wallet Connection
 // ============================================================================
-
-import { useWalletAddress } from "@/hooks/scaffold-eth/useWalletAddress";
 import { useScaffoldReadContract } from "@/hooks/scaffold-eth";
+import { useWalletAddress } from "@/hooks/scaffold-eth/useWalletAddress";
 
 // ============ OPTION 1: Read without wallet connection (using backend) ============
 /**
@@ -12,7 +11,7 @@ import { useScaffoldReadContract } from "@/hooks/scaffold-eth";
  */
 export function ReadContractWithoutWallet() {
   const { walletAddress, isLoading, error } = useWalletAddress();
-  
+
   const { data: contractData, isLoading: isReadingContract } = useScaffoldReadContract({
     contractName: "AccessControl",
     functionName: "getRoleAdmin",
@@ -38,7 +37,7 @@ export function ReadContractWithoutWallet() {
  */
 export function ReadContractWithWallet() {
   const { walletAddress, isConnected, error } = useWalletAddress();
-  
+
   const { data: contractData, isLoading: isReadingContract } = useScaffoldReadContract({
     contractName: "AccessControl",
     functionName: "getRoleAdmin",
@@ -64,13 +63,16 @@ export function ReadContractWithWallet() {
  */
 export function ReadContractAnyway() {
   const { walletAddress, source, isLoading, error } = useWalletAddress();
-  
-  const { data: contractData, isLoading: isReadingContract, error: contractError } = 
-    useScaffoldReadContract({
-      contractName: "YourContract",
-      functionName: "someFunction",
-      args: ["0x..."],
-    });
+
+  const {
+    data: contractData,
+    isLoading: isReadingContract,
+    error: contractError,
+  } = useScaffoldReadContract({
+    contractName: "YourContract",
+    functionName: "someFunction",
+    args: ["0x..."],
+  });
 
   if (isLoading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error.message}</div>;
@@ -80,13 +82,8 @@ export function ReadContractAnyway() {
     <div className="card">
       <p>Wallet: {walletAddress}</p>
       <p>Source: {source}</p> {/* "connected" or "backend" */}
-      
       {contractError && <p className="error">{contractError.message}</p>}
-      {isReadingContract ? (
-        <p>Reading contract...</p>
-      ) : (
-        <p>Data: {JSON.stringify(contractData)}</p>
-      )}
+      {isReadingContract ? <p>Reading contract...</p> : <p>Data: {JSON.stringify(contractData)}</p>}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { GitBranch, ChevronRight } from "lucide-react";
+import { ChevronRight, GitBranch } from "lucide-react";
 
 interface RelatedTask {
   id: string;
@@ -22,7 +22,7 @@ export default function RelatedTasks({ tasks }: { tasks: RelatedTask[] }) {
         <div className="flex-1 h-px bg-gray-800" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {tasks.map((r) => (
+        {tasks.map(r => (
           <motion.div
             key={r.id}
             whileHover={{ y: -2 }}
@@ -48,7 +48,7 @@ export default function RelatedTasks({ tasks }: { tasks: RelatedTask[] }) {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap gap-1">
-                {r.skills.slice(0, 2).map((s) => (
+                {r.skills.slice(0, 2).map(s => (
                   <span
                     key={s}
                     className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700/50 text-[9px] font-mono text-gray-500"

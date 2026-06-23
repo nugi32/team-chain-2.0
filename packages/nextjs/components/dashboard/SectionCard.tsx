@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronRight, Plus, Filter, TrendingUp, Eye } from "lucide-react";
+import { ChevronRight, Eye, Filter, Plus, TrendingUp } from "lucide-react";
 
 export interface CardAction {
   label: string;
@@ -17,13 +17,7 @@ interface SectionCardProps {
   className?: string;
 }
 
-export default function SectionCard({
-  title,
-  icon,
-  actions = [],
-  children,
-  className = "",
-}: SectionCardProps) {
+export default function SectionCard({ title, icon, actions = [], children, className = "" }: SectionCardProps) {
   return (
     <div className={`rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm ${className}`}>
       {/* Header with title and action buttons */}
@@ -34,30 +28,20 @@ export default function SectionCard({
         </div>
         <div className="flex items-center gap-2">
           {actions.map((action, idx) => {
-            const baseClass =
-              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1";
+            const baseClass = "px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1";
             const variantClass = {
               primary: "bg-indigo-600 hover:bg-indigo-700 text-white",
               secondary: "bg-gray-800 hover:bg-gray-700 text-gray-300",
-              ghost:
-                "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50 border border-gray-700",
+              ghost: "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50 border border-gray-700",
             }[action.variant || "secondary"];
 
             return action.href ? (
-              <a
-                key={idx}
-                href={action.href}
-                className={`${baseClass} ${variantClass}`}
-              >
+              <a key={idx} href={action.href} className={`${baseClass} ${variantClass}`}>
                 {action.icon || <ChevronRight className="w-3 h-3" />}
                 {action.label}
               </a>
             ) : (
-              <button
-                key={idx}
-                onClick={action.onClick}
-                className={`${baseClass} ${variantClass}`}
-              >
+              <button key={idx} onClick={action.onClick} className={`${baseClass} ${variantClass}`}>
                 {action.icon || <ChevronRight className="w-3 h-3" />}
                 {action.label}
               </button>

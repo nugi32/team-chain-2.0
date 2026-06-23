@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, AlertTriangle, Lock, BadgeCheck } from "lucide-react";
+import { AlertTriangle, BadgeCheck, CheckCircle2, Lock } from "lucide-react";
 
 interface TaskStakeData {
   stakeRequired: number;
@@ -52,26 +52,18 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
               <div className="flex items-center gap-1.5">
                 <div
                   className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold transition-colors ${
-                    step >= s.id
-                      ? "bg-indigo-500 text-white"
-                      : "bg-gray-800 text-gray-500"
+                    step >= s.id ? "bg-indigo-500 text-white" : "bg-gray-800 text-gray-500"
                   }`}
                 >
                   {step > s.id ? <CheckCircle2 className="w-3 h-3" /> : s.id}
                 </div>
-                <span
-                  className={`text-[10px] font-medium ${
-                    step >= s.id ? "text-gray-200" : "text-gray-600"
-                  }`}
-                >
+                <span className={`text-[10px] font-medium ${step >= s.id ? "text-gray-200" : "text-gray-600"}`}>
                   {s.label}
                 </span>
               </div>
               {i < STEPS.length - 1 && (
                 <div
-                  className={`h-px flex-1 mx-1 transition-colors ${
-                    step > s.id ? "bg-indigo-500/60" : "bg-gray-800"
-                  }`}
+                  className={`h-px flex-1 mx-1 transition-colors ${step > s.id ? "bg-indigo-500/60" : "bg-gray-800"}`}
                 />
               )}
             </React.Fragment>
@@ -82,27 +74,20 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
       <div className="p-5 space-y-4">
         {/* Step 1 — Review */}
         {step === 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5 flex gap-3">
               <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs font-semibold text-amber-300">Stake-Backed Commitment</p>
                 <p className="text-[11px] text-gray-400 mt-0.5 leading-relaxed">
-                  Joining this task locks{" "}
-                  <span className="text-white font-semibold">{task.stakeRequired} USDC</span> as stake. If you
-                  abandon without resolution, part of your stake may be slashed.
+                  Joining this task locks <span className="text-white font-semibold">{task.stakeRequired} USDC</span> as
+                  stake. If you abandon without resolution, part of your stake may be slashed.
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                Stake Summary
-              </p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Stake Summary</p>
               {[
                 ["You lock", `${task.stakeRequired} USDC`],
                 ["Potential reward", `+${task.reward} USDC`],
@@ -113,11 +98,7 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
                   <span className="text-gray-500">{k}</span>
                   <span
                     className={`font-semibold ${
-                      v.startsWith("+")
-                        ? "text-emerald-400"
-                        : v.startsWith("Up to")
-                        ? "text-red-400"
-                        : "text-white"
+                      v.startsWith("+") ? "text-emerald-400" : v.startsWith("Up to") ? "text-red-400" : "text-white"
                     }`}
                   >
                     {v}
@@ -130,9 +111,7 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
               <div
                 onClick={() => setAgreed(!agreed)}
                 className={`w-4 h-4 rounded border flex-shrink-0 mt-0.5 flex items-center justify-center transition-colors ${
-                  agreed
-                    ? "bg-indigo-500 border-indigo-500"
-                    : "border-gray-600 group-hover:border-gray-500"
+                  agreed ? "bg-indigo-500 border-indigo-500" : "border-gray-600 group-hover:border-gray-500"
                 }`}
               >
                 {agreed && <CheckCircle2 className="w-3 h-3 text-white" />}
@@ -155,11 +134,7 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
 
         {/* Step 2 — Stake */}
         {step === 2 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="rounded-xl border border-gray-800 bg-gray-950 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-400">Wallet</span>
@@ -183,8 +158,7 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
             <div className="rounded-xl border border-gray-800 bg-gray-950 p-3.5 flex gap-3">
               <Lock className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
               <p className="text-[11px] text-gray-400 leading-relaxed">
-                Funds are locked in the Team Chain smart contract escrow and released automatically
-                upon task approval.
+                Funds are locked in the Team Chain smart contract escrow and released automatically upon task approval.
               </p>
             </div>
 
@@ -214,11 +188,7 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
 
         {/* Step 3 — Sign */}
         {step === 3 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3.5 flex gap-3">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
               <div>
@@ -230,12 +200,10 @@ export default function StakePanel({ step, setStep, onConfirm, task }: StakePane
             </div>
 
             <div className="rounded-xl border border-gray-800 bg-gray-950 p-4 space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                Signing Message
-              </p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Signing Message</p>
               <p className="text-[11px] font-mono text-gray-400 leading-relaxed break-all">
-                "I commit to task-001 on Team Chain. Stake: {task.stakeRequired} USDC. Deadline:{" "}
-                {task.deadlineDate}. Chain: Mainnet."
+                "I commit to task-001 on Team Chain. Stake: {task.stakeRequired} USDC. Deadline: {task.deadlineDate}.
+                Chain: Mainnet."
               </p>
             </div>
 

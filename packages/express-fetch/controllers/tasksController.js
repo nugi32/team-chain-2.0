@@ -4,9 +4,6 @@ dotenv.config();
 
 const API_BASE_URL = process.env.API_URL || "http://localhost:4000";
 
-console.log(API_BASE_URL);
-console.log(process.env.JWT_SECRET);
-
 // Helper function to perform fetch with timeout and common headers
 const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
   const controller = new AbortController();
@@ -17,8 +14,6 @@ const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
       signal: controller.signal,
       headers: {
         Authorization: `${process.env.JWT_SECRET}`,
-        "Content-Type": "application/json",
-        ...options.headers,
       },
     });
     clearTimeout(timeoutId);
@@ -32,7 +27,7 @@ const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
 // GET all tasks
 export const getTasks = async (req, res) => {
   try {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_tasks`);
     if (!response.ok) {
       const errorText = await response.text();
       console.error(errorText);
@@ -50,7 +45,7 @@ export const getTasks = async (req, res) => {
 export const getTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks/${id}`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_tasks/${id}`);
     if (!response.ok) {
       if (response.status === 404) {
         return res.status(404).json({ message: "Task not found" });
@@ -99,7 +94,7 @@ export const createTask = async (req, res) => {
 
     console.log("Creating task with data:", JSON.stringify(taskData, null, 2));
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_tasks`, {
       method: "POST",
       body: JSON.stringify(taskData),
     }, 15000);
@@ -133,7 +128,7 @@ export const updateTask = async (req, res) => {
     // Prevent owner from being updated
     delete updateData.owner;
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks/${id}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_tasks/${id}`, {
       method: "PUT",
       body: JSON.stringify(updateData),
     });
@@ -159,7 +154,7 @@ export const updateTask = async (req, res) => {
 export const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await fetchWithTimeout(`${API_BASE_URL}/tasks/${id}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_tasks/${id}`, {
       method: "DELETE",
     });
 

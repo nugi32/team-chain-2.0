@@ -1,20 +1,12 @@
 import React from "react";
-import {
-  Shield,
-  Target,
-  CheckCircle2,
-  XCircle,
-  ListTodo,
-  Coins,
-  Loader2,
-} from "lucide-react";
 import StatCard from "./StatCard";
 import { useDashboardUserData } from "@/utils/lib/dashboard";
+import { CheckCircle2, Coins, ListTodo, Loader2, Shield, Target, XCircle } from "lucide-react";
 
 const TIER_STYLE: Record<string, string> = {
-  Bronze:   "text-amber-700 bg-amber-900/30 border-amber-700/30",
-  Silver:   "text-gray-300 bg-gray-700/30 border-gray-600/30",
-  Gold:     "text-yellow-400 bg-yellow-500/10 border-yellow-500/30",
+  Bronze: "text-amber-700 bg-amber-900/30 border-amber-700/30",
+  Silver: "text-gray-300 bg-gray-700/30 border-gray-600/30",
+  Gold: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30",
   Platinum: "text-cyan-300 bg-cyan-500/10 border-cyan-500/30",
 };
 
@@ -37,12 +29,11 @@ export default function TopStats({ id }: { id: string }) {
   }
 
   const completed = Number(user.totalTasksCompleted);
-  const total     = completed + Number(user.totalTasksFailed);
-  const tier      = user.tier ?? "Bronze";
+  const total = completed + Number(user.totalTasksFailed);
+  const tier = user.tier ?? "Bronze";
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-
       {/* Reputation */}
       <StatCard
         accent
@@ -98,7 +89,6 @@ export default function TopStats({ id }: { id: string }) {
         value={<span className="font-mono">{user.formattedBalance} ETH</span>}
         sub={user.isRegistered ? "Registered user" : "Not registered"}
       />
-
     </div>
   );
 }

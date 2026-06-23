@@ -1,42 +1,41 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import BadgeChip from "@/components/task-apply/BadgeChip";
+import MilestoneRow from "@/components/task-apply/MilestoneRow";
+import RelatedTasks from "@/components/task-apply/RelatedTasks";
+import SectionLabel from "@/components/task-apply/SectionLabel";
+import StakePanel from "@/components/task-apply/StakePanel";
+import StatPill from "@/components/task-apply/StatPill";
+import SuccessOverlay from "@/components/task-apply/SuccessOverlay";
+import TeamSection from "@/components/task-apply/TeamSection";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  ArrowLeft,
-  Shield,
-  Clock,
-  Star,
-  Users,
-  Zap,
-  ChevronDown,
-  ChevronUp,
-  CheckCircle2,
   AlertTriangle,
-  Wallet,
+  ArrowLeft,
+  Award,
+  BadgeCheck,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  CircleDot,
+  Clock,
+  Code2,
   ExternalLink,
   FileText,
-  Code2,
   GitBranch,
-  Award,
-  TrendingUp,
   Info,
   Lock,
-  Unlock,
-  BadgeCheck,
-  CircleDot,
-  ChevronRight,
+  Shield,
+  Star,
+  TrendingUp,
   Trophy,
+  Unlock,
+  Users,
+  Wallet,
+  Zap,
 } from "lucide-react";
-
-import StatPill from "@/components/task-apply/StatPill";
-import MilestoneRow from "@/components/task-apply/MilestoneRow";
-import SectionLabel from "@/components/task-apply/SectionLabel";
-import BadgeChip from "@/components/task-apply/BadgeChip";
-import StakePanel from "@/components/task-apply/StakePanel";
-import SuccessOverlay from "@/components/task-apply/SuccessOverlay";
-import RelatedTasks from "@/components/task-apply/RelatedTasks";
-import TeamSection from "@/components/task-apply/TeamSection";
 
 /* ─── MOCK DATA ─────────────────────────────────────────────── */
 const TASK = {
@@ -145,9 +144,7 @@ export default function TaskApplyPage() {
               {TASK.category}
             </span>
             <span
-              className={`text-[10px] font-semibold border rounded-full px-2.5 py-0.5 ${
-                riskColors[TASK.riskColor]
-              }`}
+              className={`text-[10px] font-semibold border rounded-full px-2.5 py-0.5 ${riskColors[TASK.riskColor]}`}
             >
               {TASK.riskBadge}
             </span>
@@ -172,11 +169,7 @@ export default function TaskApplyPage() {
           <StatPill icon={Lock} label="Stake Required" value={`${TASK.stakeRequired} USDC`} />
           <StatPill icon={TrendingUp} label="Reward" value={`${TASK.reward} USDC`} accent />
           <StatPill icon={Clock} label="Deadline" value={TASK.deadline} />
-          <StatPill
-            icon={Shield}
-            label="Min Reputation"
-            value={`${TASK.reputationRequired} REP`}
-          />
+          <StatPill icon={Shield} label="Min Reputation" value={`${TASK.reputationRequired} REP`} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -210,22 +203,16 @@ export default function TaskApplyPage() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <p className="text-sm text-gray-400 leading-relaxed mt-3 whitespace-pre-line">
-                      {TASK.description}
-                    </p>
+                    <p className="text-sm text-gray-400 leading-relaxed mt-3 whitespace-pre-line">{TASK.description}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
-              {!descExpanded && (
-                <p className="text-[11px] text-indigo-400 mt-2">Click to expand…</p>
-              )}
+              {!descExpanded && <p className="text-[11px] text-indigo-400 mt-2">Click to expand…</p>}
             </div>
 
             {/* Milestones */}
             <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <h2 className="text-sm font-semibold text-gray-200 mb-3">
-                Milestones & Reward Split
-              </h2>
+              <h2 className="text-sm font-semibold text-gray-200 mb-3">Milestones & Reward Split</h2>
               {TASK.milestones.map((m, i) => (
                 <MilestoneRow key={i} label={m.label} pct={m.pct} idx={i} />
               ))}
@@ -238,7 +225,7 @@ export default function TaskApplyPage() {
             <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
               <h2 className="text-sm font-semibold text-gray-200 mb-3">Required Skills</h2>
               <div className="flex flex-wrap gap-2">
-                {TASK.tags.map((t) => (
+                {TASK.tags.map(t => (
                   <span
                     key={t}
                     className="text-xs text-gray-300 border border-gray-700 bg-gray-800 rounded-lg px-3 py-1"
@@ -264,11 +251,9 @@ export default function TaskApplyPage() {
 
             {/* Team members */}
             <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <h2 className="text-sm font-semibold text-gray-200 mb-3">
-                Who You'll Work With
-              </h2>
+              <h2 className="text-sm font-semibold text-gray-200 mb-3">Who You'll Work With</h2>
               <div className="space-y-3">
-                {TEAM_COLLAB.map((m) => (
+                {TEAM_COLLAB.map(m => (
                   <div key={m.name} className="flex items-center gap-3">
                     <div
                       className={`w-8 h-8 rounded-full bg-${m.color}-500/20 border border-${m.color}-500/30 flex items-center justify-center text-xs font-bold text-${m.color}-300`}
@@ -313,9 +298,7 @@ export default function TaskApplyPage() {
             {/* Rep check */}
             <div
               className={`rounded-2xl border p-4 flex gap-3 ${
-                repOk
-                  ? "border-emerald-500/20 bg-emerald-500/5"
-                  : "border-red-500/20 bg-red-500/5"
+                repOk ? "border-emerald-500/20 bg-emerald-500/5" : "border-red-500/20 bg-red-500/5"
               }`}
             >
               {repOk ? (
@@ -324,35 +307,22 @@ export default function TaskApplyPage() {
                 <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0" />
               )}
               <div>
-                <p
-                  className={`text-xs font-semibold ${
-                    repOk ? "text-emerald-300" : "text-red-300"
-                  }`}
-                >
+                <p className={`text-xs font-semibold ${repOk ? "text-emerald-300" : "text-red-300"}`}>
                   {repOk ? "Reputation Eligible" : "Reputation Too Low"}
                 </p>
                 <p className="text-[11px] text-gray-400 mt-0.5">
-                  Your rep:{" "}
-                  <span className="text-white font-semibold">{TASK.userReputation}</span>{" "}
-                  / Required:{" "}
+                  Your rep: <span className="text-white font-semibold">{TASK.userReputation}</span> / Required:{" "}
                   <span className="font-semibold">{TASK.reputationRequired}</span>
                 </p>
               </div>
             </div>
 
             {/* Stake panel */}
-            <StakePanel
-              step={step}
-              setStep={setStep}
-              onConfirm={() => setSuccess(true)}
-              task={TASK}
-            />
+            <StakePanel step={step} setStep={setStep} onConfirm={() => setSuccess(true)} task={TASK} />
 
             {/* Additional info */}
             <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4 space-y-3">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                Task Details
-              </p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Task Details</p>
               {[
                 ["Applicants", `${TASK.applicants} applied`],
                 ["Est. effort", TASK.estimatedHours],

@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 const STEP_COLOR: Record<string, string> = {
   indigo: "border-indigo-500/40 bg-indigo-500/10 text-indigo-300",
@@ -13,8 +13,12 @@ const STEP_COLOR: Record<string, string> = {
   green: "border-green-500/40 bg-green-500/10 text-green-300",
 };
 const STEP_LINE: Record<string, string> = {
-  indigo: "bg-indigo-500", purple: "bg-purple-500", amber: "bg-amber-500",
-  cyan: "bg-cyan-500", emerald: "bg-emerald-500", green: "bg-green-500",
+  indigo: "bg-indigo-500",
+  purple: "bg-purple-500",
+  amber: "bg-amber-500",
+  cyan: "bg-cyan-500",
+  emerald: "bg-emerald-500",
+  green: "bg-green-500",
 };
 
 interface Step {
@@ -26,8 +30,16 @@ interface Step {
   detail: string;
 }
 
-export default function StepCard({ step, index, isActive, onClick }: {
-  step: Step; index: number; isActive: boolean; onClick: () => void;
+export default function StepCard({
+  step,
+  index,
+  isActive,
+  onClick,
+}: {
+  step: Step;
+  index: number;
+  isActive: boolean;
+  onClick: () => void;
 }) {
   return (
     <motion.div
@@ -40,7 +52,9 @@ export default function StepCard({ step, index, isActive, onClick }: {
       <div className={`h-0.5 w-full ${isActive ? STEP_LINE[step.color] : "bg-gray-800"}`} />
       <div className="p-5">
         <div className="flex items-center gap-3 mb-3">
-          <div className={`w-9 h-9 rounded-xl border flex items-center justify-center flex-shrink-0 ${STEP_COLOR[step.color]}`}>
+          <div
+            className={`w-9 h-9 rounded-xl border flex items-center justify-center flex-shrink-0 ${STEP_COLOR[step.color]}`}
+          >
             {step.icon}
           </div>
           <span className="text-[10px] font-mono text-gray-600">{step.number}</span>
@@ -50,8 +64,16 @@ export default function StepCard({ step, index, isActive, onClick }: {
 
         <AnimatePresence>
           {isActive && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-              <div className="mt-3 pt-3 border-t border-current/20 text-xs text-gray-300 leading-relaxed opacity-80">{step.detail}</div>
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-3 pt-3 border-t border-current/20 text-xs text-gray-300 leading-relaxed opacity-80">
+                {step.detail}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

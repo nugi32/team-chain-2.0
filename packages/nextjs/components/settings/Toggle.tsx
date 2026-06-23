@@ -1,5 +1,5 @@
 import React from "react";
-import { ToggleRight, ToggleLeft } from "lucide-react";
+import { ToggleLeft, ToggleRight } from "lucide-react";
 
 interface ToggleProps {
   value: boolean;
@@ -19,11 +19,7 @@ export default function Toggle({ value, onChange, label, desc }: ToggleProps) {
         {desc && <p className="text-[11px] text-gray-600 mt-0.5">{desc}</p>}
       </div>
       <div className="flex-shrink-0 mt-0.5">
-        {value ? (
-          <ToggleRight className="w-5 h-5 text-indigo-400" />
-        ) : (
-          <ToggleLeft className="w-5 h-5 text-gray-600" />
-        )}
+        {value ? <ToggleRight className="w-5 h-5 text-indigo-400" /> : <ToggleLeft className="w-5 h-5 text-gray-600" />}
       </div>
     </button>
   );

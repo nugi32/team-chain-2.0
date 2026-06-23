@@ -1,25 +1,40 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import {
-  Clock, Layers, Eye, Send, MoreHorizontal,
-  Rocket, Lock, Users, DoorOpen, Trash2, XCircle, RotateCcw,
-  Crown, User, Loader2, X, CheckCircle2, ExternalLink,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
 import {
   KanbanTask,
-  TaskRole,
   SubmitStatus,
+  TaskRole,
   UserTask,
   useDashboardTaskActions,
   useDashboardTasksData,
 } from "@/utils/lib/dashboard";
-import type { CompleteTaskOutput } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
+import { useGetTaskData } from "@/utils/lib/dashboard/useGetTaskData";
 // NOTE: adjust this import to wherever useGetTaskUtils actually lives in your project.
 import useGetTaskUtils from "@/utils/lib/helper/useGetTaskUtils";
-import { useGetTaskData } from "@/utils/lib/dashboard/useGetTaskData";
+import type { CompleteTaskOutput } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
+import {
+  CheckCircle2,
+  Clock,
+  Crown,
+  DoorOpen,
+  ExternalLink,
+  Eye,
+  Layers,
+  Loader2,
+  Lock,
+  MoreHorizontal,
+  Rocket,
+  RotateCcw,
+  Send,
+  Trash2,
+  User,
+  Users,
+  X,
+  XCircle,
+} from "lucide-react";
 import { formatEther, parseEther } from "viem";
+import { useAccount } from "wagmi";
 
 const ROLE_STYLES: Record<TaskRole, string> = {
   [TaskRole.creator]: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
@@ -75,37 +90,57 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   );
 }
 
-function DetailsModal({
-  task,
-  full,
-  onClose,
-}: {
-  task: KanbanTask;
-  full?: CompleteTaskOutput;
-  onClose: () => void;
-}) {
+function DetailsModal({ task, full, onClose }: { task: KanbanTask; full?: CompleteTaskOutput; onClose: () => void }) {
   const submission = task.submitContent;
   return (
     <Modal title={task.projectTitle} onClose={onClose}>
       <div className="space-y-2 text-xs">
-        <div className="flex justify-between"><span className="text-gray-600">Category</span><span className="text-gray-300">{task.category}</span></div>
-        <div className="flex justify-between"><span className="text-gray-600">Role</span><span className="text-gray-300">{ROLE_LABEL[task.role]}</span></div>
+        <div className="flex justify-between">
+          <span className="text-gray-600">Category</span>
+          <span className="text-gray-300">{task.category}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-600">Role</span>
+          <span className="text-gray-300">{ROLE_LABEL[task.role]}</span>
+        </div>
         {task.counterpartyName && (
-          <div className="flex justify-between"><span className="text-gray-600">Counterparty</span><span className="text-gray-300 truncate max-w-[60%]">{task.counterpartyName}</span></div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Counterparty</span>
+            <span className="text-gray-300 truncate max-w-[60%]">{task.counterpartyName}</span>
+          </div>
         )}
-        <div className="flex justify-between"><span className="text-gray-600">Deadline</span><span className="text-gray-300">{task.deadline}</span></div>
-        <div className="flex justify-between"><span className="text-gray-600">Reward</span><span className="text-gray-300">{formatWeiSafe(task.reward)} ETH (${task.rewardUSD.toLocaleString()})</span></div>
-        <div className="flex justify-between"><span className="text-gray-600">Progress</span><span className="text-gray-300">{task.progress}%</span></div>
+        <div className="flex justify-between">
+          <span className="text-gray-600">Deadline</span>
+          <span className="text-gray-300">{task.deadline}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-600">Reward</span>
+          <span className="text-gray-300">
+            {formatWeiSafe(task.reward)} ETH (${task.rewardUSD.toLocaleString()})
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-600">Progress</span>
+          <span className="text-gray-300">{task.progress}%</span>
+        </div>
         {submission && submission.status !== SubmitStatus.NoneStatus && (
-          <div className="flex justify-between"><span className="text-gray-600">Submission</span><span className="text-gray-300">{SUBMIT_STATUS_LABEL[submission.status]}</span></div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Submission</span>
+            <span className="text-gray-300">{SUBMIT_STATUS_LABEL[submission.status]}</span>
+          </div>
         )}
         {!!task.joinRequestCount && (
-          <div className="flex justify-between"><span className="text-gray-600">Join requests</span><span className="text-gray-300">{task.joinRequestCount}</span></div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Join requests</span>
+            <span className="text-gray-300">{task.joinRequestCount}</span>
+          </div>
         )}
         {!!task.tags?.length && (
           <div className="flex flex-wrap gap-1 pt-1">
-            {task.tags.map((tag) => (
-              <span key={tag} className="text-[10px] rounded-full border border-gray-800 px-2 py-0.5 text-gray-400">{tag}</span>
+            {task.tags.map(tag => (
+              <span key={tag} className="text-[10px] rounded-full border border-gray-800 px-2 py-0.5 text-gray-400">
+                {tag}
+              </span>
             ))}
           </div>
         )}
@@ -126,15 +161,21 @@ function DetailsModal({
             )}
             {!!full.skills?.length && (
               <div className="flex flex-wrap gap-1">
-                {full.skills.map((skill) => (
-                  <span key={skill} className="text-[10px] rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-indigo-300">
+                {full.skills.map(skill => (
+                  <span
+                    key={skill}
+                    className="text-[10px] rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-indigo-300"
+                  >
                     {skill}
                   </span>
                 ))}
               </div>
             )}
             {full.effort && (
-              <div className="flex justify-between"><span className="text-gray-600">Effort</span><span className="text-gray-300">{full.effort}</span></div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Effort</span>
+                <span className="text-gray-300">{full.effort}</span>
+              </div>
             )}
           </div>
         )}
@@ -143,7 +184,13 @@ function DetailsModal({
   );
 }
 
-function JoinRequestsModal({ task, busy, onAccept, onReject, onClose }: {
+function JoinRequestsModal({
+  task,
+  busy,
+  onAccept,
+  onReject,
+  onClose,
+}: {
   task: KanbanTask;
   busy: string | null;
   onAccept: (applicant: string) => void;
@@ -176,12 +223,11 @@ function JoinRequestsModal({ task, busy, onAccept, onReject, onClose }: {
         <p className="text-xs text-gray-500">No requests yet.</p>
       ) : (
         <div className="space-y-2 max-h-72 overflow-y-auto">
-          {requests.map((req) => (
+          {requests.map(req => (
             <div key={req.applicant} className="rounded-xl border border-gray-800 bg-gray-950 p-3 space-y-2">
               <p className="text-xs font-mono text-indigo-300 truncate">{req.applicant}</p>
               <div className="flex items-center justify-between text-[11px] text-gray-500">
                 <span>Stake: {formatWeiSafe(req.stakeAmount)} ETH</span>
-
               </div>
               {req.isPending && !req.hasWithdrawn && (
                 <div className="flex gap-2 pt-1">
@@ -209,7 +255,13 @@ function JoinRequestsModal({ task, busy, onAccept, onReject, onClose }: {
   );
 }
 
-function SubmissionModal({ task, busy, onApprove, onRequestRevision, onClose }: {
+function SubmissionModal({
+  task,
+  busy,
+  onApprove,
+  onRequestRevision,
+  onClose,
+}: {
   task: KanbanTask;
   busy: boolean;
   onApprove: () => void;
@@ -243,9 +295,7 @@ function SubmissionModal({ task, busy, onApprove, onRequestRevision, onClose }: 
       ) : (
         <div className="space-y-3">
           <div>
-            <p className="text-[10px] text-gray-600 uppercase tracking-wider mb-1">
-              GitHub
-            </p>
+            <p className="text-[10px] text-gray-600 uppercase tracking-wider mb-1">GitHub</p>
 
             <a
               href={submission.githubURL}
@@ -292,7 +342,12 @@ function SubmissionModal({ task, busy, onApprove, onRequestRevision, onClose }: 
   );
 }
 
-function SubmitFormModal({ isResubmit, busy, onSubmit, onClose }: {
+function SubmitFormModal({
+  isResubmit,
+  busy,
+  onSubmit,
+  onClose,
+}: {
   isResubmit: boolean;
   busy: boolean;
   onSubmit: (githubURL: string, note: string) => void;
@@ -307,13 +362,13 @@ function SubmitFormModal({ isResubmit, busy, onSubmit, onClose }: {
           type="text"
           placeholder="GitHub PR URL"
           value={githubURL}
-          onChange={(e) => setGithubURL(e.target.value)}
+          onChange={e => setGithubURL(e.target.value)}
           className="w-full rounded-xl border border-gray-800 bg-gray-950 px-3 py-2 text-xs text-gray-200 outline-none focus:border-indigo-500 placeholder:text-gray-700"
         />
         <textarea
           placeholder="Note for the reviewer"
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={e => setNote(e.target.value)}
           rows={3}
           className="w-full rounded-xl border border-gray-800 bg-gray-950 px-3 py-2 text-xs text-gray-200 outline-none focus:border-indigo-500 placeholder:text-gray-700 resize-none"
         />
@@ -330,7 +385,11 @@ function SubmitFormModal({ isResubmit, busy, onSubmit, onClose }: {
   );
 }
 
-function RevisionFormModal({ busy, onSubmit, onClose }: {
+function RevisionFormModal({
+  busy,
+  onSubmit,
+  onClose,
+}: {
   busy: boolean;
   onSubmit: (note: string, additionalHours: number) => void;
   onClose: () => void;
@@ -343,7 +402,7 @@ function RevisionFormModal({ busy, onSubmit, onClose }: {
         <textarea
           placeholder="What needs to change?"
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={e => setNote(e.target.value)}
           rows={3}
           className="w-full rounded-xl border border-gray-800 bg-gray-950 px-3 py-2 text-xs text-gray-200 outline-none focus:border-amber-500 placeholder:text-gray-700 resize-none"
         />
@@ -352,7 +411,7 @@ function RevisionFormModal({ busy, onSubmit, onClose }: {
           min="1"
           placeholder="Additional hours"
           value={hours}
-          onChange={(e) => setHours(e.target.value)}
+          onChange={e => setHours(e.target.value)}
           className="w-full rounded-xl border border-gray-800 bg-gray-950 px-3 py-2 text-xs text-gray-200 outline-none focus:border-amber-500 placeholder:text-gray-700"
         />
         <button
@@ -429,7 +488,7 @@ export default function TaskCard({ id, task }: TaskCardProps) {
   const { getCreatorStake } = useGetTaskUtils();
 
   const { tasks: liveTasks } = useDashboardTasksData(connectedAddress);
-  const liveTaskData = liveTasks?.find((t) => t.expressId === id);
+  const liveTaskData = liveTasks?.find(t => t.expressId === id);
 
   const [overlay, setOverlay] = useState<OverlayState>(null);
   const [busyKey, setBusyKey] = useState<string | null>(null);
@@ -472,7 +531,6 @@ export default function TaskCard({ id, task }: TaskCardProps) {
 
   const isStakeLoading = overlay === "activateForm" && creatorStakeWei === undefined;
 
-
   const runAction = async (key: string, fn: () => Promise<unknown>, closeOverlayOnSuccess = false) => {
     setBusyKey(key);
     try {
@@ -511,7 +569,7 @@ export default function TaskCard({ id, task }: TaskCardProps) {
         isResubmit
           ? actions.reSubmitTask(taskIdBig, note, githubURL)
           : actions.requestSubmitTask(taskIdBig, githubURL, note),
-      true
+      true,
     );
   };
 
@@ -655,7 +713,11 @@ export default function TaskCard({ id, task }: TaskCardProps) {
                 onClick={handleOpenRegistration}
                 className="text-[10px] text-violet-300 hover:text-violet-200 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
               >
-                {busyKey === "openRegistration" ? <Loader2 className="w-3 h-3 animate-spin" /> : <DoorOpen className="w-3 h-3" />}
+                {busyKey === "openRegistration" ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <DoorOpen className="w-3 h-3" />
+                )}
                 Open Registration
               </button>
               <button
@@ -677,7 +739,9 @@ export default function TaskCard({ id, task }: TaskCardProps) {
               >
                 <Users className="w-3 h-3" /> Requests
                 {!!task.joinRequestCount && (
-                  <span className="ml-0.5 rounded-full bg-indigo-500/30 px-1.5 text-[9px]">{task.joinRequestCount}</span>
+                  <span className="ml-0.5 rounded-full bg-indigo-500/30 px-1.5 text-[9px]">
+                    {task.joinRequestCount}
+                  </span>
                 )}
               </button>
               <button
@@ -685,7 +749,11 @@ export default function TaskCard({ id, task }: TaskCardProps) {
                 onClick={handleCloseRegistration}
                 className="text-[10px] text-gray-400 hover:text-white border border-gray-700 hover:border-gray-600 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
               >
-                {busyKey === "closeRegistration" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Lock className="w-3 h-3" />}
+                {busyKey === "closeRegistration" ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <Lock className="w-3 h-3" />
+                )}
                 Close
               </button>
               <button
@@ -704,8 +772,7 @@ export default function TaskCard({ id, task }: TaskCardProps) {
               {/* MEMBER */}
               {!isOwner && (
                 <>
-                  {(submitStatus === undefined ||
-                    submitStatus === SubmitStatus.NoneStatus) &&
+                  {(submitStatus === undefined || submitStatus === SubmitStatus.NoneStatus) &&
                     !getTaskSubmit(task.contractId) && (
                       <button
                         onClick={() => setOverlay("submitForm")}
@@ -752,11 +819,7 @@ export default function TaskCard({ id, task }: TaskCardProps) {
                 onClick={handleCancel}
                 className="text-[10px] text-orange-300 hover:text-orange-200 border border-orange-500/30 hover:border-orange-500/60 bg-orange-500/10 rounded-lg px-2 py-1 transition-colors disabled:opacity-50 flex items-center gap-1"
               >
-                {busyKey === "cancel" ? (
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                ) : (
-                  <XCircle className="w-3 h-3" />
-                )}
+                {busyKey === "cancel" ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
                 Cancel
               </button>
 
@@ -776,11 +839,8 @@ export default function TaskCard({ id, task }: TaskCardProps) {
                     >
                       <RotateCcw className="w-3 h-3" />
                       Review Submission
-
                       {!!getTaskSubmit(task.contractId) && (
-                        <span className="ml-0.5 rounded-full bg-amber-500/80 px-1.5 text-[9px]">
-                          1
-                        </span>
+                        <span className="ml-0.5 rounded-full bg-amber-500/80 px-1.5 text-[9px]">1</span>
                       )}
                     </button>
                   )}
@@ -801,9 +861,8 @@ export default function TaskCard({ id, task }: TaskCardProps) {
               )}
             </>
           )}
-
         </div>
       </div>
-    </div >
+    </div>
   );
 }

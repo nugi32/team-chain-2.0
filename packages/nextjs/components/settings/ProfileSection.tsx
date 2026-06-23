@@ -1,23 +1,20 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { Camera, X, User, Plus, Search } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import SectionHeading from "./SectionHeading";
+import { useParams } from "next/navigation";
 import Field from "./Field";
 import Input from "./Input";
-import Textarea from "./Textarea";
 import SaveBar from "./SaveBar";
-import { getUserById } from "@/utils/lib/express/queries/users";
+import SectionHeading from "./SectionHeading";
+import Textarea from "./Textarea";
 import { type Role, UpdateAccountPayload } from "@/utils/lib/express/mutations/users";
+import { getUserById } from "@/utils/lib/express/queries/users";
+import { skills as SKILL_OPTIONS, type SkillCategory } from "@/utils/lib/helper/skills";
 import { useUpdateProfile } from "@/utils/lib/updateProfile";
-import { useParams } from "next/navigation";
+import { Camera, Plus, Search, User, X } from "lucide-react";
 import { useAccount } from "wagmi";
 import { notification } from "~~/utils/scaffold-eth";
-import {
-  skills as SKILL_OPTIONS,
-  type SkillCategory,
-} from "@/utils/lib/helper/skills";
 
 // ── Role helpers ───────────────────────────────────────────────────────────────
 const ROLE_OPTIONS: { value: Role; label: string }[] = [
@@ -34,14 +31,14 @@ const ROLE_REVERSE_MAP: Record<string, Role> = {
 
 // ── Skill picker categories ────────────────────────────────────────────────────
 const CATEGORIES: { value: SkillCategory | "all"; label: string }[] = [
-  { value: "all",      label: "All" },
+  { value: "all", label: "All" },
   { value: "language", label: "Languages" },
   { value: "frontend", label: "Frontend" },
-  { value: "backend",  label: "Backend" },
-  { value: "mobile",   label: "Mobile" },
+  { value: "backend", label: "Backend" },
+  { value: "mobile", label: "Mobile" },
   { value: "database", label: "Database" },
-  { value: "devops",   label: "DevOps" },
-  { value: "design",   label: "Tools" },
+  { value: "devops", label: "DevOps" },
+  { value: "design", label: "Tools" },
 ];
 
 // ── SkillPicker sub-component ─────────────────────────────────────────────────
@@ -51,18 +48,18 @@ interface SkillPickerProps {
 }
 
 function SkillPicker({ selected, onChange }: SkillPickerProps) {
-  const [query, setQuery]       = useState("");
+  const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState<SkillCategory | "all">("all");
 
-  const filtered = SKILL_OPTIONS.filter((s) => {
+  const filtered = SKILL_OPTIONS.filter(s => {
     const matchesCategory = activeTab === "all" || s.category === activeTab;
-    const matchesQuery    = s.name.toLowerCase().includes(query.toLowerCase());
+    const matchesQuery = s.name.toLowerCase().includes(query.toLowerCase());
     return matchesCategory && matchesQuery;
   });
 
   const toggle = (skillName: string) => {
     if (selected.includes(skillName)) {
-      onChange(selected.filter((s) => s !== skillName));
+      onChange(selected.filter(s => s !== skillName));
     } else {
       onChange([...selected, skillName]);
     }
@@ -75,7 +72,7 @@ function SkillPicker({ selected, onChange }: SkillPickerProps) {
         <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
         <input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={e => setQuery(e.target.value)}
           placeholder="Search skills…"
           className="flex-1 bg-transparent text-xs text-gray-200 placeholder:text-gray-600 outline-none"
         />
@@ -88,7 +85,7 @@ function SkillPicker({ selected, onChange }: SkillPickerProps) {
 
       {/* Category tabs */}
       <div className="flex gap-1 px-2 pt-2 pb-1 overflow-x-auto scrollbar-none">
-        {CATEGORIES.map((cat) => (
+        {CATEGORIES.map(cat => (
           <button
             key={cat.value}
             onClick={() => setActiveTab(cat.value)}
@@ -109,7 +106,7 @@ function SkillPicker({ selected, onChange }: SkillPickerProps) {
           <p className="text-[11px] text-gray-600 text-center py-4">No skills match.</p>
         ) : (
           <div className="flex flex-wrap gap-1.5">
-            {filtered.map((skill) => {
+            {filtered.map(skill => {
               const isSelected = selected.includes(skill.name);
               return (
                 <button
@@ -134,19 +131,14 @@ function SkillPicker({ selected, onChange }: SkillPickerProps) {
       {selected.length > 0 && (
         <div className="px-3 py-2.5 border-t border-gray-800 bg-gray-900/40">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider mr-0.5">
-              Selected:
-            </span>
-            {selected.map((s) => (
+            <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider mr-0.5">Selected:</span>
+            {selected.map(s => (
               <span
                 key={s}
                 className="flex items-center gap-1 pl-2 pr-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/25 text-[11px] text-indigo-300"
               >
                 {s}
-                <button
-                  onClick={() => toggle(s)}
-                  className="text-indigo-400/60 hover:text-red-400 transition-colors"
-                >
+                <button onClick={() => toggle(s)} className="text-indigo-400/60 hover:text-red-400 transition-colors">
                   <X className="w-2.5 h-2.5" />
                 </button>
               </span>
@@ -174,11 +166,7 @@ export default function ProfileSection() {
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const id =
-      searchParams.get("id") ||
-      localStorage.getItem("userId") ||
-      params.id ||
-      "";
+    const id = searchParams.get("id") || localStorage.getItem("userId") || params.id || "";
     setUserId(id);
   }, [searchParams, params.id]);
 
@@ -207,7 +195,10 @@ export default function ProfileSection() {
 
   // ── Fetch user on mount ────────────────────────────────────────────────────
   useEffect(() => {
-    if (!userId) { setLoading(false); return; }
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
 
     (async () => {
       try {
@@ -233,7 +224,10 @@ export default function ProfileSection() {
   }, [userId]);
 
   // ── Helpers ────────────────────────────────────────────────────────────────
-  const mutate = (fn: () => void) => { fn(); setDirty(true); };
+  const mutate = (fn: () => void) => {
+    fn();
+    setDirty(true);
+  };
 
   const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -243,14 +237,12 @@ export default function ProfileSection() {
     setDirty(true);
   };
 
-  const addPoint = () =>
-    mutate(() => setDescPoints((prev) => [...prev, ""]));
+  const addPoint = () => mutate(() => setDescPoints(prev => [...prev, ""]));
 
   const updatePoint = (i: number, value: string) =>
-    mutate(() => setDescPoints((prev) => prev.map((x, j) => (j === i ? value : x))));
+    mutate(() => setDescPoints(prev => prev.map((x, j) => (j === i ? value : x))));
 
-  const removePoint = (i: number) =>
-    mutate(() => setDescPoints((prev) => prev.filter((_, j) => j !== i)));
+  const removePoint = (i: number) => mutate(() => setDescPoints(prev => prev.filter((_, j) => j !== i)));
 
   const handleSkillsChange = (skills: string[]) => {
     setSelectedSkills(skills);
@@ -315,16 +307,12 @@ export default function ProfileSection() {
   }
 
   if (!userId) {
-    return (
-      <p className="text-xs text-gray-500 py-10 text-center">
-        No user ID found in URL or local storage.
-      </p>
-    );
+    return <p className="text-xs text-gray-500 py-10 text-center">No user ID found in URL or local storage.</p>;
   }
 
   const initials = name
     .split(" ")
-    .map((n) => n[0])
+    .map(n => n[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
@@ -357,19 +345,19 @@ export default function ProfileSection() {
       {/* ── Basic info ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
         <Field label="Name">
-          <Input value={name} onChange={(v) => mutate(() => setName(v))} maxLength={80} />
+          <Input value={name} onChange={v => mutate(() => setName(v))} maxLength={80} />
         </Field>
         <Field label="Email">
-          <Input value={email} onChange={(v) => mutate(() => setEmail(v))} placeholder="you@example.com" />
+          <Input value={email} onChange={v => mutate(() => setEmail(v))} placeholder="you@example.com" />
         </Field>
 
         <Field label="Role" hint="Your role in the project or DAO.">
           <select
             value={role}
-            onChange={(e) => mutate(() => setRole(e.target.value as Role))}
+            onChange={e => mutate(() => setRole(e.target.value as Role))}
             className="w-full rounded-xl border border-gray-800 bg-gray-900 focus:border-indigo-500/50 px-3 py-2.5 text-xs text-gray-200 outline-none transition-colors"
           >
-            {ROLE_OPTIONS.map((opt) => (
+            {ROLE_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
@@ -389,10 +377,10 @@ export default function ProfileSection() {
       {/* ── Social links ───────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 pb-8 border-b border-gray-800">
         <Field label="GitHub">
-          <Input value={github} onChange={(v) => mutate(() => setGithub(v))} prefix="github.com/" />
+          <Input value={github} onChange={v => mutate(() => setGithub(v))} prefix="github.com/" />
         </Field>
         <Field label="LinkedIn">
-          <Input value={linkedin} onChange={(v) => mutate(() => setLinkedin(v))} prefix="linkedin.com/in/" />
+          <Input value={linkedin} onChange={v => mutate(() => setLinkedin(v))} prefix="linkedin.com/in/" />
         </Field>
       </div>
 
@@ -403,7 +391,7 @@ export default function ProfileSection() {
         <Field label="Header" hint="Short headline shown at the top of your profile.">
           <Input
             value={descHeader}
-            onChange={(v) => mutate(() => setDescHeader(v))}
+            onChange={v => mutate(() => setDescHeader(v))}
             maxLength={80}
             placeholder="e.g. Full-stack Web3 Developer"
           />
@@ -412,7 +400,7 @@ export default function ProfileSection() {
         <Field label="Summary" hint="A paragraph summarising your background and goals.">
           <Textarea
             value={descSummary}
-            onChange={(v) => mutate(() => setDescSummary(v))}
+            onChange={v => mutate(() => setDescSummary(v))}
             placeholder="Tell teams about yourself…"
             rows={3}
             maxLength={500}
@@ -425,7 +413,7 @@ export default function ProfileSection() {
               <div key={i} className="flex items-center gap-2">
                 <input
                   value={point}
-                  onChange={(e) => updatePoint(i, e.target.value)}
+                  onChange={e => updatePoint(i, e.target.value)}
                   className="flex-1 rounded-xl border border-gray-800 bg-gray-900 focus:border-indigo-500/50 px-3 py-2.5 text-xs text-gray-200 placeholder:text-gray-600 outline-none transition-colors"
                   placeholder={`Highlight ${i + 1}`}
                 />
@@ -449,7 +437,7 @@ export default function ProfileSection() {
         <Field label="Footer" hint="Closing line or call-to-action on your profile.">
           <Input
             value={descFooter}
-            onChange={(v) => mutate(() => setDescFooter(v))}
+            onChange={v => mutate(() => setDescFooter(v))}
             maxLength={120}
             placeholder="e.g. Open to new collaborations."
           />

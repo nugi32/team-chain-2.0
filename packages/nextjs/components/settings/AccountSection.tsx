@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Lock, Eye, EyeOff, AlertTriangle, Check } from "lucide-react";
-import { motion } from "framer-motion";
-import SectionHeading from "./SectionHeading";
 import Field from "./Field";
 import Input from "./Input";
-import Toggle from "./Toggle";
 import SaveBar from "./SaveBar";
+import SectionHeading from "./SectionHeading";
+import Toggle from "./Toggle";
+import { motion } from "framer-motion";
+import { AlertTriangle, Check, Eye, EyeOff, Lock } from "lucide-react";
 
 export default function AccountSection() {
   const [email, setEmail] = useState("john@example.com");
@@ -21,7 +21,7 @@ export default function AccountSection() {
 
   const save = async () => {
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    await new Promise(r => setTimeout(r, 1200));
     setSaving(false);
     setDirty(false);
   };
@@ -35,7 +35,10 @@ export default function AccountSection() {
         <Field label="Email address" hint="Used for notifications and account recovery only.">
           <Input
             value={email}
-            onChange={(v) => { setEmail(v); setDirty(true); }}
+            onChange={v => {
+              setEmail(v);
+              setDirty(true);
+            }}
             type="email"
             placeholder="you@example.com"
           />
@@ -51,21 +54,43 @@ export default function AccountSection() {
               <input
                 type={showCurrent ? "text" : "password"}
                 value={currentPw}
-                onChange={(e) => { setCurrentPw(e.target.value); setDirty(true); }}
+                onChange={e => {
+                  setCurrentPw(e.target.value);
+                  setDirty(true);
+                }}
                 className="flex-1 bg-transparent px-3 py-2.5 text-xs text-gray-200 outline-none"
                 placeholder="••••••••"
               />
-              <button onClick={() => setShowCurrent((p) => !p)} className="pr-3 text-gray-600 hover:text-gray-400 transition-colors">
+              <button
+                onClick={() => setShowCurrent(p => !p)}
+                className="pr-3 text-gray-600 hover:text-gray-400 transition-colors"
+              >
                 {showCurrent ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
               </button>
             </div>
           </Field>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Field label="New password">
-              <Input value={newPw} onChange={(v) => { setNewPw(v); setDirty(true); }} type="password" placeholder="••••••••" />
+              <Input
+                value={newPw}
+                onChange={v => {
+                  setNewPw(v);
+                  setDirty(true);
+                }}
+                type="password"
+                placeholder="••••••••"
+              />
             </Field>
             <Field label="Confirm new password">
-              <Input value={confirmPw} onChange={(v) => { setConfirmPw(v); setDirty(true); }} type="password" placeholder="••••••••" />
+              <Input
+                value={confirmPw}
+                onChange={v => {
+                  setConfirmPw(v);
+                  setDirty(true);
+                }}
+                type="password"
+                placeholder="••••••••"
+              />
             </Field>
           </div>
           {newPw && confirmPw && newPw !== confirmPw && (
@@ -82,7 +107,10 @@ export default function AccountSection() {
         <div className="rounded-xl border border-gray-800 bg-gray-900/50 px-4 py-1">
           <Toggle
             value={twoFA}
-            onChange={(v) => { setTwoFA(v); setDirty(true); }}
+            onChange={v => {
+              setTwoFA(v);
+              setDirty(true);
+            }}
             label="Enable 2FA"
             desc="Protect your account with an authenticator app."
           />

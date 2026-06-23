@@ -1,26 +1,34 @@
 "use client";
 
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-
-import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Bell, GitBranch, Menu, X,
-  Clock, UserCheck, MessageSquare, AlertTriangle, CheckCheck,
-  Settings, LogOut, User, Mail, LayoutDashboard, ChevronRight,
-} from "lucide-react";
-
-import { FaGithub } from "react-icons/fa";
-
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
-import { hardhat } from "viem/chains";
-import { handleFetchUserHeader } from "@/utils/lib/header";
-
-import Image from "next/image";
-import defaultProfile from "@/public/defaultProfile.jpg";
 import { useParams } from "next/navigation";
+import defaultProfile from "@/public/defaultProfile.jpg";
+import { handleFetchUserHeader } from "@/utils/lib/header";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertTriangle,
+  Bell,
+  CheckCheck,
+  ChevronRight,
+  Clock,
+  GitBranch,
+  LayoutDashboard,
+  LogOut,
+  Mail,
+  Menu,
+  MessageSquare,
+  Settings,
+  User,
+  UserCheck,
+  X,
+} from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import { hardhat } from "viem/chains";
+import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 /* ─────────────────────────────────────
    TYPES & DATA
@@ -71,7 +79,6 @@ const INITIAL_NOTIFICATIONS: Notification[] = [
   },
 ];
 
-
 const NOTIF_META: Record<NotifType, { icon: React.ReactNode; color: string }> = {
   deadline: { icon: <Clock className="w-3.5 h-3.5" />, color: "text-red-400    bg-red-500/10" },
   review: { icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-amber-400  bg-amber-500/10" },
@@ -83,10 +90,7 @@ const NOTIF_META: Record<NotifType, { icon: React.ReactNode; color: string }> = 
   update: { icon: <Settings className="w-3.5 h-3.5" />, color: "text-purple-400 bg-purple-500/10" },
 };
 
-const userId =
-  typeof window !== "undefined"
-    ? localStorage.getItem("userId")
-    : null;
+const userId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
 
 const NAV_LINKS = [
   { label: "Dashboard", href: `/dashboard/${userId}`, requiresUserId: true },
@@ -106,7 +110,7 @@ function NotificationPanel({
   onMarkAllRead: () => void;
   onMarkRead: (id: number) => void;
 }) {
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <motion.div
@@ -115,7 +119,7 @@ function NotificationPanel({
       exit={{ opacity: 0, y: -6, scale: 0.98 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
       className="absolute right-0 top-full mt-2 z-50 w-[340px] rounded-2xl border border-gray-800 bg-gray-900 shadow-2xl overflow-hidden"
-      onClick={(e) => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
     >
       {/* Panel header */}
       <div className="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
@@ -146,7 +150,7 @@ function NotificationPanel({
             <p className="text-xs text-gray-600">You're all caught up</p>
           </div>
         ) : (
-          notifications.map((n) => {
+          notifications.map(n => {
             const meta = NOTIF_META[n.type];
             return (
               <button
@@ -158,7 +162,12 @@ function NotificationPanel({
                   !n.read ? "bg-gray-800/20" : "opacity-55",
                 ].join(" ")}
               >
-                <div className={["w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5", meta.color].join(" ")}>
+                <div
+                  className={[
+                    "w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5",
+                    meta.color,
+                  ].join(" ")}
+                >
                   {meta.icon}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -168,8 +177,12 @@ function NotificationPanel({
                   <p className="text-[10px] text-gray-600 mt-0.5">{n.time}</p>
                 </div>
                 {!n.read && (
-                  <div className={["w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5",
-                    n.urgent ? "bg-red-400" : "bg-indigo-400"].join(" ")} />
+                  <div
+                    className={[
+                      "w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5",
+                      n.urgent ? "bg-red-400" : "bg-indigo-400",
+                    ].join(" ")}
+                  />
                 )}
               </button>
             );
@@ -206,15 +219,13 @@ function ProfileDropdown({
   // "John Doe" → "JD"
   const initials = name
     .split(" ")
-    .map((w) => w[0] ?? "")
+    .map(w => w[0] ?? "")
     .join("")
     .toUpperCase()
     .slice(0, 2);
 
   // strip https://github.com/ to show just the handle
-  const githubHandle = githubUrl
-    ? githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//i, "@")
-    : null;
+  const githubHandle = githubUrl ? githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//i, "@") : null;
 
   type MenuItem = {
     icon: React.ReactNode;
@@ -244,7 +255,7 @@ function ProfileDropdown({
       exit={{ opacity: 0, y: -6, scale: 0.97 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
       className="absolute right-0 top-full mt-2 z-50 w-[248px] rounded-2xl border border-gray-800 bg-gray-900 shadow-2xl overflow-hidden"
-      onClick={(e) => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
     >
       {/* ── Identity block ── */}
       <div className="px-4 py-3.5 border-b border-gray-800">
@@ -252,25 +263,15 @@ function ProfileDropdown({
           {/* Avatar */}
           <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex-shrink-0 overflow-hidden flex items-center justify-center">
             {profilePicture ? (
-              <Image
-                src={profilePicture}
-                alt="Profile"
-                width={40}
-                height={40}
-                className="w-full h-full object-cover"
-              />
+              <Image src={profilePicture} alt="Profile" width={40} height={40} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-indigo-300 text-sm font-bold leading-none">
-                {initials || "?"}
-              </span>
+              <span className="text-indigo-300 text-sm font-bold leading-none">{initials || "?"}</span>
             )}
           </div>
 
           {/* Text info */}
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-gray-100 truncate leading-tight">
-              {name || "Anonymous"}
-            </p>
+            <p className="text-xs font-semibold text-gray-100 truncate leading-tight">{name || "Anonymous"}</p>
 
             {email && (
               <p className="text-[10px] text-gray-500 truncate flex items-center gap-1 mt-0.5">
@@ -297,7 +298,7 @@ function ProfileDropdown({
 
       {/* ── Menu items ── */}
       <div className="py-1.5">
-        {menuItems.map((item) =>
+        {menuItems.map(item =>
           item.href ? (
             <Link
               key={item.label}
@@ -305,31 +306,33 @@ function ProfileDropdown({
               onClick={onClose}
               className="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors group"
             >
-              <span className="text-gray-500 group-hover:text-indigo-400 transition-colors">
-                {item.icon}
-              </span>
+              <span className="text-gray-500 group-hover:text-indigo-400 transition-colors">{item.icon}</span>
               <span className="flex-1">{item.label}</span>
               <ChevronRight className="w-3 h-3 text-gray-700 group-hover:text-gray-500 transition-colors" />
             </Link>
           ) : (
             <button
               key={item.label}
-              onClick={() => { item.onClick?.(); onClose(); }}
+              onClick={() => {
+                item.onClick?.();
+                onClose();
+              }}
               className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors group"
             >
-              <span className="text-gray-500 group-hover:text-indigo-400 transition-colors">
-                {item.icon}
-              </span>
+              <span className="text-gray-500 group-hover:text-indigo-400 transition-colors">{item.icon}</span>
               <span className="flex-1 text-left">{item.label}</span>
             </button>
-          )
+          ),
         )}
       </div>
 
       {/* ── Divider + Logout ── */}
       <div className="border-t border-gray-800 py-1.5">
         <button
-          onClick={() => { onLogout(); onClose(); }}
+          onClick={() => {
+            onLogout();
+            onClose();
+          }}
           className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors group"
         >
           <LogOut className="w-3.5 h-3.5 flex-shrink-0" />
@@ -352,7 +355,7 @@ function MobileMenu({ pathname, onClose }: { pathname: string; onClose: () => vo
       transition={{ duration: 0.15 }}
       className="absolute top-full left-0 right-0 z-50 border-b border-gray-800 bg-gray-950/98 backdrop-blur-md px-4 py-3 flex flex-col gap-1"
     >
-      {NAV_LINKS.map((link) => {
+      {NAV_LINKS.map(link => {
         const active = pathname === link.href || pathname.startsWith(link.href + "/");
         return (
           <Link
@@ -387,21 +390,24 @@ export const Header = () => {
 
   const [notifOpen, setNotifOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);   // ← new
+  const [profileOpen, setProfileOpen] = useState(false); // ← new
   const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
 
   const notifRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);          // ← new
+  const profileRef = useRef<HTMLDivElement>(null); // ← new
 
   const [profilePicture, setProfilePicture] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
-  const [userEmail, setUserEmail] = useState<string>("");  // ← new
-  const [userGithub, setUserGithub] = useState<string>("");  // ← new
+  const [userEmail, setUserEmail] = useState<string>(""); // ← new
+  const [userGithub, setUserGithub] = useState<string>(""); // ← new
   const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
-    const id = localStorage.getItem("userId") || params.id as string;
-    if (!id) { console.warn("cannot get user id from localStorage"); return; }
+    const id = localStorage.getItem("userId") || (params.id as string);
+    if (!id) {
+      console.warn("cannot get user id from localStorage");
+      return;
+    }
     setUserId(id);
 
     const fetchProfile = async () => {
@@ -409,7 +415,7 @@ export const Header = () => {
         const result = await handleFetchUserHeader(id);
         setProfilePicture(result.profilePicture);
         setUserName(result.name);
-        setUserEmail(result.email);      // ← new
+        setUserEmail(result.email); // ← new
         setUserGithub(result.githubUrl); // ← new
       } catch (err) {
         console.error(`err fetching user header: ${err}`);
@@ -422,8 +428,7 @@ export const Header = () => {
   useEffect(() => {
     if (!notifOpen) return;
     const handler = (e: MouseEvent) => {
-      if (notifRef.current && !notifRef.current.contains(e.target as Node))
-        setNotifOpen(false);
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -433,8 +438,7 @@ export const Header = () => {
   useEffect(() => {
     if (!profileOpen) return;
     const handler = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node))
-        setProfileOpen(false);
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -442,31 +446,44 @@ export const Header = () => {
 
   /* Close mobile menu on resize to desktop */
   useEffect(() => {
-    const handler = () => { if (window.innerWidth >= 768) setMobileOpen(false); };
+    const handler = () => {
+      if (window.innerWidth >= 768) setMobileOpen(false);
+    };
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-  const urgentCount = notifications.filter((n) => n.urgent && !n.read).length;
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const urgentCount = notifications.filter(n => n.urgent && !n.read).length;
 
-  const markAllRead = () => setNotifications((p) => p.map((n) => ({ ...n, read: true })));
-  const markRead = (id: number) => setNotifications((p) => p.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  const markAllRead = () => setNotifications(p => p.map(n => ({ ...n, read: true })));
+  const markRead = (id: number) => setNotifications(p => p.map(n => (n.id === id ? { ...n, read: true } : n)));
 
   const handleLogout = () => {
-    localStorage.clear();           // wipe all local storage
-    router.push("/");               // redirect to landing
+    localStorage.clear(); // wipe all local storage
+    router.push("/"); // redirect to landing
   };
 
   /* Close other panels when one opens */
-  const openProfile = () => { setProfileOpen((p) => !p); setNotifOpen(false); setMobileOpen(false); };
-  const openNotif = () => { setNotifOpen((p) => !p); setProfileOpen(false); setMobileOpen(false); };
-  const openMobile = () => { setMobileOpen((p) => !p); setNotifOpen(false); setProfileOpen(false); };
+  const openProfile = () => {
+    setProfileOpen(p => !p);
+    setNotifOpen(false);
+    setMobileOpen(false);
+  };
+  const openNotif = () => {
+    setNotifOpen(p => !p);
+    setProfileOpen(false);
+    setMobileOpen(false);
+  };
+  const openMobile = () => {
+    setMobileOpen(p => !p);
+    setNotifOpen(false);
+    setProfileOpen(false);
+  };
 
   return (
     <header className="relative border-b border-gray-800 bg-gray-950/80 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6 h-14 flex items-center justify-between gap-4">
-
         {/* ── Logo ── */}
         <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
           <div className="w-7 h-7 rounded-lg bg-indigo-500 flex items-center justify-center">
@@ -481,10 +498,8 @@ export const Header = () => {
 
         {/* ── Nav (desktop, centered) ── */}
         <nav className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
-          {NAV_LINKS.map((link) => {
-            const href = "requiresUserId" in link && link.requiresUserId
-              ? `/dashboard/${userId}`
-              : link.href;
+          {NAV_LINKS.map(link => {
+            const href = "requiresUserId" in link && link.requiresUserId ? `/dashboard/${userId}` : link.href;
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
@@ -503,11 +518,8 @@ export const Header = () => {
 
         {/* ── Right actions ── */}
         <div className="flex items-center gap-2 flex-shrink-0">
-
           {/* Faucet — desktop only */}
-          <div className="hidden lg:block">
-            {isLocalNetwork && <FaucetButton />}
-          </div>
+          <div className="hidden lg:block">{isLocalNetwork && <FaucetButton />}</div>
 
           {/* Wallet — desktop only */}
           <div className="hidden md:flex items-center rounded-xl border border-gray-800 bg-gray-900 px-2 py-1">
@@ -526,12 +538,16 @@ export const Header = () => {
                   : "border-gray-800 bg-gray-900 hover:border-gray-700 hover:bg-gray-800/50",
               ].join(" ")}
             >
-              <Bell className={["w-4 h-4 transition-colors", notifOpen ? "text-indigo-400" : "text-gray-400"].join(" ")} />
+              <Bell
+                className={["w-4 h-4 transition-colors", notifOpen ? "text-indigo-400" : "text-gray-400"].join(" ")}
+              />
               <AnimatePresence>
                 {unreadCount > 0 && (
                   <motion.span
                     key="badge"
-                    initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
                     className={[
                       "absolute -top-1 -right-1 min-w-[16px] h-4 rounded-full text-[9px] flex items-center justify-center font-bold px-0.5",
                       urgentCount > 0 ? "bg-red-500 text-white" : "bg-indigo-500 text-white",
@@ -544,11 +560,7 @@ export const Header = () => {
             </button>
             <AnimatePresence>
               {notifOpen && (
-                <NotificationPanel
-                  notifications={notifications}
-                  onMarkAllRead={markAllRead}
-                  onMarkRead={markRead}
-                />
+                <NotificationPanel notifications={notifications} onMarkAllRead={markAllRead} onMarkRead={markRead} />
               )}
             </AnimatePresence>
           </div>
@@ -561,15 +573,23 @@ export const Header = () => {
           >
             <AnimatePresence mode="wait" initial={false}>
               {mobileOpen ? (
-                <motion.div key="x"
-                  initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.12 }}>
+                <motion.div
+                  key="x"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.12 }}
+                >
                   <X className="w-4 h-4 text-gray-400" />
                 </motion.div>
               ) : (
-                <motion.div key="menu"
-                  initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.12 }}>
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.12 }}
+                >
                   <Menu className="w-4 h-4 text-gray-400" />
                 </motion.div>
               )}
@@ -611,17 +631,13 @@ export const Header = () => {
               )}
             </AnimatePresence>
           </div>
-
         </div>
       </div>
 
       {/* Mobile menu */}
       <AnimatePresence>
-        {mobileOpen && (
-          <MobileMenu pathname={pathname} onClose={() => setMobileOpen(false)} />
-        )}
+        {mobileOpen && <MobileMenu pathname={pathname} onClose={() => setMobileOpen(false)} />}
       </AnimatePresence>
-
     </header>
   );
 };

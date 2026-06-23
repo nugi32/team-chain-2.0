@@ -1,7 +1,7 @@
 import React from "react";
-import { Star, ExternalLink, CircleDot } from "lucide-react";
 import MilestoneTracker from "./MilestoneTracker";
 import type { Milestone, Reviewer, Transaction } from "./types";
+import { CircleDot, ExternalLink, Star } from "lucide-react";
 
 interface SidebarProps {
   milestones: Milestone[];
@@ -28,9 +28,7 @@ export default function Sidebar({
 
       {/* Economic State */}
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5 space-y-3">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-          Economic State
-        </p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Economic State</p>
         {[
           ["Stake locked", `${stakeAmount} USDC`, "text-white"],
           ["M1 reward earned", "+36 USDC", "text-emerald-400"],
@@ -51,11 +49,9 @@ export default function Sidebar({
 
       {/* Reviewers */}
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-3">
-          Assigned Reviewers
-        </p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-3">Assigned Reviewers</p>
         <div className="space-y-3">
-          {reviewers.map((r) => (
+          {reviewers.map(r => (
             <div key={r.name} className="flex items-center gap-3">
               <div className="w-7 h-7 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-300">
                 {r.avatar}
@@ -75,9 +71,7 @@ export default function Sidebar({
 
       {/* On-chain transactions */}
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-3">
-          On-chain History
-        </p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-3">On-chain History</p>
         <div className="space-y-3">
           {txHistory.map((tx, i) => (
             <div key={i} className="flex items-start gap-2.5">
@@ -109,9 +103,7 @@ export default function Sidebar({
 
       {/* Submission checklist */}
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-3">
-          Submission Checklist
-        </p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-3">Submission Checklist</p>
         <div className="space-y-2">
           {requiredDocs.map((d, i) => (
             <div key={i} className="flex items-center gap-2 text-xs text-gray-400">

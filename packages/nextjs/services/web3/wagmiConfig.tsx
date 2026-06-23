@@ -19,7 +19,10 @@ export const wagmiConfig = createConfig({
   client({ chain }) {
     // Extra fallback for mainnet.
     const mainnetFallbackWithDefaultRPC = [http("https://mainnet.rpc.buidlguidl.com", { timeout: 15000 })];
-    let rpcFallbacks = [...(chain.id === mainnet.id ? mainnetFallbackWithDefaultRPC : []), http(undefined, { timeout: 15000 })];
+    let rpcFallbacks = [
+      ...(chain.id === mainnet.id ? mainnetFallbackWithDefaultRPC : []),
+      http(undefined, { timeout: 15000 }),
+    ];
 
     const rpcOverrideUrl = (scaffoldConfig.rpcOverrides as ScaffoldConfig["rpcOverrides"])?.[chain.id];
 

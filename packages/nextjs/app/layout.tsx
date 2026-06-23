@@ -1,16 +1,12 @@
+import Providers from "./providers";
+import { ThemeProvider } from "@/components/global/ThemeProvider";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@scaffold-ui/components/styles.css";
-
 import type { Metadata } from "next";
-
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
-import { ThemeProvider } from "@/components/global/ThemeProvider";
-
 import "~~/styles/globals.css";
-import Providers from "./providers";
 
 export const metadata: Metadata = {
-
   title: {
     default: "Team Chain",
     template: "%s | Team Chain",
@@ -44,8 +40,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Team Chain",
-    description:
-      "Build trusted teams through GitHub reputation and stake-backed accountability.",
+    description: "Build trusted teams through GitHub reputation and stake-backed accountability.",
 
     url: "https://teamchain.xyz",
 
@@ -68,8 +63,7 @@ export const metadata: Metadata = {
 
     title: "Team Chain",
 
-    description:
-      "Build trusted teams through GitHub reputation and stake-backed accountability.",
+    description: "Build trusted teams through GitHub reputation and stake-backed accountability.",
 
     images: ["/og-image.png"],
   },
@@ -80,19 +74,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider enableSystem>
           <Providers>
-            <ScaffoldEthAppWithProviders>
-              {children}
-            </ScaffoldEthAppWithProviders>
+            <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
           </Providers>
         </ThemeProvider>
       </body>

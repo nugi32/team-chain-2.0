@@ -1,9 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 //
 // enums
@@ -51,10 +49,10 @@ type MergedTask = TaskApiData & {
 };
 
 export const useTaskDataUtils = () => {
-  // NOTE: The blockchain hooks (useTaskData from smartContractWrapper) can only be 
+  // NOTE: The blockchain hooks (useTaskData from smartContractWrapper) can only be
   // called at component level. This utility provides task data query helpers.
   // For blockchain task data, use useTaskData hook directly in components.
-  
+
   const [tasks, setTasks] = useState<MergedTask[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -90,160 +88,61 @@ export const useTaskDataUtils = () => {
   //
   // single task
   //
-  const getTaskById = (
-    taskId: number
-  ) =>
-    tasks.find(
-      t =>
-        Number(t.id) ===
-        taskId
-    );
+  const getTaskById = (taskId: number) => tasks.find(t => Number(t.id) === taskId);
 
   //
   // offchain getters
   //
-  const getTaskTitle = (
-    id: number,
-  ) =>
-    getTaskById(id)?.title;
+  const getTaskTitle = (id: number) => getTaskById(id)?.title;
 
-  const getTaskPicture = (
-    id: number,
-  ) =>
-    getTaskById(id)?.picture;
+  const getTaskPicture = (id: number) => getTaskById(id)?.picture;
 
-  const getTaskOwner = (
-    id: number,
-  ) =>
-    getTaskById(id)?.owner;
+  const getTaskOwner = (id: number) => getTaskById(id)?.owner;
 
-  const getTaskDescription = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.description;
+  const getTaskDescription = (id: number) => getTaskById(id)?.description;
 
-  const getTaskHeader = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.description.header;
+  const getTaskHeader = (id: number) => getTaskById(id)?.description.header;
 
-  const getTaskSummary = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.description.summary;
+  const getTaskSummary = (id: number) => getTaskById(id)?.description.summary;
 
-  const getTaskPoints = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.description.points;
+  const getTaskPoints = (id: number) => getTaskById(id)?.description.points;
 
-  const getTaskFooter = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.description.footer;
+  const getTaskFooter = (id: number) => getTaskById(id)?.description.footer;
 
   //
   // onchain
   //
-  const getTaskReward = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.onchain.reward;
+  const getTaskReward = (id: number) => getTaskById(id)?.onchain.reward;
 
-  const getTaskValue = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.onchain.value;
+  const getTaskValue = (id: number) => getTaskById(id)?.onchain.value;
 
-  const getTaskStatus = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.onchain.status;
+  const getTaskStatus = (id: number) => getTaskById(id)?.onchain.status;
 
-  const getTaskDeadline = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.onchain.deadlineAt;
+  const getTaskDeadline = (id: number) => getTaskById(id)?.onchain.deadlineAt;
 
-  const getSubmitStatus = (
-    id: number,
-  ) =>
-    getTaskById(id)
-      ?.submit?.status;
+  const getSubmitStatus = (id: number) => getTaskById(id)?.submit?.status;
 
   //
   // filters
   //
-  const activeTasks =
-    useMemo(
-      () =>
-        tasks.filter(
-          t =>
-            t.onchain
-              .status ===
-            TaskStatus
-              .Active ||
-            t.onchain
-              .status ===
-            TaskStatus
-              .InProgres,
-        ),
-      [tasks],
-    );
+  const activeTasks = useMemo(
+    () => tasks.filter(t => t.onchain.status === TaskStatus.Active || t.onchain.status === TaskStatus.InProgres),
+    [tasks],
+  );
 
-  const reviewTasks =
-    useMemo(
-      () =>
-        tasks.filter(
-          t =>
-            t.submit
-              ?.status ===
-            SubmitStatus.Pending ||
-            t.submit
-              ?.status ===
-            SubmitStatus.RevisionNeeded,
-        ),
-      [tasks],
-    );
+  const reviewTasks = useMemo(
+    () =>
+      tasks.filter(t => t.submit?.status === SubmitStatus.Pending || t.submit?.status === SubmitStatus.RevisionNeeded),
+    [tasks],
+  );
 
-  const completedTasks =
-    useMemo(
-      () =>
-        tasks.filter(
-          t =>
-            t.onchain
-              .status ===
-            TaskStatus.Completed,
-        ),
-      [tasks],
-    );
+  const completedTasks = useMemo(() => tasks.filter(t => t.onchain.status === TaskStatus.Completed), [tasks]);
 
-  const disputedTasks =
-    useMemo(
-      () =>
-        tasks.filter(
-          t =>
-            t.onchain &&
-            !t.onchain
-              .isRewardClaimed &&
-            Number(
-              t.onchain
-                .deadlineAt,
-            ) <
-            Date.now() /
-            1000,
-        ),
-      [tasks],
-    );
+  const disputedTasks = useMemo(
+    () =>
+      tasks.filter(t => t.onchain && !t.onchain.isRewardClaimed && Number(t.onchain.deadlineAt) < Date.now() / 1000),
+    [tasks],
+  );
 
   return {
     loading,

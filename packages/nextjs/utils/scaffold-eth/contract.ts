@@ -383,7 +383,14 @@ export const getParsedErrorWithAllAbis = (error: any, chainId: AllowedChainIds):
               const errorSelector = hash.slice(0, 10); // 0x + 8 chars = 10 total
 
               if (errorSelector === signature) {
-                console.log("[Error Lookup] Found matching error:", errorName, "from", contractName, "signature:", errorSignature);
+                console.log(
+                  "[Error Lookup] Found matching error:",
+                  errorName,
+                  "from",
+                  contractName,
+                  "signature:",
+                  errorSignature,
+                );
               }
 
               errorLookup[errorSelector] = {

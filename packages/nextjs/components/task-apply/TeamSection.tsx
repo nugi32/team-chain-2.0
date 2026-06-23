@@ -1,6 +1,6 @@
-import SectionLabel from "./SectionLabel";
 import BadgeChip from "./BadgeChip";
-import { Trophy, CircleDot, Users } from "lucide-react";
+import SectionLabel from "./SectionLabel";
+import { CircleDot, Trophy, Users } from "lucide-react";
 
 interface TeamSectionProps {
   teamAvatar: string;
@@ -10,13 +10,7 @@ interface TeamSectionProps {
   teamMembers: number;
 }
 
-export default function TeamSection({
-  teamAvatar,
-  teamName,
-  teamRep,
-  teamCompletions,
-  teamMembers,
-}: TeamSectionProps) {
+export default function TeamSection({ teamAvatar, teamName, teamRep, teamCompletions, teamMembers }: TeamSectionProps) {
   return (
     <div>
       <SectionLabel>About the Team</SectionLabel>

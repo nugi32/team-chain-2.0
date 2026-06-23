@@ -26,9 +26,7 @@ function adminAuth(req, res, next) {
 
   try {
     // Verify and decode the JWT token
-    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
 
     // Check if user has admin role
     if (decoded.role !== "admin") {
@@ -37,7 +35,6 @@ function adminAuth(req, res, next) {
 
     // Proceed to next middleware/route handler
     next();
-    console.log("SECRET BACKEND:", JSON.stringify(process.env.JWT_SECRET));
 
   } catch (error) {
     console.log("JWT verify error:", error.message);

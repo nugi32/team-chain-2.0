@@ -55,165 +55,157 @@ export interface CompleteTaskOutput {
 */
 
 export enum SubmitStatus {
-    NoneStatus = 0,
-    Pending = 1,
-    RevisionNeeded = 2,
-    Accepted = 3,
+  NoneStatus = 0,
+  Pending = 1,
+  RevisionNeeded = 2,
+  Accepted = 3,
 }
 
 export enum TaskRole {
-    creator = 0,
-    member = 1,
+  creator = 0,
+  member = 1,
 }
 
 export enum UserTask {
-    None,
-    Request,
-    Accepted,
-    Rejected,
-    Cancelled
+  None,
+  Request,
+  Accepted,
+  Rejected,
+  Cancelled,
 }
 
 export type JoinRequestData = {
-    applicant: string;
-    stakeAmount: bigint;
-    status: UserTask;
-    isPending: boolean;
-    hasWithdrawn: boolean;
-}
+  applicant: string;
+  stakeAmount: bigint;
+  status: UserTask;
+  isPending: boolean;
+  hasWithdrawn: boolean;
+};
 
 export type TaskSubmitData = {
-    githubURL: string;
-    note: string;
-    address: string;
-    status: SubmitStatus;
-    revisionTime: bigint;
-    newDeadline: bigint;
-}
+  githubURL: string;
+  note: string;
+  address: string;
+  status: SubmitStatus;
+  revisionTime: bigint;
+  newDeadline: bigint;
+};
 //========================================================
 // User Section
 //========================================================
 
 export interface offchainUserDataOutput {
-    _id: string,
-    walletAddress: string,
-    name: string,
-    email: string,
-    github: string,
-    linkedin: string,
-    role: string,
-    profilePicture: string,
-    description: {
-        header: string,
-        summary: string,
-        points: string[],
-        footer: string,
-    },
-    owner: string,
-    skills: string[],
+  _id: string;
+  walletAddress: string;
+  name: string;
+  email: string;
+  github: string;
+  linkedin: string;
+  role: string;
+  profilePicture: string;
+  description: {
+    header: string;
+    summary: string;
+    points: string[];
+    footer: string;
+  };
+  owner: string;
+  skills: string[];
 }
 
 export type onchainUserDataOutput = {
-    totalTasksCreated: bigint;
-    totalTasksCompleted: bigint;
-    totalTasksFailed: bigint;
-    reputation: bigint;
-    balance: bigint;
-    isRegistered: boolean;
-    exists: boolean;
-    GitProfile: string;
+  totalTasksCreated: bigint;
+  totalTasksCompleted: bigint;
+  totalTasksFailed: bigint;
+  reputation: bigint;
+  balance: bigint;
+  isRegistered: boolean;
+  exists: boolean;
+  GitProfile: string;
 };
 
-export type completeUserOutput =
-    offchainUserDataOutput &
-    onchainUserDataOutput;
+export type completeUserOutput = offchainUserDataOutput & onchainUserDataOutput;
 
 //========================================================
 // Kanban Section
 //========================================================
 
-export type TabType =
-    | "Created"
-    | "Active"
-    | "OpenRegistration"
-    | "InProgres"
-    | "Completed"
-    | "Cancelled";
+export type TabType = "Created" | "Active" | "OpenRegistration" | "InProgres" | "Completed" | "Cancelled";
 
 export const KANBAN_TABS: readonly TabType[] = [
-    "Created",
-    "Active",
-    "OpenRegistration",
-    "InProgres",
-    "Completed",
-    "Cancelled",
+  "Created",
+  "Active",
+  "OpenRegistration",
+  "InProgres",
+  "Completed",
+  "Cancelled",
 ];
 
 export const ALL_TABS = KANBAN_TABS;
 
 export type KanbanTask = {
-    id: string;
-    contractId: number;
+  id: string;
+  contractId: number;
 
-    tab: TabType;
-    role: TaskRole;
+  tab: TabType;
+  role: TaskRole;
 
-    projectTitle: string;
-    category: string;
+  projectTitle: string;
+  category: string;
 
-    reward: number;
-    rewardUSD: number;
+  reward: number;
+  rewardUSD: number;
 
-    deadline: string;
-    daysLeft: number;
-    isOverdue: boolean;
+  deadline: string;
+  daysLeft: number;
+  isOverdue: boolean;
 
-    progress: number;
+  progress: number;
 
-    counterpartyName?: string;
+  counterpartyName?: string;
 
-    tags: string[];
+  tags: string[];
 
-    // SC Data
-    joinRequest?: JoinRequestData[];
-    joinRequestCount?: number;
+  // SC Data
+  joinRequest?: JoinRequestData[];
+  joinRequestCount?: number;
 
-    submitContent?: TaskSubmitData;
+  submitContent?: TaskSubmitData;
 };
 
 export interface KanbanBoardProps {
-    tabs: readonly TabType[];
-    activeTab: TabType;
-    onTabChange: (tab: TabType) => void;
-    tasks: KanbanTask[];
+  tabs: readonly TabType[];
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
+  tasks: KanbanTask[];
 
-    // Button-rule handlers, by tab:
-    // Created      -> creator: onActivate
-    // Active       -> creator: onOpenRegistration, onDelete
-    // OpenRegistration -> creator: onViewRequests, onCloseRegistration, onDelete
-    // InProgres    -> member: onSubmit | everyone: onCancel
-    // Review       -> creator: onRequestRevision | member: onSubmit | everyone: onCancel
-    // Completed/Cancelled -> view only
-    onView?: (task: KanbanTask) => void;
-    onActivate?: (task: KanbanTask) => void;
-    onOpenRegistration?: (task: KanbanTask) => void;
-    onCloseRegistration?: (task: KanbanTask) => void;
-    onViewRequests?: (task: KanbanTask) => void;
-    onDelete?: (task: KanbanTask) => void;
-    onSubmit?: (task: KanbanTask) => void;
-    onRequestRevision?: (task: KanbanTask) => void;
-    onCancel?: (task: KanbanTask) => void;
-    onApprove?: (task: KanbanTask) => void;
+  // Button-rule handlers, by tab:
+  // Created      -> creator: onActivate
+  // Active       -> creator: onOpenRegistration, onDelete
+  // OpenRegistration -> creator: onViewRequests, onCloseRegistration, onDelete
+  // InProgres    -> member: onSubmit | everyone: onCancel
+  // Review       -> creator: onRequestRevision | member: onSubmit | everyone: onCancel
+  // Completed/Cancelled -> view only
+  onView?: (task: KanbanTask) => void;
+  onActivate?: (task: KanbanTask) => void;
+  onOpenRegistration?: (task: KanbanTask) => void;
+  onCloseRegistration?: (task: KanbanTask) => void;
+  onViewRequests?: (task: KanbanTask) => void;
+  onDelete?: (task: KanbanTask) => void;
+  onSubmit?: (task: KanbanTask) => void;
+  onRequestRevision?: (task: KanbanTask) => void;
+  onCancel?: (task: KanbanTask) => void;
+  onApprove?: (task: KanbanTask) => void;
 
-    // kept for backward compatibility — not driven by the current button rules
-    onJoinRequest?: (task: KanbanTask) => void;
+  // kept for backward compatibility — not driven by the current button rules
+  onJoinRequest?: (task: KanbanTask) => void;
 }
 
 export interface TabSelectorProps {
-    activeTab: TabType;
-    onTabChange: (tab: TabType) => void;
-    tasks: KanbanTask[];
-    showAllTabs?: boolean;
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
+  tasks: KanbanTask[];
+  showAllTabs?: boolean;
 }
 
 //========================================================
@@ -221,24 +213,24 @@ export interface TabSelectorProps {
 //========================================================
 
 export interface UserStats {
-    // offchain
-    name: string;
-    walletAddress: string;
-    role: string;
-    skills: string[];
-    github: string;
-    profilePicture: string;
-    // onchain
-    reputation: bigint;
-    totalTasksCreated: bigint;
-    totalTasksCompleted: bigint;
-    totalTasksFailed: bigint;
-    balance: bigint;
-    isRegistered: boolean;
-    exists: boolean;
-    GitProfile: string;
-    // computed
-    successRate: number;
-    tier: "Bronze" | "Silver" | "Gold" | "Platinum";
-    formattedBalance: string;
+  // offchain
+  name: string;
+  walletAddress: string;
+  role: string;
+  skills: string[];
+  github: string;
+  profilePicture: string;
+  // onchain
+  reputation: bigint;
+  totalTasksCreated: bigint;
+  totalTasksCompleted: bigint;
+  totalTasksFailed: bigint;
+  balance: bigint;
+  isRegistered: boolean;
+  exists: boolean;
+  GitProfile: string;
+  // computed
+  successRate: number;
+  tier: "Bronze" | "Silver" | "Gold" | "Platinum";
+  formattedBalance: string;
 }

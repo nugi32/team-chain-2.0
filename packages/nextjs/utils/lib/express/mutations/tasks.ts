@@ -10,13 +10,7 @@ export type TaskCategory =
   | "Design / UX"
   | "Documentation";
 
-export type TaskEffort =
-  | "< 4 hrs"
-  | "4–8 hrs"
-  | "1–3 days"
-  | "1 week"
-  | "2+ weeks"
-  | "";
+export type TaskEffort = "< 4 hrs" | "4–8 hrs" | "1–3 days" | "1 week" | "2+ weeks" | "";
 
 export interface CreateTaskPayload {
   contractId: string; // Smart contract task ID (uint256 as string)
@@ -34,14 +28,9 @@ export interface CreateTaskPayload {
 
 export type UpdateTaskPayload = Partial<CreateTaskPayload>;
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
-export async function handleCreateTask(
-  formData: CreateTaskPayload,
-  jwtToken: string
-): Promise<string> {
-
+export async function handleCreateTask(formData: CreateTaskPayload, jwtToken: string): Promise<string> {
   const backendData = {
     contractId: formData.contractId,
     projectName: formData.projectName,
@@ -56,16 +45,12 @@ export async function handleCreateTask(
     reward: formData.reward,
   };
 
-  const response = await axios.post<{ id: string }>(
-    `${API_BASE}/api/tasks`,
-    backendData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    }
-  );
+  const response = await axios.post<{ id: string }>(`${API_BASE}/api/tasks`, backendData, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
 
   if (!response.data.id) {
     throw new Error("No task ID returned from server");
@@ -74,11 +59,7 @@ export async function handleCreateTask(
   return response.data.id;
 }
 
-export async function handleUpdateTask(
-  taskId: string,
-  formData: UpdateTaskPayload,
-  jwtToken: string
-) {
+export async function handleUpdateTask(taskId: string, formData: UpdateTaskPayload, jwtToken: string) {
   const backendData = {
     ...(formData.contractId !== undefined && {
       contractId: formData.contractId,
@@ -115,34 +96,23 @@ export async function handleUpdateTask(
     }),
   };
 
-  const { data } = await axios.patch(
-    `${API_BASE}/api/tasks/${taskId}`,
-    backendData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    }
-  );
+  const { data } = await axios.patch(`${API_BASE}/api/tasks/${taskId}`, backendData, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
 
   return data;
 }
 
-export async function handleDeleteTask(
-  taskId: string,
-  jwtToken: string,
-) {
-
-  const response = await axios.delete(
-    `${API_BASE}/api/tasks/${taskId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    }
-  );
+export async function handleDeleteTask(taskId: string, jwtToken: string) {
+  const response = await axios.delete(`${API_BASE}/api/tasks/${taskId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
 
   return response.data;
 }

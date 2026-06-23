@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { GitBranch, ExternalLink, MessageCircle } from "lucide-react";
+import { ExternalLink, GitBranch, MessageCircle } from "lucide-react";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 
 const QUICK_LINKS = [
@@ -54,9 +54,7 @@ export default function Footer() {
               </div>
 
               <div>
-                <h3 className="font-bold text-white text-lg">
-                  TeamChain
-                </h3>
+                <h3 className="font-bold text-white text-lg">TeamChain</h3>
 
                 <div className="inline-flex items-center gap-2 mt-1 px-2 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-[11px] text-amber-300">
                   <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
@@ -66,19 +64,16 @@ export default function Footer() {
             </div>
 
             <p className="max-w-sm text-sm leading-relaxed text-gray-400">
-              Build trusted teams through GitHub reputation, transparent
-              contributions, and stake-backed accountability.
+              Build trusted teams through GitHub reputation, transparent contributions, and stake-backed accountability.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
-              Quick Links
-            </h4>
+            <h4 className="mb-4 text-sm font-semibold text-white">Quick Links</h4>
 
             <ul className="space-y-3">
-              {QUICK_LINKS.map((link) => (
+              {QUICK_LINKS.map(link => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
@@ -95,12 +90,10 @@ export default function Footer() {
 
           {/* Social */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-white">
-              Community
-            </h4>
+            <h4 className="mb-4 text-sm font-semibold text-white">Community</h4>
 
             <div className="flex items-center gap-3">
-              {SOCIALS.map((social) => (
+              {SOCIALS.map(social => (
                 <Link
                   key={social.label}
                   href={social.href}
@@ -112,17 +105,13 @@ export default function Footer() {
               ))}
             </div>
 
-            <p className="mt-4 text-sm text-gray-500">
-              Follow development updates and join the community.
-            </p>
+            <p className="mt-4 text-sm text-gray-500">Follow development updates and join the community.</p>
           </div>
         </motion.div>
 
         {/* Bottom */}
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-500">
-            © {new Date().getFullYear()} TeamChain. All rights reserved.
-          </p>
+          <p className="text-xs text-gray-500">© {new Date().getFullYear()} TeamChain. All rights reserved.</p>
 
           <div className="flex items-center gap-2 text-xs text-amber-300">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />

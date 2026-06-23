@@ -36,7 +36,7 @@ export default function ConfirmModal({
         exit={{ scale: 0.93, opacity: 0, y: 12 }}
         transition={{ type: "spring", stiffness: 280, damping: 22 }}
         className="w-full max-w-sm rounded-2xl border border-gray-700 bg-gray-900 p-6"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <h3 className="text-base font-semibold text-white mb-2">{title}</h3>
         <p className="text-sm text-gray-400 mb-4 leading-relaxed">{description}</p>
@@ -44,7 +44,7 @@ export default function ConfirmModal({
           <>
             <textarea
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={e => setNote(e.target.value)}
               rows={3}
               placeholder="Leave a note for the worker (required)…"
               className="w-full rounded-xl border border-gray-700 bg-gray-950 px-3 py-2.5 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-indigo-500/60 resize-none mb-4"

@@ -9,7 +9,11 @@ export default function ChartTooltip({ active, payload, label, prefix = "", suff
         <div key={p.dataKey} className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
           <span className="text-gray-400">{p.name}:</span>
-          <span className="font-semibold text-white">{prefix}{p.value}{suffix}</span>
+          <span className="font-semibold text-white">
+            {prefix}
+            {p.value}
+            {suffix}
+          </span>
         </div>
       ))}
     </div>

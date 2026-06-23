@@ -1,6 +1,6 @@
+import type { Milestone } from "./types";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import type { Milestone } from "./types";
 
 interface MilestoneTrackerProps {
   milestones: Milestone[];
@@ -40,11 +40,7 @@ export default function MilestoneTracker({ milestones, progress }: MilestoneTrac
                 <div className="flex items-center justify-between gap-2">
                   <p
                     className={`text-xs leading-snug ${
-                      m.done
-                        ? "text-gray-500 line-through"
-                        : m.active
-                        ? "text-white font-medium"
-                        : "text-gray-500"
+                      m.done ? "text-gray-500 line-through" : m.active ? "text-white font-medium" : "text-gray-500"
                     }`}
                   >
                     {m.label}

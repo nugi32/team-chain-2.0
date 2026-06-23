@@ -1,103 +1,91 @@
 import { useState } from "react";
+import { getTaskById } from "@/utils/lib/express/queries/tasks";
 import { useTaskController } from "@/utils/lib/smartContractWrapper/user/TaskController";
 import { useAccount } from "wagmi";
-import { getTaskById } from "@/utils/lib/express/queries/tasks";
 
 export function useJoinRequestManagement() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const { address, isConnected } = useAccount();
-    const { actions, task, user } = useTaskController();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { address, isConnected } = useAccount();
+  const { actions, task, user } = useTaskController();
 
-    const acceptRequest = async (
-        expressTaskId: string,
-        applicantAddress: string
-    ): Promise<void> => {
-        setIsLoading(true);
-        setError(null);
+  const acceptRequest = async (expressTaskId: string, applicantAddress: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
 
-        try {
-            if (!isConnected || !address) {
-                throw new Error("Please connect your wallet first.");
-            }
+    try {
+      if (!isConnected || !address) {
+        throw new Error("Please connect your wallet first.");
+      }
 
-            const taskData = await getTaskById(expressTaskId);
-            task.setApproveTaskId(BigInt(taskData.smartContractId))
-            user.setApproveApplicant(applicantAddress);
+      const taskData = await getTaskById(expressTaskId);
+      task.setApproveTaskId(BigInt(taskData.smartContractId));
+      user.setApproveApplicant(applicantAddress);
 
-            await actions.handleApproveJoinRequest();
+      await actions.handleApproveJoinRequest();
 
-            setIsLoading(false);
+      setIsLoading(false);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to create task";
+      setError(errorMessage);
+      setIsLoading(false);
+      throw err;
+    }
+  };
 
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Failed to create task";
-            setError(errorMessage);
-            setIsLoading(false);
-            throw err;
-        }
-    };
+  const acceptRequestAndRejectOther = async (expressTaskId: string, applicantAddress: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
 
-    const acceptRequestAndRejectOther = async (
-        expressTaskId: string,
-        applicantAddress: string
-    ): Promise<void> => {
-        setIsLoading(true);
-        setError(null);
+    try {
+      if (!isConnected || !address) {
+        throw new Error("Please connect your wallet first.");
+      }
 
-        try {
-            if (!isConnected || !address) {
-                throw new Error("Please connect your wallet first.");
-            }
+      const taskData = await getTaskById(expressTaskId);
+      task.setHandleApproveJoinRequestAndRejectOthersId(BigInt(taskData.smartContractId));
+      user.setHandleApproveJoinRequestAndRejectOthersApplicant(applicantAddress);
 
-            const taskData = await getTaskById(expressTaskId);
-            task.setHandleApproveJoinRequestAndRejectOthersId(BigInt(taskData.smartContractId))
-            user.setHandleApproveJoinRequestAndRejectOthersApplicant(applicantAddress);
+      await actions.handleApproveJoinRequestAndRejectOthers();
 
-            await actions.handleApproveJoinRequestAndRejectOthers();
+      setIsLoading(false);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to create task";
+      setError(errorMessage);
+      setIsLoading(false);
+      throw err;
+    }
+  };
 
-            setIsLoading(false);
+  const rejectRequest = async (expressTaskId: string, applicantAddress: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
 
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Failed to create task";
-            setError(errorMessage);
-            setIsLoading(false);
-            throw err;
-        }
-    };
+    try {
+      if (!isConnected || !address) {
+        throw new Error("Please connect your wallet first.");
+      }
 
-    const rejectRequest = async (
-        expressTaskId: string,
-        applicantAddress: string
-    ): Promise<void> => {
-        setIsLoading(true);
-        setError(null);
+      const taskData = await getTaskById(expressTaskId);
+      task.setRejectTaskId(BigInt(taskData.smartContractId));
+      user.setRejectApplicant(applicantAddress);
 
-        try {
-            if (!isConnected || !address) {
-                throw new Error("Please connect your wallet first.");
-            }
+      await actions.handleRejectJoinRequest();
 
-            const taskData = await getTaskById(expressTaskId);
-            task.setRejectTaskId(BigInt(taskData.smartContractId))
-            user.setRejectApplicant(applicantAddress);
+      setIsLoading(false);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to create task";
+      setError(errorMessage);
+      setIsLoading(false);
+      throw err;
+    }
+  };
 
-            await actions.handleRejectJoinRequest();
-
-            setIsLoading(false);
-
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Failed to create task";
-            setError(errorMessage);
-            setIsLoading(false);
-            throw err;
-        }
-    };
-
-    return {
-        acceptRequest,
-        acceptRequestAndRejectOther,
-        rejectRequest,
-        isLoading,
-        error,
-    };
+  return {
+    acceptRequest,
+    acceptRequestAndRejectOther,
+    rejectRequest,
+    isLoading,
+    error,
+  };
 }

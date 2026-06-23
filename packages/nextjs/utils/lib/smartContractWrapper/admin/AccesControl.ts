@@ -1,17 +1,17 @@
+import { useCallback, useEffect, useState } from "react";
+import { ethers } from "ethers";
 import { useWalletClient } from "wagmi";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import { useEffect, useState, useCallback } from "react";
-import { ethers } from "ethers";
 
 /**
  * Standardized response shape for all wrapper functions.
  */
 export interface ContractResponse<T = unknown> {
-    success: boolean;
-    data?: T;
-    error?: string;
-    txHash?: string;
-    receipt?: ethers.TransactionReceipt;
+  success: boolean;
+  data?: T;
+  error?: string;
+  txHash?: string;
+  receipt?: ethers.TransactionReceipt;
 }
 
 /**
@@ -24,332 +24,295 @@ export interface ContractResponse<T = unknown> {
  * - ethers v6
  */
 export default function useAccessControl() {
-    const { data: walletClient } = useWalletClient();
+  const { data: walletClient } = useWalletClient();
 
-    const { data: deployedContractData } =
-        useDeployedContractInfo("AccessControl");
+  const { data: deployedContractData } = useDeployedContractInfo("AccessControl");
 
-    const [signer, setSigner] =
-        useState<ethers.Signer | null>(null);
+  const [signer, setSigner] = useState<ethers.Signer | null>(null);
 
-    const [signerAddress, setSignerAddress] =
-        useState<string>("");
+  const [signerAddress, setSignerAddress] = useState<string>("");
 
-    const [writeContract, setWriteContract] =
-        useState<ethers.Contract | null>(null);
+  const [writeContract, setWriteContract] = useState<ethers.Contract | null>(null);
 
-    // ---------------------------------------------------------------------------
-    // Initialize ethers signer + contract
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Initialize ethers signer + contract
+  // ---------------------------------------------------------------------------
 
-    useEffect(() => {
-        if (!walletClient || !deployedContractData) {
-            setSigner(null);
-            setSignerAddress("");
-            setWriteContract(null);
-            return;
-        }
+  useEffect(() => {
+    if (!walletClient || !deployedContractData) {
+      setSigner(null);
+      setSignerAddress("");
+      setWriteContract(null);
+      return;
+    }
 
-        const initSigner = async () => {
-            try {
-                // Create ethers provider from wagmi wallet client
-                const provider = new ethers.BrowserProvider(
-                    walletClient.transport
-                );
+    const initSigner = async () => {
+      try {
+        // Create ethers provider from wagmi wallet client
+        const provider = new ethers.BrowserProvider(walletClient.transport);
 
-                // Get signer
-                const _signer = await provider.getSigner();
+        // Get signer
+        const _signer = await provider.getSigner();
 
-                setSigner(_signer);
+        setSigner(_signer);
 
-                // Get connected wallet address
-                const addr = await _signer.getAddress();
+        // Get connected wallet address
+        const addr = await _signer.getAddress();
 
-                setSignerAddress(addr);
+        setSignerAddress(addr);
 
-                // Create write-enabled ethers contract
-                const contract = new ethers.Contract(
-                    deployedContractData.address,
-                    deployedContractData.abi,
-                    _signer
-                );
+        // Create write-enabled ethers contract
+        const contract = new ethers.Contract(deployedContractData.address, deployedContractData.abi, _signer);
 
-                setWriteContract(contract);
-            } catch (error) {
-                console.error(
-                    "Failed to initialize signer/contract:",
-                    error
-                );
+        setWriteContract(contract);
+      } catch (error) {
+        console.error("Failed to initialize signer/contract:", error);
 
-                setSigner(null);
-                setSignerAddress("");
-                setWriteContract(null);
-            }
+        setSigner(null);
+        setSignerAddress("");
+        setWriteContract(null);
+      }
+    };
+
+    initSigner();
+  }, [walletClient, deployedContractData]);
+
+  // ---------------------------------------------------------------------------
+  // Helper: ensure contract exists
+  // ---------------------------------------------------------------------------
+
+  const requireContract = (): ethers.Contract => {
+    if (!writeContract) {
+      throw new Error("Contract not initialized");
+    }
+
+    return writeContract;
+  };
+
+  // ---------------------------------------------------------------------------
+  // WRITE FUNCTIONS
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Initialize contract
+   */
+  const initialize = useCallback(async (): Promise<ContractResponse> => {
+    try {
+      const c = requireContract();
+
+      const tx = await c.initialize();
+
+      const receipt = await tx.wait();
+
+      return {
+        success: true,
+        txHash: tx.hash,
+        receipt,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }, [writeContract]);
+
+  /**
+   * Assign new employee
+   */
+  const assignNewEmployee = useCallback(
+    async (newEmployee: string): Promise<ContractResponse> => {
+      try {
+        const c = requireContract();
+
+        const tx = await c.assignNewEmployee(newEmployee);
+
+        const receipt = await tx.wait();
+
+        return {
+          success: true,
+          txHash: tx.hash,
+          receipt,
         };
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+    },
+    [writeContract],
+  );
 
-        initSigner();
-    }, [walletClient, deployedContractData]);
+  /**
+   * Remove employee
+   */
+  const removeEmployee = useCallback(
+    async (employee: string): Promise<ContractResponse> => {
+      try {
+        const c = requireContract();
 
-    // ---------------------------------------------------------------------------
-    // Helper: ensure contract exists
-    // ---------------------------------------------------------------------------
+        const tx = await c.removeEmployee(employee);
 
-    const requireContract = (): ethers.Contract => {
-        if (!writeContract) {
-            throw new Error("Contract not initialized");
-        }
+        const receipt = await tx.wait();
 
-        return writeContract;
-    };
+        return {
+          success: true,
+          txHash: tx.hash,
+          receipt,
+        };
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+    },
+    [writeContract],
+  );
 
-    // ---------------------------------------------------------------------------
-    // WRITE FUNCTIONS
-    // ---------------------------------------------------------------------------
+  /**
+   * Change owner
+   */
+  const changeOwner = useCallback(
+    async (newOwner: string): Promise<ContractResponse> => {
+      try {
+        const c = requireContract();
 
-    /**
-     * Initialize contract
-     */
-    const initialize = useCallback(
-        async (): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
+        const tx = await c.changeOwner(newOwner);
 
-                const tx = await c.initialize();
+        const receipt = await tx.wait();
 
-                const receipt = await tx.wait();
+        return {
+          success: true,
+          txHash: tx.hash,
+          receipt,
+        };
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+    },
+    [writeContract],
+  );
 
-                return {
-                    success: true,
-                    txHash: tx.hash,
-                    receipt,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
+  // ---------------------------------------------------------------------------
+  // READ FUNCTIONS
+  // ---------------------------------------------------------------------------
 
-    /**
-     * Assign new employee
-     */
-    const assignNewEmployee = useCallback(
-        async (
-            newEmployee: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
+  /**
+   * Get contract owner
+   */
+  const getOwner = useCallback(async (): Promise<ContractResponse<string>> => {
+    try {
+      const c = requireContract();
 
-                const tx = await c.assignNewEmployee(
-                    newEmployee
-                );
+      const result: string = await c.owner();
 
-                const receipt = await tx.wait();
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }, [writeContract]);
 
-                return {
-                    success: true,
-                    txHash: tx.hash,
-                    receipt,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
+  /**
+   * Get employee count
+   */
+  const getEmployeeCount = useCallback(async (): Promise<ContractResponse<bigint>> => {
+    try {
+      const c = requireContract();
 
-    /**
-     * Remove employee
-     */
-    const removeEmployee = useCallback(
-        async (
-            employee: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
+      const result: bigint = await c.employeeCount();
 
-                const tx = await c.removeEmployee(employee);
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }, [writeContract]);
 
-                const receipt = await tx.wait();
+  /**
+   * Check employee role
+   */
+  const hasRole = useCallback(
+    async (account: string): Promise<ContractResponse<boolean>> => {
+      try {
+        const c = requireContract();
 
-                return {
-                    success: true,
-                    txHash: tx.hash,
-                    receipt,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
+        const result: boolean = await c.hasRole(account);
 
-    /**
-     * Change owner
-     */
-    const changeOwner = useCallback(
-        async (
-            newOwner: string
-        ): Promise<ContractResponse> => {
-            try {
-                const c = requireContract();
+        return {
+          success: true,
+          data: result,
+        };
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+    },
+    [writeContract],
+  );
 
-                const tx = await c.changeOwner(newOwner);
+  /**
+   * Get employee mapping status
+   */
+  const getEmployee = useCallback(
+    async (employee: string): Promise<ContractResponse<boolean>> => {
+      try {
+        const c = requireContract();
 
-                const receipt = await tx.wait();
+        const result: boolean = await c.employees(employee);
 
-                return {
-                    success: true,
-                    txHash: tx.hash,
-                    receipt,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
+        return {
+          success: true,
+          data: result,
+        };
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+    },
+    [writeContract],
+  );
 
-    // ---------------------------------------------------------------------------
-    // READ FUNCTIONS
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Return API
+  // ---------------------------------------------------------------------------
 
-    /**
-     * Get contract owner
-     */
-    const getOwner = useCallback(
-        async (): Promise<ContractResponse<string>> => {
-            try {
-                const c = requireContract();
+  return {
+    signer,
+    signerAddress,
 
-                const result: string = await c.owner();
+    // ethers contract instance
+    contract: writeContract,
 
-                return {
-                    success: true,
-                    data: result,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
+    // Write functions
+    initialize,
+    assignNewEmployee,
+    removeEmployee,
+    changeOwner,
 
-    /**
-     * Get employee count
-     */
-    const getEmployeeCount = useCallback(
-        async (): Promise<ContractResponse<bigint>> => {
-            try {
-                const c = requireContract();
-
-                const result: bigint =
-                    await c.employeeCount();
-
-                return {
-                    success: true,
-                    data: result,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Check employee role
-     */
-    const hasRole = useCallback(
-        async (
-            account: string
-        ): Promise<ContractResponse<boolean>> => {
-            try {
-                const c = requireContract();
-
-                const result: boolean =
-                    await c.hasRole(account);
-
-                return {
-                    success: true,
-                    data: result,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
-
-    /**
-     * Get employee mapping status
-     */
-    const getEmployee = useCallback(
-        async (
-            employee: string
-        ): Promise<ContractResponse<boolean>> => {
-            try {
-                const c = requireContract();
-
-                const result: boolean =
-                    await c.employees(employee);
-
-                return {
-                    success: true,
-                    data: result,
-                };
-            } catch (error: any) {
-                return {
-                    success: false,
-                    error: error.message,
-                };
-            }
-        },
-        [writeContract]
-    );
-
-    // ---------------------------------------------------------------------------
-    // Return API
-    // ---------------------------------------------------------------------------
-
-    return {
-        signer,
-        signerAddress,
-
-        // ethers contract instance
-        contract: writeContract,
-
-        // Write functions
-        initialize,
-        assignNewEmployee,
-        removeEmployee,
-        changeOwner,
-
-        // Read functions
-        getOwner,
-        getEmployeeCount,
-        hasRole,
-        getEmployee,
-    };
+    // Read functions
+    getOwner,
+    getEmployeeCount,
+    hasRole,
+    getEmployee,
+  };
 }

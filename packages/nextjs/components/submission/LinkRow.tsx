@@ -16,7 +16,7 @@ export default function LinkRow({ value, onChange, placeholder, onRemove, showRe
         <input
           type="url"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
           className="flex-1 bg-transparent text-sm text-gray-200 placeholder-gray-600 outline-none"
         />

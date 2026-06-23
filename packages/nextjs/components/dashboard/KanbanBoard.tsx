@@ -1,11 +1,9 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Layers, Filter } from "lucide-react";
-
-import SectionHeading from "./SectionHeading";
 import TaskCard from "./DashboardTaskComponets/TaskCard";
-
-import type { TabType, KanbanBoardProps } from "@/utils/lib/dashboard";
+import SectionHeading from "./SectionHeading";
+import type { KanbanBoardProps, TabType } from "@/utils/lib/dashboard";
+import { AnimatePresence, motion } from "framer-motion";
+import { Filter, Layers } from "lucide-react";
 
 export default function KanbanBoard({
   tabs,
@@ -24,17 +22,24 @@ export default function KanbanBoard({
   onRequestRevision,
   onCancel,
 }: KanbanBoardProps) {
-  const visibleTasks = tasks.filter((t) => t.tab === activeTab);
+  const visibleTasks = tasks.filter(t => t.tab === activeTab);
 
   const getTabColor = (tab: TabType) => {
     switch (tab) {
-      case "Created": return "bg-slate-500/20 text-slate-400";
-      case "Active": return "bg-blue-500/20 text-blue-400";
-      case "OpenRegistration": return "bg-indigo-500/20 text-indigo-400";
-      case "InProgres": return "bg-cyan-500/20 text-cyan-400";
-      case "Completed": return "bg-emerald-500/20 text-emerald-400";
-      case "Cancelled": return "bg-red-500/20 text-red-400";
-      default: return "bg-gray-500/20 text-gray-400";
+      case "Created":
+        return "bg-slate-500/20 text-slate-400";
+      case "Active":
+        return "bg-blue-500/20 text-blue-400";
+      case "OpenRegistration":
+        return "bg-indigo-500/20 text-indigo-400";
+      case "InProgres":
+        return "bg-cyan-500/20 text-cyan-400";
+      case "Completed":
+        return "bg-emerald-500/20 text-emerald-400";
+      case "Cancelled":
+        return "bg-red-500/20 text-red-400";
+      default:
+        return "bg-gray-500/20 text-gray-400";
     }
   };
 
@@ -52,8 +57,8 @@ export default function KanbanBoard({
       />
 
       <div className="flex gap-1 mb-4 p-1 rounded-2xl bg-gray-900 border border-gray-800 w-fit flex-wrap">
-        {tabs.map((tab) => {
-          const count = tasks.filter((t) => t.tab === tab).length;
+        {tabs.map(tab => {
+          const count = tasks.filter(t => t.tab === tab).length;
 
           return (
             <button
@@ -61,9 +66,7 @@ export default function KanbanBoard({
               onClick={() => onTabChange(tab)}
               className={[
                 "relative rounded-xl px-4 py-1.5 text-xs font-medium transition-all",
-                activeTab === tab
-                  ? "bg-gray-800 text-white shadow"
-                  : "text-gray-500 hover:text-gray-300",
+                activeTab === tab ? "bg-gray-800 text-white shadow" : "text-gray-500 hover:text-gray-300",
               ].join(" ")}
             >
               {tab}
@@ -85,13 +88,7 @@ export default function KanbanBoard({
           className="grid sm:grid-cols-2 gap-3"
         >
           {visibleTasks.length > 0 ? (
-            visibleTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                id={task.id}
-                task={task}
-              />
-            ))
+            visibleTasks.map(task => <TaskCard key={task.id} id={task.id} task={task} />)
           ) : (
             <div className="col-span-2 rounded-2xl border border-dashed border-gray-800 bg-gray-900/50 p-10 text-center">
               <p className="text-sm text-gray-600">No tasks in this column</p>

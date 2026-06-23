@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronLeft, ChevronRight, FileText, Coins, Users, Eye } from "lucide-react";
-
+import React, { useCallback, useState } from "react";
+import PreviewSidebar from "@/components/taskCreation/PreviewSidebar";
 import Step1 from "@/components/taskCreation/Step1";
 import Step2 from "@/components/taskCreation/Step2";
 import Step3 from "@/components/taskCreation/Step3";
 import Step4 from "@/components/taskCreation/Step4";
-import PreviewSidebar from "@/components/taskCreation/PreviewSidebar";
 import type { FormData } from "@/components/taskCreation/types";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, ChevronLeft, ChevronRight, Coins, Eye, FileText, Users } from "lucide-react";
 
 const EMPTY: FormData = {
   title: "",
@@ -32,10 +31,10 @@ const EMPTY: FormData = {
 };
 
 const STEPS = [
-  { id: 1, label: "Basics",      icon: <FileText className="w-3.5 h-3.5" /> },
-  { id: 2, label: "Commitment",  icon: <Coins className="w-3.5 h-3.5" /> },
-  { id: 3, label: "Requirements",icon: <Users className="w-3.5 h-3.5" /> },
-  { id: 4, label: "Review",      icon: <Eye className="w-3.5 h-3.5" /> },
+  { id: 1, label: "Basics", icon: <FileText className="w-3.5 h-3.5" /> },
+  { id: 2, label: "Commitment", icon: <Coins className="w-3.5 h-3.5" /> },
+  { id: 3, label: "Requirements", icon: <Users className="w-3.5 h-3.5" /> },
+  { id: 4, label: "Review", icon: <Eye className="w-3.5 h-3.5" /> },
 ];
 
 export default function CreateTaskPage() {
@@ -45,12 +44,12 @@ export default function CreateTaskPage() {
   const [published, setPublished] = useState(false);
 
   const set = useCallback((k: keyof FormData, v: unknown) => {
-    setData((p) => ({ ...p, [k]: v }));
+    setData(p => ({ ...p, [k]: v }));
   }, []);
 
   const publish = async () => {
     setPublishing(true);
-    await new Promise((r) => setTimeout(r, 2200));
+    await new Promise(r => setTimeout(r, 2200));
     setPublishing(false);
     setPublished(true);
   };
@@ -87,17 +86,26 @@ export default function CreateTaskPage() {
                       : "text-gray-700 cursor-default",
                 ].join(" ")}
               >
-                <div className={[
-                  "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
-                  step === s.id ? "bg-indigo-500 text-white" :
-                  s.id < step ? "bg-indigo-500/20 text-indigo-400" : "bg-gray-800 text-gray-700",
-                ].join(" ")}>
+                <div
+                  className={[
+                    "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
+                    step === s.id
+                      ? "bg-indigo-500 text-white"
+                      : s.id < step
+                        ? "bg-indigo-500/20 text-indigo-400"
+                        : "bg-gray-800 text-gray-700",
+                  ].join(" ")}
+                >
                   {s.id < step ? <Check className="w-3 h-3" /> : s.icon}
                 </div>
                 {s.label}
               </button>
               {i < STEPS.length - 1 && (
-                <div className={["h-px w-8 mx-1 flex-shrink-0", s.id < step ? "bg-indigo-500/30" : "bg-gray-800"].join(" ")} />
+                <div
+                  className={["h-px w-8 mx-1 flex-shrink-0", s.id < step ? "bg-indigo-500/30" : "bg-gray-800"].join(
+                    " ",
+                  )}
+                />
               )}
             </React.Fragment>
           ))}
@@ -120,12 +128,7 @@ export default function CreateTaskPage() {
                   {step === 2 && <Step2 data={data} set={set} />}
                   {step === 3 && <Step3 data={data} set={set} />}
                   {step === 4 && (
-                    <Step4
-                      data={data}
-                      onPublish={publish}
-                      publishing={publishing}
-                      published={published}
-                    />
+                    <Step4 data={data} onPublish={publish} publishing={publishing} published={published} />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -135,19 +138,21 @@ export default function CreateTaskPage() {
                 <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-800">
                   <button
                     type="button"
-                    onClick={() => setStep((p) => Math.max(1, p - 1))}
+                    onClick={() => setStep(p => Math.max(1, p - 1))}
                     disabled={step === 1}
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-800 text-xs text-gray-500 hover:text-white hover:border-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" /> Back
                   </button>
 
-                  <span className="text-[11px] text-gray-700">Step {step} of {STEPS.length}</span>
+                  <span className="text-[11px] text-gray-700">
+                    Step {step} of {STEPS.length}
+                  </span>
 
                   {step < 4 ? (
                     <button
                       type="button"
-                      onClick={() => setStep((p) => Math.min(4, p + 1))}
+                      onClick={() => setStep(p => Math.min(4, p + 1))}
                       disabled={!canNext[step]}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-semibold text-white transition-colors"
                     >

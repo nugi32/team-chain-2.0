@@ -1,22 +1,18 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Wallet, ArrowLeft, ShieldCheck } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { LinkButton } from "@/components/globalComponents/LinkButton";
 import { Card, CardContent } from "@/components/globalComponents/card";
-
+import { handleLogin } from "@/utils/lib/login";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount, useDisconnect } from "wagmi";
-
-import { notification } from "~~/utils/scaffold-eth";
+import { motion } from "framer-motion";
+import { ArrowLeft, ShieldCheck, Wallet } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
-
-import { handleLogin } from "@/utils/lib/login";
+import { FaGithub } from "react-icons/fa";
+import { useAccount, useDisconnect } from "wagmi";
+import { notification } from "~~/utils/scaffold-eth";
 
 // ---------------------------------------------------------------------------
 // Countdown + redirect helper
@@ -61,7 +57,7 @@ function startCountdownRedirect({
         Cancel Redirect
       </button>
     </div>,
-    { duration: 6000 }
+    { duration: 6000 },
   );
 
   interval = setInterval(() => {
@@ -120,9 +116,9 @@ export default function TeamChainLoginPage() {
     }
   }, [disconnect]);
 
-    useEffect(() => {
-      localStorage.clear();
-    }, []);
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
   // -------------------------------------------------------------------------
   // 2. Clear GitHub OAuth session on page refresh
   //    (if already authenticated and not just after a login redirect)
@@ -132,12 +128,14 @@ export default function TeamChainLoginPage() {
     // dan belum pernah menjalankan signOut (cegah loop)
     if (status === "authenticated" && !sessionStorage.getItem("githubLoginPending") && !clearedSessionRef.current) {
       clearedSessionRef.current = true;
-      signOut({ redirect: false }).then(() => {
-        console.log("GitHub OAuth session cleared on page refresh");
-        notification.info("Session cleared. Please login again.");
-        // Opsional: reload halaman untuk reset state sepenuhnya
-        // window.location.reload();
-      }).catch(err => console.error("SignOut error:", err));
+      signOut({ redirect: false })
+        .then(() => {
+          console.log("GitHub OAuth session cleared on page refresh");
+          notification.info("Session cleared. Please login again.");
+          // Opsional: reload halaman untuk reset state sepenuhnya
+          // window.location.reload();
+        })
+        .catch(err => console.error("SignOut error:", err));
     }
   }, [status]);
 
@@ -175,9 +173,8 @@ export default function TeamChainLoginPage() {
         setIsLoading(false);
       }
     },
-    [router]
+    [router],
   );
-
 
   // -------------------------------------------------------------------------
   // WALLET trigger
@@ -201,10 +198,7 @@ export default function TeamChainLoginPage() {
     if (githubHandledRef.current) return;
 
     const username =
-      (session?.user as { login?: string } | undefined)?.login ??
-      session?.user?.name ??
-      session?.user?.email ??
-      "";
+      (session?.user as { login?: string } | undefined)?.login ?? session?.user?.name ?? session?.user?.email ?? "";
 
     if (!username) {
       console.warn("Username not found in session");
@@ -244,21 +238,16 @@ export default function TeamChainLoginPage() {
               Recommended authentication method
             </div>
 
-            <h1 className="text-4xl font-bold leading-tight mb-4">
-              Access Team Chain
-            </h1>
+            <h1 className="text-4xl font-bold leading-tight mb-4">Access Team Chain</h1>
 
             <p className="text-gray-400 leading-7 max-w-md">
-              Team Chain supports multiple authentication methods, but
-              wallet-based login is the primary access layer for protocol
-              participation.
+              Team Chain supports multiple authentication methods, but wallet-based login is the primary access layer
+              for protocol participation.
             </p>
           </div>
 
           <div className="rounded-2xl border border-gray-800 bg-gray-950 p-5 mt-8">
-            <h2 className="font-semibold mb-3 text-white">
-              Why connect wallet?
-            </h2>
+            <h2 className="font-semibold mb-3 text-white">Why connect wallet?</h2>
 
             <ul className="space-y-3 text-sm text-gray-400 leading-6">
               <li>• Required to sign transactions, stake, vote, and claim rewards.</li>
@@ -269,10 +258,7 @@ export default function TeamChainLoginPage() {
         </motion.div>
 
         {/* RIGHT PANEL */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
           <Card className="bg-gray-900 border-gray-800 rounded-3xl shadow-2xl h-full">
             <CardContent className="p-8 md:p-10">
               <div className="lg:hidden mb-6">
@@ -288,8 +274,7 @@ export default function TeamChainLoginPage() {
               <div className="mb-8">
                 <h2 className="text-2xl font-semibold mb-2">Get Started</h2>
                 <p className="text-sm text-gray-400 leading-6">
-                  Choose your preferred sign-in method. For full protocol
-                  interaction, wallet connection is required.
+                  Choose your preferred sign-in method. For full protocol interaction, wallet connection is required.
                 </p>
               </div>
 
@@ -319,8 +304,7 @@ export default function TeamChainLoginPage() {
                       </div>
 
                       <p className="text-sm text-gray-400 mt-1 leading-6">
-                        Full access: transactions, staking, governance voting,
-                        rewards, and protocol actions.
+                        Full access: transactions, staking, governance voting, rewards, and protocol actions.
                       </p>
                     </div>
                   </div>
@@ -344,8 +328,7 @@ export default function TeamChainLoginPage() {
                     <div>
                       <span className="font-medium">Continue with GitHub</span>
                       <p className="text-sm text-gray-400 mt-1 leading-6">
-                        Read-only access for profile sync, public activity, and
-                        team discovery.
+                        Read-only access for profile sync, public activity, and team discovery.
                       </p>
                     </div>
                   </div>
@@ -353,14 +336,9 @@ export default function TeamChainLoginPage() {
               </div>
 
               <div className="mt-8 pt-6 border-t border-gray-800">
-                <p className="text-sm text-gray-400 mb-4">
-                  New to Team Chain?
-                </p>
+                <p className="text-sm text-gray-400 mb-4">New to Team Chain?</p>
 
-                <LinkButton
-                  className="w-full h-12 rounded-2xl"
-                  href="/getStarted"
-                >
+                <LinkButton className="w-full h-12 rounded-2xl" href="/getStarted">
                   Create Account
                 </LinkButton>
               </div>

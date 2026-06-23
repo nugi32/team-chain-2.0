@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useGetCompleteTasks } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
-import { getUserById } from "@/utils/lib/express/queries/users";
 import { useTaskController } from "../smartContractWrapper/user/TaskController";
+import { getUserById } from "@/utils/lib/express/queries/users";
+import { useGetCompleteTasks } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
+
 //utils/lib/dashboard
 /*
 this hook return something like this
@@ -42,13 +43,8 @@ export interface CompleteTaskOutput {
 }
 */
 
-export const useDashboardTasksData = (
-  address?: string,
-  id?: string
-) => {
-  const [walletAddress, setWalletAddress] = useState<string | undefined>(
-    address
-  );
+export const useDashboardTasksData = (address?: string, id?: string) => {
+  const [walletAddress, setWalletAddress] = useState<string | undefined>(address);
 
   const [loadingTask, setLoadingTask] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -74,9 +70,7 @@ export const useDashboardTasksData = (
 
         setWalletAddress(undefined);
       } catch (err) {
-        console.error(
-          `error while fetching user by id, error message: ${err}`
-        );
+        console.error(`error while fetching user by id, error message: ${err}`);
 
         setError(err instanceof Error ? err : new Error(String(err)));
       } finally {

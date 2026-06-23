@@ -9,16 +9,13 @@ import { formatEther } from "viem";
  */
 export async function weiToUsd(wei: bigint): Promise<number> {
   try {
-    const { data } = await axios.get(
-      "https://api.coingecko.com/api/v3/simple/price",
-      {
-        params: {
-          ids: "ethereum",
-          vs_currencies: "usd",
-        },
-        timeout: 10000,
-      }
-    );
+    const { data } = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
+      params: {
+        ids: "ethereum",
+        vs_currencies: "usd",
+      },
+      timeout: 10000,
+    });
 
     const ethPriceUsd = data?.ethereum?.usd;
 

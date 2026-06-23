@@ -1,6 +1,6 @@
+import { useCallback, useState } from "react";
 import { useTaskController } from "@/utils/lib/smartContractWrapper/user/TaskController";
 import { useTaskData } from "@/utils/lib/smartContractWrapper/user/taskData";
-import { useState, useCallback } from "react";
 
 /*
 const taskInfo: {
@@ -42,90 +42,100 @@ const taskInfo: {
 */
 
 export const useGetTaskUtils = (id?: bigint) => {
-    const { task, data, form, user } = useTaskController();
-    const {
-        data: taskDataState,
-        form: taskDataForm,
-    } = useTaskData();
+  const { task, data, form, user } = useTaskController();
+  const { data: taskDataState, form: taskDataForm } = useTaskData();
 
-    const [taskId, setTaskId] = useState<bigint | undefined>(undefined);
+  const [taskId, setTaskId] = useState<bigint | undefined>(undefined);
 
-    const resolveTaskId = (Pid?: bigint): bigint => {
-        const resolvedId = taskId ?? id ?? Pid;
+  const resolveTaskId = (Pid?: bigint): bigint => {
+    const resolvedId = taskId ?? id ?? Pid;
 
-        if (resolvedId === undefined) {
-            throw new Error("No task ID provided");
-        }
+    if (resolvedId === undefined) {
+      throw new Error("No task ID provided");
+    }
 
-        return resolvedId;
-    };
+    return resolvedId;
+  };
 
-    const getTaskData = useCallback((Pid?: bigint) => {
-        const resolvedId = resolveTaskId(Pid);
+  const getTaskData = useCallback(
+    (Pid?: bigint) => {
+      const resolvedId = resolveTaskId(Pid);
 
-        taskDataForm.setId(resolvedId);
+      taskDataForm.setId(resolvedId);
 
-        return taskDataState.task;
-    }, [taskId, id, taskDataForm, taskDataState]);
+      return taskDataState.task;
+    },
+    [taskId, id, taskDataForm, taskDataState],
+  );
 
-    const getJoinRequestCount = useCallback((Pid?: bigint) => {
-        const resolvedId = resolveTaskId(Pid);
+  const getJoinRequestCount = useCallback(
+    (Pid?: bigint) => {
+      const resolvedId = resolveTaskId(Pid);
 
-        task.setDeleteTaskId(resolvedId);
+      task.setDeleteTaskId(resolvedId);
 
-        return data.joinRequestCount;
-    }, [taskId, id, task, data]);
+      return data.joinRequestCount;
+    },
+    [taskId, id, task, data],
+  );
 
-    const getMemberRequiredStake = useCallback((Pid?: bigint) => {
-        const resolvedId = resolveTaskId(Pid);
+  const getMemberRequiredStake = useCallback(
+    (Pid?: bigint) => {
+      const resolvedId = resolveTaskId(Pid);
 
-        task.setDeleteTaskId(resolvedId);
+      task.setDeleteTaskId(resolvedId);
 
-        return data.memberRequiredStake;
-    }, [taskId, id, task, data]);
+      return data.memberRequiredStake;
+    },
+    [taskId, id, task, data],
+  );
 
-    const getCreatorStake = useCallback((Pid?: bigint) => {
-        const taskInfo = getTaskData(Pid);
+  const getCreatorStake = useCallback(
+    (Pid?: bigint) => {
+      const taskInfo = getTaskData(Pid);
 
-        if (!taskInfo) {
-            return undefined;
-        }
+      if (!taskInfo) {
+        return undefined;
+      }
 
-        form.setDeadlineHours(taskInfo.deadlineHours);
-        form.setMaxRevision(taskInfo.maxRevision);
-        form.setRewardWei(taskInfo.reward.toString());
-        user.setCreatorStakeCaller(taskInfo.creator);
+      form.setDeadlineHours(taskInfo.deadlineHours);
+      form.setMaxRevision(taskInfo.maxRevision);
+      form.setRewardWei(taskInfo.reward.toString());
+      user.setCreatorStakeCaller(taskInfo.creator);
 
-        return data.creatorStake;
-    }, [getTaskData, form, user, data]);
+      return data.creatorStake;
+    },
+    [getTaskData, form, user, data],
+  );
 
-    const getProjectValue = useCallback((Pid?: bigint) => {
-        const taskInfo = getTaskData(Pid);
+  const getProjectValue = useCallback(
+    (Pid?: bigint) => {
+      const taskInfo = getTaskData(Pid);
 
-        if (!taskInfo) {
-            return undefined;
-        }
+      if (!taskInfo) {
+        return undefined;
+      }
 
-        form.setDeadlineHours(taskInfo.deadlineHours);
-        form.setMaxRevision(taskInfo.maxRevision);
-        form.setRewardWei(taskInfo.reward.toString());
+      form.setDeadlineHours(taskInfo.deadlineHours);
+      form.setMaxRevision(taskInfo.maxRevision);
+      form.setRewardWei(taskInfo.reward.toString());
 
-        user.setProjectValueCaller(
-            taskInfo.creator ?? taskInfo.member
-        );
+      user.setProjectValueCaller(taskInfo.creator ?? taskInfo.member);
 
-        return data.projectValue;
-    }, [getTaskData, form, user, data]);
+      return data.projectValue;
+    },
+    [getTaskData, form, user, data],
+  );
 
-    return {
-        taskId,
-        setTaskId,
-        getTaskData,
-        getJoinRequestCount,
-        getMemberRequiredStake,
-        getCreatorStake,
-        getProjectValue,
-    };
+  return {
+    taskId,
+    setTaskId,
+    getTaskData,
+    getJoinRequestCount,
+    getMemberRequiredStake,
+    getCreatorStake,
+    getProjectValue,
+  };
 };
 
 export default useGetTaskUtils;

@@ -1,26 +1,15 @@
 "use client";
 
 import React, { MutableRefObject, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Upload,
-  Mail,
-  Smartphone,
-  CheckCircle2,
-  User,
-  Hash,
-  Wallet,
-  AlertCircle,
-} from "lucide-react";
-import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
-
-import Field from "./Field";
 import CountrySelector from "./CountrySelector";
+import Field from "./Field";
 import OtpInput from "./OtpInput";
-
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle, CheckCircle2, Hash, Mail, Smartphone, Upload, User, Wallet } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { FaGithub } from "react-icons/fa";
 
 // ─── Dev flag ────────────────────────────────────────────────────────────────
 // Set to `true` to skip phone/OTP verification during development.
@@ -83,7 +72,7 @@ export default function ProfileForm({
 
     // Prefill name only if the field is still empty (don't overwrite user edits)
     if (session.user.name) {
-      setFullName((prev) => (prev ? prev : session.user!.name!));
+      setFullName(prev => (prev ? prev : session.user!.name!));
     }
 
     // Prefill avatar with GitHub profile picture only if nothing is set yet
@@ -95,9 +84,7 @@ export default function ProfileForm({
 
   // Derived session values
   const githubUsername =
-    (session?.user as { login?: string })?.login ??
-    session?.user?.name?.toLowerCase().replace(/\s+/g, "") ??
-    null;
+    (session?.user as { login?: string })?.login ?? session?.user?.name?.toLowerCase().replace(/\s+/g, "") ?? null;
   const email = session?.user?.email ?? null;
   const isGithubLinked = !!session?.user;
 
@@ -116,12 +103,7 @@ export default function ProfileForm({
     errors.phone = "Phone number must be verified.";
   }
 
-  const isFormValid =
-    fullName.trim() &&
-    age &&
-    Number(age) >= 13 &&
-    isGithubLinked &&
-    phoneReady;
+  const isFormValid = fullName.trim() && age && Number(age) >= 13 && isGithubLinked && phoneReady;
 
   // ── Styles ─────────────────────────────────────────────────────────────────
   const inputClass =
@@ -137,26 +119,18 @@ export default function ProfileForm({
       ].join(" ")}
     >
       <div className="p-8 space-y-6">
-
         {/* ── Avatar + Name row ─────────────────────────────────────────── */}
         <div className="flex items-start gap-5">
-
           {/* Avatar upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-1.5">
-              Avatar
-            </label>
+            <label className="block text-sm font-medium text-gray-200 mb-1.5">Avatar</label>
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
               className="relative w-20 h-20 rounded-2xl border border-dashed border-gray-700 bg-gray-950 hover:border-indigo-500 transition-colors overflow-hidden flex items-center justify-center group"
             >
               {avatarPreview ? (
-                <img
-                  src={avatarPreview}
-                  alt="avatar"
-                  className="w-full h-full object-cover"
-                />
+                <img src={avatarPreview} alt="avatar" className="w-full h-full object-cover" />
               ) : (
                 <div className="flex flex-col items-center gap-1 text-gray-600 group-hover:text-gray-400 transition-colors">
                   <Upload className="w-5 h-5" />
@@ -169,17 +143,9 @@ export default function ProfileForm({
                 </div>
               )}
             </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={onAvatarUpload}
-            />
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onAvatarUpload} />
             {avatarPreview && session?.user?.image && (
-              <p className="text-[10px] text-gray-600 mt-1 text-center">
-                from GitHub
-              </p>
+              <p className="text-[10px] text-gray-600 mt-1 text-center">from GitHub</p>
             )}
           </div>
 
@@ -192,8 +158,8 @@ export default function ProfileForm({
                   type="text"
                   placeholder="Your full name"
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  onBlur={() => setTouched((t) => ({ ...t, fullName: true }))}
+                  onChange={e => setFullName(e.target.value)}
+                  onBlur={() => setTouched(t => ({ ...t, fullName: true }))}
                   className={[
                     inputClass,
                     "pl-11",
@@ -217,8 +183,8 @@ export default function ProfileForm({
                   max={120}
                   placeholder="Your age"
                   value={age}
-                  onChange={(e) => setAge(e.target.value)}
-                  onBlur={() => setTouched((t) => ({ ...t, age: true }))}
+                  onChange={e => setAge(e.target.value)}
+                  onBlur={() => setTouched(t => ({ ...t, age: true }))}
                   className={[
                     inputClass,
                     "pl-11",
@@ -239,10 +205,7 @@ export default function ProfileForm({
         <div className="border-t border-gray-800" />
 
         {/* ── GitHub OAuth ──────────────────────────────────────────────── */}
-        <Field
-          label="GitHub"
-          hint="OAuth login required — links your GitHub account and fetches profile data"
-        >
+        <Field label="GitHub" hint="OAuth login required — links your GitHub account and fetches profile data">
           <div className="space-y-3">
             {/* Status badge */}
             <AnimatePresence mode="wait">
@@ -257,9 +220,7 @@ export default function ProfileForm({
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-emerald-300 font-medium">
-                        @{githubUsername}
-                      </p>
+                      <p className="text-sm text-emerald-300 font-medium">@{githubUsername}</p>
                       {email && (
                         <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                           <Mail className="w-3 h-3" />
@@ -284,10 +245,8 @@ export default function ProfileForm({
                   exit={{ opacity: 0 }}
                 >
                   <button
-                    onClick={() =>
-                      signIn("github", { callbackUrl: "/getStarted" }, { prompt: "select_account" })
-                    }
-                    onBlur={() => setTouched((t) => ({ ...t, github: true }))}
+                    onClick={() => signIn("github", { callbackUrl: "/getStarted" }, { prompt: "select_account" })}
+                    onBlur={() => setTouched(t => ({ ...t, github: true }))}
                     type="button"
                     className={[
                       "w-full rounded-2xl border px-4 py-3 text-sm transition-colors flex items-center gap-2",
@@ -335,8 +294,8 @@ export default function ProfileForm({
                 type="tel"
                 placeholder={BYPASS_PHONE_VERIFICATION ? "Optional in dev mode" : "Phone number"}
                 value={phone}
-                onChange={(e) => onPhoneChange(e.target.value.replace(/\D/g, ""))}
-                onBlur={() => setTouched((t) => ({ ...t, phone: true }))}
+                onChange={e => onPhoneChange(e.target.value.replace(/\D/g, ""))}
+                onBlur={() => setTouched(t => ({ ...t, phone: true }))}
                 className={[
                   inputClass,
                   "pl-11",
@@ -361,10 +320,7 @@ export default function ProfileForm({
                 ].join(" ")}
               >
                 {sendingCode ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
                       <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" className="opacity-75" />
@@ -412,9 +368,7 @@ export default function ProfileForm({
                 </AnimatePresence>
 
                 {!otpVerified && otp.length > 0 && otp.length < 6 && (
-                  <p className="text-xs text-gray-500 mt-2">
-                    Enter all 6 digits to verify
-                  </p>
+                  <p className="text-xs text-gray-500 mt-2">Enter all 6 digits to verify</p>
                 )}
               </Field>
             </motion.div>
@@ -427,11 +381,9 @@ export default function ProfileForm({
         <div className="flex items-center gap-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 px-4 py-3 mb-6 text-xs text-gray-400 leading-relaxed">
           <Wallet className="w-4 h-4 text-indigo-400 flex-shrink-0" />
           <span>
-            Submitting this form will prompt a{" "}
-            <span className="text-indigo-300 font-medium">wallet signature</span>{" "}
-            to register your profile on-chain. A gas fee of approximately{" "}
-            <span className="text-white font-medium">$0.01–$0.05</span>{" "}
-            will be deducted from your connected wallet.
+            Submitting this form will prompt a <span className="text-indigo-300 font-medium">wallet signature</span> to
+            register your profile on-chain. A gas fee of approximately{" "}
+            <span className="text-white font-medium">$0.01–$0.05</span> will be deducted from your connected wallet.
           </span>
         </div>
 

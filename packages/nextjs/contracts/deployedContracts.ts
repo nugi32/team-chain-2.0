@@ -2029,12 +2029,9 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        __cancelByMe:
-          "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
-        __changeAddressRegistry:
-          "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
-        __triggerDeadline:
-          "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
+        __cancelByMe: "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
+        __changeAddressRegistry: "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
+        __triggerDeadline: "contracts/system/interfaces/taskCTCcall/ICancellationLogic.sol",
       },
       deployedOnBlock: 11070786,
     },
@@ -2206,18 +2203,12 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        __approveAndRejectOthers:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __approveJoinRequest:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __changeAddressRegistry:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __rejectJoinRequest:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __requestJoinTask:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
-        __withdrawJoinRequest:
-          "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __approveAndRejectOthers: "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __approveJoinRequest: "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __changeAddressRegistry: "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __rejectJoinRequest: "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __requestJoinTask: "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
+        __withdrawJoinRequest: "contracts/system/interfaces/taskCTCcall/IJoinRequestLogic.sol",
       },
       deployedOnBlock: 11070785,
     },
@@ -2391,16 +2382,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        __approveTask:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __changeAddressRegistry:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __reSubmitTask:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __requestRevision:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
-        __requestSubmitTask:
-          "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __approveTask: "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __changeAddressRegistry: "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __reSubmitTask: "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __requestRevision: "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
+        __requestSubmitTask: "contracts/system/interfaces/taskCTCcall/ISubmissionLogic.sol",
       },
       deployedOnBlock: 11070784,
     },
@@ -5202,22 +5188,14 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        ___getCreatorStake:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        ___getProjectValue:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __activateTask:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __changeAddressRegistry:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __closeRegistration:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __createTask:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __deleteTask:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
-        __openRegistration:
-          "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        ___getCreatorStake: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        ___getProjectValue: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __activateTask: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __changeAddressRegistry: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __closeRegistration: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __createTask: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __deleteTask: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
+        __openRegistration: "contracts/system/interfaces/taskCTCcall/ITaskLifecycleLogic.sol",
       },
       deployedOnBlock: 11070783,
     },

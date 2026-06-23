@@ -1,7 +1,7 @@
 import React from "react";
-import { Plus } from "lucide-react";
-import { getUserById } from "@/utils/lib/express/queries/users";
 import { useEffect, useState } from "react";
+import { getUserById } from "@/utils/lib/express/queries/users";
+import { Plus } from "lucide-react";
 
 export default function GreetingHeader({ id }: { id: string }) {
   const [userName, setUserName] = useState<string>("User");
@@ -20,15 +20,10 @@ export default function GreetingHeader({ id }: { id: string }) {
   return (
     <div className="mb-8 flex items-start justify-between flex-wrap gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Welcome back, {userName.split(" ")[0]} 👋
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">Welcome back, {userName.split(" ")[0]} 👋</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Monitor{" "}
-          <span className="text-indigo-400 font-medium">active commitments</span>,{" "}
-          stay aligned with{" "}
-          <span className="text-amber-400 font-medium">pending reviews</span>, and
-          keep momentum going.
+          Monitor <span className="text-indigo-400 font-medium">active commitments</span>, stay aligned with{" "}
+          <span className="text-amber-400 font-medium">pending reviews</span>, and keep momentum going.
         </p>
       </div>
       <button

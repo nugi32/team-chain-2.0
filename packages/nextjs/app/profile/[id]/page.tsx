@@ -1,21 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Copy,
-  CheckCheck,
-  Mail,
-  ExternalLink,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-
 import { getUserById } from "@/utils/lib/express/queries/users";
+import { motion } from "framer-motion";
+import { AlertCircle, ArrowLeft, CheckCheck, CheckCircle2, Copy, ExternalLink, Loader2, Mail } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,15 +34,13 @@ interface UserProfile {
 const VALID_ROLES: ValidRole[] = ["Developer", "Designer", "Project Manager"];
 
 const roleStyle: Record<ValidRole, { bg: string; text: string; dot: string }> = {
-  Developer:         { bg: "bg-indigo-500/15", text: "text-indigo-300", dot: "bg-indigo-400" },
-  Designer:          { bg: "bg-violet-500/15", text: "text-violet-300", dot: "bg-violet-400" },
-  "Project Manager": { bg: "bg-cyan-500/15",   text: "text-cyan-300",   dot: "bg-cyan-400"   },
+  Developer: { bg: "bg-indigo-500/15", text: "text-indigo-300", dot: "bg-indigo-400" },
+  Designer: { bg: "bg-violet-500/15", text: "text-violet-300", dot: "bg-violet-400" },
+  "Project Manager": { bg: "bg-cyan-500/15", text: "text-cyan-300", dot: "bg-cyan-400" },
 };
 
 function toValidRole(raw: string): ValidRole {
-  return VALID_ROLES.includes(raw as ValidRole)
-    ? (raw as ValidRole)
-    : "Developer";
+  return VALID_ROLES.includes(raw as ValidRole) ? (raw as ValidRole) : "Developer";
 }
 
 // ─── Animation helpers ────────────────────────────────────────────────────────
@@ -76,11 +64,7 @@ const fadeIn = (delay = 0) => ({
 // ─── Loading skeleton ─────────────────────────────────────────────────────────
 
 function Skeleton({ className }: { className?: string }) {
-  return (
-    <div
-      className={`animate-pulse rounded-xl bg-gray-800/60 ${className ?? ""}`}
-    />
-  );
+  return <div className={`animate-pulse rounded-xl bg-gray-800/60 ${className ?? ""}`} />;
 }
 
 function ProfileSkeleton() {
@@ -121,7 +105,9 @@ function ProfileSkeleton() {
         <div className="space-y-5">
           <div className="rounded-3xl border border-gray-800/80 bg-gray-900/50 p-6 space-y-3">
             <Skeleton className="h-3 w-16" />
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 rounded-2xl" />)}
+            {[1, 2, 3].map(i => (
+              <Skeleton key={i} className="h-12 rounded-2xl" />
+            ))}
           </div>
           <div className="rounded-3xl border border-gray-800/80 bg-gray-900/50 p-6 space-y-3">
             <Skeleton className="h-3 w-14" />
@@ -177,10 +163,7 @@ function WalletBadge({ address }: { address: string }) {
       <span className="hidden sm:block">{address}</span>
       <span className="sm:hidden">{short}</span>
       <span className="ml-0.5 text-gray-600 group-hover:text-indigo-400 transition-colors">
-        {copied
-          ? <CheckCheck className="w-3.5 h-3.5 text-emerald-400" />
-          : <Copy className="w-3.5 h-3.5" />
-        }
+        {copied ? <CheckCheck className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
       </span>
     </button>
   );
@@ -219,7 +202,7 @@ function SocialLink({
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // localStorage is only available client-side, so read it inside useEffect
@@ -256,9 +239,11 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#070b12] text-white relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: "linear-gradient(#6366f1 1px, transparent 1px), linear-gradient(to right, #6366f1 1px, transparent 1px)",
+            backgroundImage:
+              "linear-gradient(#6366f1 1px, transparent 1px), linear-gradient(to right, #6366f1 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
@@ -287,7 +272,6 @@ export default function ProfilePage() {
       `}</style>
 
       <div className="min-h-screen bg-[#070b12] text-white relative overflow-hidden">
-
         {/* Background grid */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.03]"
@@ -300,7 +284,6 @@ export default function ProfilePage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(99,102,241,0.10),transparent)]" />
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-
           {/* ── Back nav ───────────────────────────────────────────────── */}
           <motion.div {...fadeIn(0)}>
             <Link
@@ -328,7 +311,7 @@ export default function ProfilePage() {
                     src={profile.profilePicture}
                     alt={profile.name}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
+                    onError={e => {
                       (e.target as HTMLImageElement).src =
                         `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}&background=1e1b4b&color=818cf8&size=112`;
                     }}
@@ -370,20 +353,14 @@ export default function ProfilePage() {
 
           {/* ── Body grid ──────────────────────────────────────────────── */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
             {/* Left — Description + Skills (2/3) */}
             <motion.div {...fadeUp(0.2)} className="lg:col-span-2 space-y-5">
-
               {/* Description */}
               <div className="rounded-3xl border border-gray-800/80 bg-gray-900/50 backdrop-blur-sm p-6 space-y-5">
-                <h2 className="font-syne text-xs uppercase tracking-[0.15em] text-gray-500 font-semibold">
-                  About
-                </h2>
+                <h2 className="font-syne text-xs uppercase tracking-[0.15em] text-gray-500 font-semibold">About</h2>
 
                 {profile.description.summary && (
-                  <p className="text-sm text-gray-300 leading-relaxed">
-                    {profile.description.summary}
-                  </p>
+                  <p className="text-sm text-gray-300 leading-relaxed">{profile.description.summary}</p>
                 )}
 
                 {profile.description.points.length > 0 && (
@@ -406,9 +383,7 @@ export default function ProfilePage() {
                 {profile.description.footer && (
                   <>
                     <div className="border-t border-gray-800" />
-                    <p className="text-xs text-gray-500 italic leading-relaxed">
-                      {profile.description.footer}
-                    </p>
+                    <p className="text-xs text-gray-500 italic leading-relaxed">{profile.description.footer}</p>
                   </>
                 )}
               </div>
@@ -444,20 +419,12 @@ export default function ProfilePage() {
 
             {/* Right — Contact + Wallet (1/3) */}
             <motion.div {...fadeUp(0.28)} className="space-y-5">
-
               {/* Contact */}
               <div className="rounded-3xl border border-gray-800/80 bg-gray-900/50 backdrop-blur-sm p-6 space-y-4">
-                <h2 className="font-syne text-xs uppercase tracking-[0.15em] text-gray-500 font-semibold">
-                  Contact
-                </h2>
+                <h2 className="font-syne text-xs uppercase tracking-[0.15em] text-gray-500 font-semibold">Contact</h2>
 
                 <div className="space-y-2.5">
-                  <SocialLink
-                    href={`mailto:${profile.email}`}
-                    icon={Mail}
-                    label="Email"
-                    value={profile.email}
-                  />
+                  <SocialLink href={`mailto:${profile.email}`} icon={Mail} label="Email" value={profile.email} />
                   <SocialLink
                     href={profile.github}
                     icon={FaGithub}
@@ -478,9 +445,7 @@ export default function ProfilePage() {
 
               {/* Wallet */}
               <div className="rounded-3xl border border-gray-800/80 bg-gray-900/50 backdrop-blur-sm p-6 space-y-3">
-                <h2 className="font-syne text-xs uppercase tracking-[0.15em] text-gray-500 font-semibold">
-                  Wallet
-                </h2>
+                <h2 className="font-syne text-xs uppercase tracking-[0.15em] text-gray-500 font-semibold">Wallet</h2>
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
@@ -489,12 +454,12 @@ export default function ProfilePage() {
                       Verified on-chain
                     </span>
                   </div>
-                  <p
-                    className="font-dm-mono text-[11px] text-gray-500 break-all leading-relaxed border border-gray-800 rounded-xl bg-gray-950/60 px-3 py-2 hover:text-indigo-400 transition-colors duration-150"
-                  >
-                    <a href={`https://etherscan.io/address/${profile.walletAddress}`}
-                    target="_blank"
-                    rel="noopener noreferrer">
+                  <p className="font-dm-mono text-[11px] text-gray-500 break-all leading-relaxed border border-gray-800 rounded-xl bg-gray-950/60 px-3 py-2 hover:text-indigo-400 transition-colors duration-150">
+                    <a
+                      href={`https://etherscan.io/address/${profile.walletAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {profile.walletAddress}
                     </a>
                   </p>

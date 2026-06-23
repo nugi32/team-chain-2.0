@@ -12,8 +12,6 @@ const fetchWithTimeout = async (url, options = {}, timeout = 15000) => {
       signal: controller.signal,
       headers: {
         Authorization: `${process.env.JWT_SECRET}`,
-        "Content-Type": "application/json",
-        ...options.headers,
       },
     });
     clearTimeout(timeoutId);
@@ -27,7 +25,7 @@ const fetchWithTimeout = async (url, options = {}, timeout = 15000) => {
 // GET semua user (public endpoint - no auth required)
 export const getAllUsers = async (_req, res) => {
   try {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/users`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_users`);
     if (!response.ok) {
       const errorText = await response.text();
       console.error(errorText);
@@ -51,7 +49,7 @@ export const getUserById = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/users/${id}`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_users/${id}`);
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -100,7 +98,7 @@ export const createUser = async (req, res) => {
       owner: value.walletAddress,
     };
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/users`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_users`, {
       method: "POST",
       body: JSON.stringify(userData),
       headers: {
@@ -140,11 +138,7 @@ export const updateUser = async (req, res) => {
     const updateData = { ...req.body };
     delete updateData.owner;
 
-    console.log(`[updateUser] Forwarding PUT to ${API_BASE_URL}/users/${id}`);
-    console.log(`[updateUser] Request body:`, JSON.stringify(updateData, null, 2));
-    console.log(`[updateUser] Authorization header:`, req.headers.authorization);
-
-    const response = await fetchWithTimeout(`${API_BASE_URL}/users/${id}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_users/${id}`, {
       method: "PUT",
       body: JSON.stringify(updateData),
       headers: {
@@ -180,7 +174,7 @@ export const deleteUser = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    const response = await fetchWithTimeout(`${API_BASE_URL}/users/${id}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/teamChain_users/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: req.headers.authorization,

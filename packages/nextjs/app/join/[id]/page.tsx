@@ -1,16 +1,51 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  ArrowLeft, Lock, DollarSign, Calendar, Clock, Star,
-  Users, Shield, BadgeCheck, Zap, AlertTriangle, Target,
-  Sparkles, CircleDot, Trophy, ChevronRight, ExternalLink,
-  Copy, Check, CheckCircle2, XCircle, GitCommit,
-  MessageSquare, Send, FileText, Link2, Hash,
-  TrendingUp, Flame, BarChart3, Activity, Info,
-  ChevronDown, ChevronUp, Play, Pause, HelpCircle,
-  GitBranch, Package, Upload, Eye, ThumbsUp, Flag,
+  Activity,
+  AlertTriangle,
+  ArrowLeft,
+  BadgeCheck,
+  BarChart3,
+  Calendar,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  CircleDot,
+  Clock,
+  Copy,
+  DollarSign,
+  ExternalLink,
+  Eye,
+  FileText,
+  Flag,
+  Flame,
+  GitBranch,
+  GitCommit,
+  Hash,
+  HelpCircle,
+  Info,
+  Link2,
+  Lock,
+  MessageSquare,
+  Package,
+  Pause,
+  Play,
+  Send,
+  Shield,
+  Sparkles,
+  Star,
+  Target,
+  ThumbsUp,
+  TrendingUp,
+  Trophy,
+  Upload,
+  Users,
+  XCircle,
+  Zap,
 } from "lucide-react";
 
 // ─────────────────────────────────────────────
@@ -109,96 +144,211 @@ The deliverable is a production-ready Next.js page with full TypeScript types, u
 
 const MILESTONES: Milestone[] = [
   {
-    id: "m1", index: 1,
+    id: "m1",
+    index: 1,
     title: "Wallet Connection Integration",
-    description: "Implement RainbowKit with MetaMask, WalletConnect, Coinbase Wallet. Persistent session, chain-switch prompts.",
-    reward: 35, deadline: "May 13, 2026",
+    description:
+      "Implement RainbowKit with MetaMask, WalletConnect, Coinbase Wallet. Persistent session, chain-switch prompts.",
+    reward: 35,
+    deadline: "May 13, 2026",
     status: "active",
-    approvals: 0, approvalsNeeded: 2,
+    approvals: 0,
+    approvalsNeeded: 2,
   },
   {
-    id: "m2", index: 2,
+    id: "m2",
+    index: 2,
     title: "Multi-Sig Transaction Queue UI",
     description: "Real-time pending queue with signer threshold, expiry countdown, gas estimates, and sign button.",
-    reward: 50, deadline: "May 15, 2026",
+    reward: 50,
+    deadline: "May 15, 2026",
     status: "pending",
-    approvals: 0, approvalsNeeded: 2,
+    approvals: 0,
+    approvalsNeeded: 2,
   },
   {
-    id: "m3", index: 3,
+    id: "m3",
+    index: 3,
     title: "Tests + Storybook Stories",
     description: "Unit tests for signature flow, Storybook stories for transaction card, final PR review.",
-    reward: 35, deadline: "May 16, 2026",
+    reward: 35,
+    deadline: "May 16, 2026",
     status: "pending",
-    approvals: 0, approvalsNeeded: 2,
+    approvals: 0,
+    approvalsNeeded: 2,
   },
 ];
 
 const COMMENTS: Comment[] = [
   {
-    id: "c1", author: "Alex M.", authorRep: 91, avatar: "AM",
+    id: "c1",
+    author: "Alex M.",
+    authorRep: 91,
+    avatar: "AM",
     avatarColor: "from-indigo-600 to-violet-600",
-    content: "Is WalletConnect v2 required or is v1 still acceptable for this scope? The migration adds some complexity.",
-    timestamp: "2h ago", likes: 3, isTeam: false,
+    content:
+      "Is WalletConnect v2 required or is v1 still acceptable for this scope? The migration adds some complexity.",
+    timestamp: "2h ago",
+    likes: 3,
+    isTeam: false,
   },
   {
-    id: "c2", author: "GovChain Team", authorRep: 91, avatar: "GC",
+    id: "c2",
+    author: "GovChain Team",
+    authorRep: 91,
+    avatar: "GC",
     avatarColor: "from-indigo-600 to-violet-600",
-    content: "WalletConnect v2 is required — we're targeting long-term support. RainbowKit 2.x handles the adapter for you so the migration overhead is minimal. Happy to answer follow-up questions.",
-    timestamp: "1h ago", likes: 7, isTeam: true,
+    content:
+      "WalletConnect v2 is required — we're targeting long-term support. RainbowKit 2.x handles the adapter for you so the migration overhead is minimal. Happy to answer follow-up questions.",
+    timestamp: "1h ago",
+    likes: 7,
+    isTeam: true,
   },
   {
-    id: "c3", author: "devkata.eth", authorRep: 78, avatar: "DK",
+    id: "c3",
+    author: "devkata.eth",
+    authorRep: 78,
+    avatar: "DK",
     avatarColor: "from-emerald-600 to-teal-600",
-    content: "For the multi-sig queue, should we use polling or WebSocket subscriptions? Polling seems simpler but WebSockets would give real-time updates.",
-    timestamp: "45m ago", likes: 2, isTeam: false,
+    content:
+      "For the multi-sig queue, should we use polling or WebSocket subscriptions? Polling seems simpler but WebSockets would give real-time updates.",
+    timestamp: "45m ago",
+    likes: 2,
+    isTeam: false,
   },
   {
-    id: "c4", author: "GovChain Team", authorRep: 91, avatar: "GC",
+    id: "c4",
+    author: "GovChain Team",
+    authorRep: 91,
+    avatar: "GC",
     avatarColor: "from-indigo-600 to-violet-600",
-    content: "WebSocket via Alchemy's Subscription API preferred — we already have the API key in the env setup. But polling fallback is acceptable if you document it.",
-    timestamp: "30m ago", likes: 5, isTeam: true,
+    content:
+      "WebSocket via Alchemy's Subscription API preferred — we already have the API key in the env setup. But polling fallback is acceptable if you document it.",
+    timestamp: "30m ago",
+    likes: 5,
+    isTeam: true,
   },
 ];
 
 const TX_EVENTS: TxEvent[] = [
-  { id: "e1", type: "stake_locked", label: "Stake locked into escrow", value: "40 ETH", timestamp: "May 8, 2026 09:14", txHash: "0xab3f...2c1d", actor: "GovChain DAO" },
-  { id: "e2", type: "application", label: "Application submitted", timestamp: "May 9, 2026 11:42", txHash: "0xcc91...5f3a", actor: "devkata.eth" },
-  { id: "e3", type: "application", label: "Application submitted", timestamp: "May 9, 2026 14:08", txHash: "0xd712...8e4b", actor: "0xmarcus.eth" },
-  { id: "e4", type: "review_started", label: "Review period started", timestamp: "May 10, 2026 10:00", txHash: "0xfe44...9a2c", actor: "GovChain DAO" },
+  {
+    id: "e1",
+    type: "stake_locked",
+    label: "Stake locked into escrow",
+    value: "40 ETH",
+    timestamp: "May 8, 2026 09:14",
+    txHash: "0xab3f...2c1d",
+    actor: "GovChain DAO",
+  },
+  {
+    id: "e2",
+    type: "application",
+    label: "Application submitted",
+    timestamp: "May 9, 2026 11:42",
+    txHash: "0xcc91...5f3a",
+    actor: "devkata.eth",
+  },
+  {
+    id: "e3",
+    type: "application",
+    label: "Application submitted",
+    timestamp: "May 9, 2026 14:08",
+    txHash: "0xd712...8e4b",
+    actor: "0xmarcus.eth",
+  },
+  {
+    id: "e4",
+    type: "review_started",
+    label: "Review period started",
+    timestamp: "May 10, 2026 10:00",
+    txHash: "0xfe44...9a2c",
+    actor: "GovChain DAO",
+  },
 ];
 
 const RELATED = [
-  { id: "r1", title: "Governance Proposal UI", project: "GovChain DAO", reward: 100, stake: 35, deadline: "6 days", skills: ["Next.js", "Ethers.js"], teamAvatar: "GC", avatarColor: "from-indigo-600 to-violet-600" },
-  { id: "r2", title: "Token Vesting Dashboard", project: "VestDAO", reward: 45, stake: 15, deadline: "7 days", skills: ["React", "Wagmi"], teamAvatar: "VD", avatarColor: "from-sky-600 to-blue-600" },
+  {
+    id: "r1",
+    title: "Governance Proposal UI",
+    project: "GovChain DAO",
+    reward: 100,
+    stake: 35,
+    deadline: "6 days",
+    skills: ["Next.js", "Ethers.js"],
+    teamAvatar: "GC",
+    avatarColor: "from-indigo-600 to-violet-600",
+  },
+  {
+    id: "r2",
+    title: "Token Vesting Dashboard",
+    project: "VestDAO",
+    reward: 45,
+    stake: 15,
+    deadline: "7 days",
+    skills: ["React", "Wagmi"],
+    teamAvatar: "VD",
+    avatarColor: "from-sky-600 to-blue-600",
+  },
 ];
 
 // ─────────────────────────────────────────────
 //  BADGE CONFIG
 // ─────────────────────────────────────────────
 const badgeConfig: Record<RiskBadge, { color: string; icon: React.ReactNode }> = {
-  "Low Risk":     { color: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20", icon: <Shield className="w-2.5 h-2.5" /> },
-  "Verified Team":{ color: "bg-indigo-500/15 text-indigo-400 border-indigo-500/20",   icon: <BadgeCheck className="w-2.5 h-2.5" /> },
-  "High Stake":   { color: "bg-amber-500/15 text-amber-400 border-amber-500/20",       icon: <Zap className="w-2.5 h-2.5" /> },
-  "Fast Review":  { color: "bg-sky-500/15 text-sky-400 border-sky-500/20",             icon: <Target className="w-2.5 h-2.5" /> },
-  "New Team":     { color: "bg-purple-500/15 text-purple-400 border-purple-500/20",    icon: <Sparkles className="w-2.5 h-2.5" /> },
-  "Urgent":       { color: "bg-red-500/15 text-red-400 border-red-500/20",             icon: <AlertTriangle className="w-2.5 h-2.5" /> },
+  "Low Risk": {
+    color: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
+    icon: <Shield className="w-2.5 h-2.5" />,
+  },
+  "Verified Team": {
+    color: "bg-indigo-500/15 text-indigo-400 border-indigo-500/20",
+    icon: <BadgeCheck className="w-2.5 h-2.5" />,
+  },
+  "High Stake": { color: "bg-amber-500/15 text-amber-400 border-amber-500/20", icon: <Zap className="w-2.5 h-2.5" /> },
+  "Fast Review": { color: "bg-sky-500/15 text-sky-400 border-sky-500/20", icon: <Target className="w-2.5 h-2.5" /> },
+  "New Team": {
+    color: "bg-purple-500/15 text-purple-400 border-purple-500/20",
+    icon: <Sparkles className="w-2.5 h-2.5" />,
+  },
+  Urgent: { color: "bg-red-500/15 text-red-400 border-red-500/20", icon: <AlertTriangle className="w-2.5 h-2.5" /> },
 };
 
-const milestoneStatusConfig: Record<MilestoneStatus, { color: string; bg: string; icon: React.ReactNode; label: string }> = {
-  completed: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", icon: <CheckCircle2 className="w-4 h-4" />, label: "Completed" },
-  active:    { color: "text-indigo-400",  bg: "bg-indigo-500/10 border-indigo-500/20",   icon: <Play className="w-4 h-4" />,         label: "In Progress" },
-  pending:   { color: "text-gray-500",    bg: "bg-gray-800/60 border-gray-700/40",        icon: <Pause className="w-4 h-4" />,        label: "Pending" },
-  disputed:  { color: "text-red-400",     bg: "bg-red-500/10 border-red-500/20",          icon: <Flag className="w-4 h-4" />,         label: "Disputed" },
+const milestoneStatusConfig: Record<
+  MilestoneStatus,
+  { color: string; bg: string; icon: React.ReactNode; label: string }
+> = {
+  completed: {
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/10 border-emerald-500/20",
+    icon: <CheckCircle2 className="w-4 h-4" />,
+    label: "Completed",
+  },
+  active: {
+    color: "text-indigo-400",
+    bg: "bg-indigo-500/10 border-indigo-500/20",
+    icon: <Play className="w-4 h-4" />,
+    label: "In Progress",
+  },
+  pending: {
+    color: "text-gray-500",
+    bg: "bg-gray-800/60 border-gray-700/40",
+    icon: <Pause className="w-4 h-4" />,
+    label: "Pending",
+  },
+  disputed: {
+    color: "text-red-400",
+    bg: "bg-red-500/10 border-red-500/20",
+    icon: <Flag className="w-4 h-4" />,
+    label: "Disputed",
+  },
 };
 
 const txIconConfig: Record<TxEvent["type"], { icon: React.ReactNode; color: string }> = {
-  stake_locked:       { icon: <Lock className="w-3.5 h-3.5" />,         color: "text-amber-400 bg-amber-500/10" },
+  stake_locked: { icon: <Lock className="w-3.5 h-3.5" />, color: "text-amber-400 bg-amber-500/10" },
   milestone_approved: { icon: <CheckCircle2 className="w-3.5 h-3.5" />, color: "text-emerald-400 bg-emerald-500/10" },
-  reward_released:    { icon: <DollarSign className="w-3.5 h-3.5" />,   color: "text-emerald-400 bg-emerald-500/10" },
-  dispute_opened:     { icon: <Flag className="w-3.5 h-3.5" />,         color: "text-red-400 bg-red-500/10" },
-  application:        { icon: <Users className="w-3.5 h-3.5" />,        color: "text-indigo-400 bg-indigo-500/10" },
-  review_started:     { icon: <Eye className="w-3.5 h-3.5" />,          color: "text-sky-400 bg-sky-500/10" },
+  reward_released: { icon: <DollarSign className="w-3.5 h-3.5" />, color: "text-emerald-400 bg-emerald-500/10" },
+  dispute_opened: { icon: <Flag className="w-3.5 h-3.5" />, color: "text-red-400 bg-red-500/10" },
+  application: { icon: <Users className="w-3.5 h-3.5" />, color: "text-indigo-400 bg-indigo-500/10" },
+  review_started: { icon: <Eye className="w-3.5 h-3.5" />, color: "text-sky-400 bg-sky-500/10" },
 };
 
 // ─────────────────────────────────────────────
@@ -207,15 +357,20 @@ const txIconConfig: Record<TxEvent["type"], { icon: React.ReactNode; color: stri
 function BadgeChip({ badge }: { badge: RiskBadge }) {
   const cfg = badgeConfig[badge];
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] font-semibold ${cfg.color}`}>
-      {cfg.icon}{badge}
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] font-semibold ${cfg.color}`}
+    >
+      {cfg.icon}
+      {badge}
     </span>
   );
 }
 
 function SkillTag({ skill, size = "sm" }: { skill: string; size?: "sm" | "md" }) {
   return (
-    <span className={`px-2 py-0.5 rounded-md bg-gray-800 border border-gray-700/60 font-mono text-gray-400 ${size === "md" ? "text-xs" : "text-[10px]"}`}>
+    <span
+      className={`px-2 py-0.5 rounded-md bg-gray-800 border border-gray-700/60 font-mono text-gray-400 ${size === "md" ? "text-xs" : "text-[10px]"}`}
+    >
       {skill}
     </span>
   );
@@ -225,7 +380,11 @@ function CopyButton({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
-      onClick={() => { navigator.clipboard.writeText(value); setCopied(true); setTimeout(() => setCopied(false), 1800); }}
+      onClick={() => {
+        navigator.clipboard.writeText(value);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1800);
+      }}
       className="text-gray-600 hover:text-gray-400 transition-colors ml-1.5"
     >
       {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
@@ -234,19 +393,17 @@ function CopyButton({ value }: { value: string }) {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-[10px] uppercase tracking-widest text-gray-600 font-bold mb-3">{children}</p>
-  );
+  return <p className="text-[10px] uppercase tracking-widest text-gray-600 font-bold mb-3">{children}</p>;
 }
 
 // ─────────────────────────────────────────────
 //  TABS
 // ─────────────────────────────────────────────
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-  { key: "overview",    label: "Overview",    icon: <FileText className="w-3.5 h-3.5" /> },
-  { key: "milestones", label: "Milestones",  icon: <GitCommit className="w-3.5 h-3.5" /> },
-  { key: "onchain",    label: "On-Chain",    icon: <Activity className="w-3.5 h-3.5" /> },
-  { key: "discussion", label: "Discussion",  icon: <MessageSquare className="w-3.5 h-3.5" /> },
+  { key: "overview", label: "Overview", icon: <FileText className="w-3.5 h-3.5" /> },
+  { key: "milestones", label: "Milestones", icon: <GitCommit className="w-3.5 h-3.5" /> },
+  { key: "onchain", label: "On-Chain", icon: <Activity className="w-3.5 h-3.5" /> },
+  { key: "discussion", label: "Discussion", icon: <MessageSquare className="w-3.5 h-3.5" /> },
 ];
 
 // ─────────────────────────────────────────────
@@ -272,7 +429,15 @@ function OverviewTab() {
                     const bold = line.replace(/\*\*(.*?)\*\*/g, "§§$1§§").split("§§");
                     return (
                       <p key={j} className={line.startsWith("**") ? "font-semibold text-gray-200 mt-2" : ""}>
-                        {bold.map((seg, k) => k % 2 === 1 ? <strong key={k} className="text-gray-200 font-semibold">{seg}</strong> : seg)}
+                        {bold.map((seg, k) =>
+                          k % 2 === 1 ? (
+                            <strong key={k} className="text-gray-200 font-semibold">
+                              {seg}
+                            </strong>
+                          ) : (
+                            seg
+                          ),
+                        )}
                       </p>
                     );
                   })}
@@ -288,7 +453,15 @@ function OverviewTab() {
           onClick={() => setExpanded(p => !p)}
           className="mt-2 text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
         >
-          {expanded ? <><ChevronUp className="w-3.5 h-3.5" /> Show less</> : <><ChevronDown className="w-3.5 h-3.5" /> Read more</>}
+          {expanded ? (
+            <>
+              <ChevronUp className="w-3.5 h-3.5" /> Show less
+            </>
+          ) : (
+            <>
+              <ChevronDown className="w-3.5 h-3.5" /> Read more
+            </>
+          )}
         </button>
       </div>
 
@@ -315,7 +488,9 @@ function OverviewTab() {
       <div>
         <SectionLabel>Required Skills</SectionLabel>
         <div className="flex flex-wrap gap-2">
-          {TASK.skills.map(s => <SkillTag key={s} skill={s} size="md" />)}
+          {TASK.skills.map(s => (
+            <SkillTag key={s} skill={s} size="md" />
+          ))}
         </div>
       </div>
 
@@ -329,7 +504,9 @@ function OverviewTab() {
               <div key={m.id} className={`flex items-center gap-3 p-3 rounded-xl border ${cfg.bg}`}>
                 <span className={`flex-shrink-0 ${cfg.color}`}>{cfg.icon}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-gray-200 truncate">M{m.index}: {m.title}</p>
+                  <p className="text-xs font-semibold text-gray-200 truncate">
+                    M{m.index}: {m.title}
+                  </p>
                   <p className="text-[10px] text-gray-600 mt-0.5">Due {m.deadline}</p>
                 </div>
                 <span className={`text-xs font-bold ${cfg.color} flex-shrink-0`}>{m.reward} ETH</span>
@@ -352,19 +529,27 @@ function OverviewTab() {
                 <h3 className="text-sm font-bold text-gray-100">{TASK.teamName}</h3>
                 <BadgeChip badge="Verified Team" />
               </div>
-              <p className="text-xs text-gray-500 mb-3">On-chain governance infrastructure and DAO tooling on Ethereum.</p>
+              <p className="text-xs text-gray-500 mb-3">
+                On-chain governance infrastructure and DAO tooling on Ethereum.
+              </p>
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-xs text-gray-400"><span className="font-semibold text-gray-200">{TASK.teamRep}</span> reputation</span>
+                  <span className="text-xs text-gray-400">
+                    <span className="font-semibold text-gray-200">{TASK.teamRep}</span> reputation
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <CircleDot className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-xs text-gray-400"><span className="font-semibold text-gray-200">{TASK.teamCompletions}</span> completions</span>
+                  <span className="text-xs text-gray-400">
+                    <span className="font-semibold text-gray-200">{TASK.teamCompletions}</span> completions
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5 text-indigo-400" />
-                  <span className="text-xs text-gray-400"><span className="font-semibold text-gray-200">{TASK.teamMembers}</span> members</span>
+                  <span className="text-xs text-gray-400">
+                    <span className="font-semibold text-gray-200">{TASK.teamMembers}</span> members
+                  </span>
                 </div>
               </div>
             </div>
@@ -388,7 +573,9 @@ function MilestonesTab() {
       <div className="rounded-2xl border border-gray-800 bg-gray-900/60 p-5">
         <div className="flex items-center justify-between mb-3">
           <SectionLabel>Overall Progress</SectionLabel>
-          <span className="text-xs font-semibold text-gray-400">{completedCount}/{MILESTONES.length} completed</span>
+          <span className="text-xs font-semibold text-gray-400">
+            {completedCount}/{MILESTONES.length} completed
+          </span>
         </div>
         <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
           <motion.div
@@ -409,12 +596,16 @@ function MilestonesTab() {
       <div className="flex items-center gap-3 text-xs text-gray-500">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded bg-indigo-600" />
-          <span>Locked stake: <span className="text-amber-400 font-semibold">{TASK.stake} ETH</span></span>
+          <span>
+            Locked stake: <span className="text-amber-400 font-semibold">{TASK.stake} ETH</span>
+          </span>
         </div>
         <span>·</span>
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded bg-emerald-600" />
-          <span>Total reward pool: <span className="text-emerald-400 font-semibold">{TASK.reward} ETH</span></span>
+          <span>
+            Total reward pool: <span className="text-emerald-400 font-semibold">{TASK.reward} ETH</span>
+          </span>
         </div>
       </div>
 
@@ -437,7 +628,9 @@ function MilestonesTab() {
                 className="relative flex gap-4"
               >
                 {/* timeline node */}
-                <div className={`relative z-10 w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 ${cfg.bg} ${cfg.color}`}>
+                <div
+                  className={`relative z-10 w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 ${cfg.bg} ${cfg.color}`}
+                >
                   {cfg.icon}
                 </div>
 
@@ -447,7 +640,9 @@ function MilestonesTab() {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-[10px] text-gray-600 font-mono">M{m.index}</span>
-                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md border ${cfg.bg} ${cfg.color}`}>
+                        <span
+                          className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md border ${cfg.bg} ${cfg.color}`}
+                        >
                           {cfg.label}
                         </span>
                       </div>
@@ -469,7 +664,9 @@ function MilestonesTab() {
                       </div>
                       <div className="flex items-center gap-1 text-[10px] text-gray-600">
                         <ThumbsUp className="w-3 h-3" />
-                        <span>{m.approvals}/{m.approvalsNeeded} approvals</span>
+                        <span>
+                          {m.approvals}/{m.approvalsNeeded} approvals
+                        </span>
                       </div>
                     </div>
 
@@ -495,7 +692,9 @@ function MilestonesTab() {
                     <div className="mt-3 pt-3 border-t border-gray-800/60">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-[10px] text-gray-600">Approval progress</span>
-                        <span className="text-[10px] font-semibold text-indigo-400">{m.approvals}/{m.approvalsNeeded}</span>
+                        <span className="text-[10px] font-semibold text-indigo-400">
+                          {m.approvals}/{m.approvalsNeeded}
+                        </span>
                       </div>
                       <div className="h-1.5 bg-gray-800 rounded-full">
                         <motion.div
@@ -536,7 +735,9 @@ function OnChainTab() {
             <div key={row.label} className="flex items-center justify-between px-4 py-3">
               <span className="text-xs text-gray-500">{row.label}</span>
               <div className="flex items-center gap-1">
-                <span className={`text-xs font-semibold text-gray-200 ${row.mono ? "font-mono" : ""}`}>{row.value}</span>
+                <span className={`text-xs font-semibold text-gray-200 ${row.mono ? "font-mono" : ""}`}>
+                  {row.value}
+                </span>
                 {row.copy && <CopyButton value={row.value} />}
               </div>
             </div>
@@ -549,9 +750,27 @@ function OnChainTab() {
         <SectionLabel>Economic Breakdown</SectionLabel>
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: "Stake Locked", value: `${TASK.stake} ETH`, icon: <Lock className="w-4 h-4" />, color: "text-amber-400", sub: "Returned on success" },
-            { label: "Reward Pool", value: `${TASK.reward} ETH`, icon: <DollarSign className="w-4 h-4" />, color: "text-emerald-400", sub: "Paid per milestone" },
-            { label: "Total Value", value: `${TASK.totalValue} ETH`, icon: <BarChart3 className="w-4 h-4" />, color: "text-indigo-400", sub: "At risk for worker" },
+            {
+              label: "Stake Locked",
+              value: `${TASK.stake} ETH`,
+              icon: <Lock className="w-4 h-4" />,
+              color: "text-amber-400",
+              sub: "Returned on success",
+            },
+            {
+              label: "Reward Pool",
+              value: `${TASK.reward} ETH`,
+              icon: <DollarSign className="w-4 h-4" />,
+              color: "text-emerald-400",
+              sub: "Paid per milestone",
+            },
+            {
+              label: "Total Value",
+              value: `${TASK.totalValue} ETH`,
+              icon: <BarChart3 className="w-4 h-4" />,
+              color: "text-indigo-400",
+              sub: "At risk for worker",
+            },
           ].map(item => (
             <div key={item.label} className="rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-center">
               <div className={`flex justify-center mb-1 ${item.color}`}>{item.icon}</div>
@@ -568,10 +787,26 @@ function OnChainTab() {
         <SectionLabel>Payout Mechanism</SectionLabel>
         <div className="rounded-2xl border border-gray-800 bg-gray-900/60 p-4 space-y-3">
           {[
-            { step: "1", text: "Worker stakes 40 ETH into the escrow contract on joining.", icon: <Lock className="w-3.5 h-3.5 text-amber-400" /> },
-            { step: "2", text: "Each milestone reward is released upon 2-of-3 team approvals on-chain.", icon: <ThumbsUp className="w-3.5 h-3.5 text-indigo-400" /> },
-            { step: "3", text: "Stake is returned in full upon final milestone approval.", icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> },
-            { step: "4", text: "Disputes trigger a 72h arbitration window with DAO voting.", icon: <Flag className="w-3.5 h-3.5 text-red-400" /> },
+            {
+              step: "1",
+              text: "Worker stakes 40 ETH into the escrow contract on joining.",
+              icon: <Lock className="w-3.5 h-3.5 text-amber-400" />,
+            },
+            {
+              step: "2",
+              text: "Each milestone reward is released upon 2-of-3 team approvals on-chain.",
+              icon: <ThumbsUp className="w-3.5 h-3.5 text-indigo-400" />,
+            },
+            {
+              step: "3",
+              text: "Stake is returned in full upon final milestone approval.",
+              icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />,
+            },
+            {
+              step: "4",
+              text: "Disputes trigger a 72h arbitration window with DAO voting.",
+              icon: <Flag className="w-3.5 h-3.5 text-red-400" />,
+            },
           ].map(item => (
             <div key={item.step} className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center flex-shrink-0 text-[10px] text-gray-500 font-bold">
@@ -639,16 +874,21 @@ function DiscussionTab() {
   const handleSubmit = () => {
     if (!newComment.trim()) return;
     const c: Comment = {
-      id: `c${Date.now()}`, author: "You", authorRep: 0, avatar: "ME",
+      id: `c${Date.now()}`,
+      author: "You",
+      authorRep: 0,
+      avatar: "ME",
       avatarColor: "from-violet-600 to-purple-600",
-      content: newComment, timestamp: "just now", likes: 0,
+      content: newComment,
+      timestamp: "just now",
+      likes: 0,
     };
     setComments(p => [...p, c]);
     setNewComment("");
   };
 
   const toggleLike = (id: string) => {
-    setLikedIds(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+    setLikedIds(p => (p.includes(id) ? p.filter(x => x !== id) : [...p, id]));
   };
 
   return (
@@ -671,17 +911,22 @@ function DiscussionTab() {
             transition={{ delay: i * 0.06 }}
             className={`flex gap-3 ${c.isTeam ? "bg-indigo-500/5 border border-indigo-500/10 rounded-2xl p-4" : ""}`}
           >
-            <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${c.avatarColor} flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white`}>
+            <div
+              className={`w-8 h-8 rounded-xl bg-gradient-to-br ${c.avatarColor} flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white`}
+            >
               {c.avatar}
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-xs font-semibold text-gray-200">{c.author}</span>
                 {c.isTeam && (
-                  <span className="px-1.5 py-0.5 rounded bg-indigo-600/20 border border-indigo-500/30 text-[9px] font-bold text-indigo-400 uppercase tracking-wide">Team</span>
+                  <span className="px-1.5 py-0.5 rounded bg-indigo-600/20 border border-indigo-500/30 text-[9px] font-bold text-indigo-400 uppercase tracking-wide">
+                    Team
+                  </span>
                 )}
                 <span className="flex items-center gap-0.5 text-[10px] text-amber-400/70">
-                  <Star className="w-2.5 h-2.5" />{c.authorRep}
+                  <Star className="w-2.5 h-2.5" />
+                  {c.authorRep}
                 </span>
                 <span className="text-[10px] text-gray-700 ml-auto">{c.timestamp}</span>
               </div>
@@ -717,7 +962,8 @@ function DiscussionTab() {
         <div className="flex items-center justify-between mt-3">
           <p className="text-[10px] text-gray-700">Visible to all applicants and the team</p>
           <motion.button
-            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={handleSubmit}
             disabled={!newComment.trim()}
             className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors flex items-center gap-1.5"
@@ -739,7 +985,10 @@ function ApplySidebar() {
 
   const handleApply = () => {
     setApplying(true);
-    setTimeout(() => { setApplying(false); setApplied(true); }, 1400);
+    setTimeout(() => {
+      setApplying(false);
+      setApplied(true);
+    }, 1400);
   };
 
   const isUrgent = TASK.deadlineDays <= 5;
@@ -763,10 +1012,30 @@ function ApplySidebar() {
         {/* meta rows */}
         <div className="space-y-2 pt-1">
           {[
-            { icon: <Calendar className="w-3.5 h-3.5 text-gray-500" />, label: "Deadline", value: TASK.deadlineDate, highlight: isUrgent ? "text-red-400" : "text-gray-300" },
-            { icon: <Clock className="w-3.5 h-3.5 text-gray-500" />, label: "Est. effort", value: TASK.effort, highlight: "text-gray-300" },
-            { icon: <Star className="w-3.5 h-3.5 text-gray-500" />, label: "Required REP", value: `${TASK.requiredRep}+`, highlight: "text-indigo-400" },
-            { icon: <Users className="w-3.5 h-3.5 text-gray-500" />, label: "Open slots", value: `${TASK.slots - TASK.applicants} of ${TASK.slots}`, highlight: "text-emerald-400" },
+            {
+              icon: <Calendar className="w-3.5 h-3.5 text-gray-500" />,
+              label: "Deadline",
+              value: TASK.deadlineDate,
+              highlight: isUrgent ? "text-red-400" : "text-gray-300",
+            },
+            {
+              icon: <Clock className="w-3.5 h-3.5 text-gray-500" />,
+              label: "Est. effort",
+              value: TASK.effort,
+              highlight: "text-gray-300",
+            },
+            {
+              icon: <Star className="w-3.5 h-3.5 text-gray-500" />,
+              label: "Required REP",
+              value: `${TASK.requiredRep}+`,
+              highlight: "text-indigo-400",
+            },
+            {
+              icon: <Users className="w-3.5 h-3.5 text-gray-500" />,
+              label: "Open slots",
+              value: `${TASK.slots - TASK.applicants} of ${TASK.slots}`,
+              highlight: "text-emerald-400",
+            },
           ].map(row => (
             <div key={row.label} className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
@@ -785,19 +1054,26 @@ function ApplySidebar() {
         {!applied ? (
           <div className="space-y-2">
             <motion.button
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
               onClick={handleApply}
               disabled={applying}
               className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white text-sm font-bold transition-colors flex items-center justify-center gap-2"
             >
               {applying ? (
-                <><span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" /> Submitting…</>
+                <>
+                  <span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />{" "}
+                  Submitting…
+                </>
               ) : (
-                <>Apply for Task <ChevronRight className="w-4 h-4" /></>
+                <>
+                  Apply for Task <ChevronRight className="w-4 h-4" />
+                </>
               )}
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
               className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold transition-colors flex items-center justify-center gap-2"
             >
               <Zap className="w-4 h-4" /> Stake & Join Instantly
@@ -805,7 +1081,8 @@ function ApplySidebar() {
           </div>
         ) : (
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             className="rounded-xl bg-emerald-500/10 border border-emerald-500/25 p-4 text-center"
           >
             <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
@@ -816,8 +1093,7 @@ function ApplySidebar() {
 
         {/* gas note */}
         <p className="text-[10px] text-gray-700 text-center flex items-center justify-center gap-1">
-          <Info className="w-3 h-3" />
-          A small gas fee is required to submit on-chain.
+          <Info className="w-3 h-3" />A small gas fee is required to submit on-chain.
         </p>
       </div>
 
@@ -828,7 +1104,8 @@ function ApplySidebar() {
           <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Stake Risk</span>
         </div>
         <p className="text-[11px] text-amber-200/60 leading-relaxed">
-          Your <strong className="text-amber-400">{TASK.stake} ETH stake</strong> is held in escrow and returned upon final milestone approval. Failure to deliver may result in partial or full stake slash per protocol rules.
+          Your <strong className="text-amber-400">{TASK.stake} ETH stake</strong> is held in escrow and returned upon
+          final milestone approval. Failure to deliver may result in partial or full stake slash per protocol rules.
         </p>
         <button className="text-[10px] text-amber-400/70 hover:text-amber-400 flex items-center gap-1 transition-colors">
           Read protocol rules <ExternalLink className="w-3 h-3" />
@@ -841,8 +1118,10 @@ function ApplySidebar() {
         <div className="space-y-2">
           {["devkata.eth", "0xmarcus.eth", "lila.dev"].slice(0, TASK.applicants).map((addr, i) => (
             <div key={i} className="flex items-center gap-2.5">
-              <div className={`w-7 h-7 rounded-lg bg-gradient-to-br flex-shrink-0 flex items-center justify-center text-[9px] font-bold text-white
-                ${i === 0 ? "from-emerald-600 to-teal-600" : i === 1 ? "from-violet-600 to-purple-600" : "from-rose-600 to-pink-600"}`}>
+              <div
+                className={`w-7 h-7 rounded-lg bg-gradient-to-br flex-shrink-0 flex items-center justify-center text-[9px] font-bold text-white
+                ${i === 0 ? "from-emerald-600 to-teal-600" : i === 1 ? "from-violet-600 to-purple-600" : "from-rose-600 to-pink-600"}`}
+              >
                 {addr.slice(0, 2).toUpperCase()}
               </div>
               <span className="text-xs text-gray-400 font-mono">{addr}</span>
@@ -866,13 +1145,16 @@ export default function TaskDetailPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       {/* bg grid */}
-      <div className="fixed inset-0 pointer-events-none" style={{
-        backgroundImage: "linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px)",
-        backgroundSize: "48px 48px",
-      }} />
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
       <div className="relative max-w-[1320px] mx-auto px-4 sm:px-6 py-6">
-
         {/* ── BACK BREADCRUMB ── */}
         <motion.div
           initial={{ opacity: 0, x: -8 }}
@@ -909,7 +1191,9 @@ export default function TaskDetailPage() {
                 </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                    {TASK.badges.map(b => <BadgeChip key={b} badge={b} />)}
+                    {TASK.badges.map(b => (
+                      <BadgeChip key={b} badge={b} />
+                    ))}
                     {isUrgent && (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border bg-red-500/15 text-red-400 border-red-500/20 text-[10px] font-semibold">
                         <Flame className="w-2.5 h-2.5" /> Urgent
@@ -940,13 +1224,41 @@ export default function TaskDetailPage() {
             {/* 5-metric strip */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               {[
-                { icon: <Lock className="w-3.5 h-3.5" />, label: "Stake", value: `${TASK.stake} ETH`, color: "text-amber-400" },
-                { icon: <DollarSign className="w-3.5 h-3.5" />, label: "Reward", value: `${TASK.reward} ETH`, color: "text-emerald-400" },
-                { icon: <Calendar className="w-3.5 h-3.5" />, label: "Deadline", value: TASK.deadline, color: isUrgent ? "text-red-400" : "text-gray-200" },
-                { icon: <Star className="w-3.5 h-3.5" />, label: "Min REP", value: `${TASK.requiredRep}+`, color: "text-indigo-400" },
-                { icon: <Users className="w-3.5 h-3.5" />, label: "Slots", value: `${TASK.applicants}/${TASK.slots}`, color: "text-gray-300" },
+                {
+                  icon: <Lock className="w-3.5 h-3.5" />,
+                  label: "Stake",
+                  value: `${TASK.stake} ETH`,
+                  color: "text-amber-400",
+                },
+                {
+                  icon: <DollarSign className="w-3.5 h-3.5" />,
+                  label: "Reward",
+                  value: `${TASK.reward} ETH`,
+                  color: "text-emerald-400",
+                },
+                {
+                  icon: <Calendar className="w-3.5 h-3.5" />,
+                  label: "Deadline",
+                  value: TASK.deadline,
+                  color: isUrgent ? "text-red-400" : "text-gray-200",
+                },
+                {
+                  icon: <Star className="w-3.5 h-3.5" />,
+                  label: "Min REP",
+                  value: `${TASK.requiredRep}+`,
+                  color: "text-indigo-400",
+                },
+                {
+                  icon: <Users className="w-3.5 h-3.5" />,
+                  label: "Slots",
+                  value: `${TASK.applicants}/${TASK.slots}`,
+                  color: "text-gray-300",
+                },
               ].map(m => (
-                <div key={m.label} className="rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2.5 flex items-center gap-2">
+                <div
+                  key={m.label}
+                  className="rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2.5 flex items-center gap-2"
+                >
                   <span className={m.color}>{m.icon}</span>
                   <div>
                     <p className={`text-sm font-bold ${m.color}`}>{m.value}</p>
@@ -960,10 +1272,8 @@ export default function TaskDetailPage() {
 
         {/* ── MAIN LAYOUT ── */}
         <div className="flex gap-6 items-start">
-
           {/* ── LEFT: tabs + content ── */}
           <div className="flex-1 min-w-0">
-
             {/* Tab bar */}
             <div className="flex items-center gap-1 mb-6 border-b border-gray-800 pb-0">
               {TABS.map(tab => (
@@ -976,7 +1286,10 @@ export default function TaskDetailPage() {
                 >
                   {tab.icon} {tab.label}
                   {activeTab === tab.key && (
-                    <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-full" />
+                    <motion.div
+                      layoutId="tab-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-full"
+                    />
                   )}
                 </button>
               ))}
@@ -991,9 +1304,9 @@ export default function TaskDetailPage() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18 }}
               >
-                {activeTab === "overview"    && <OverviewTab />}
+                {activeTab === "overview" && <OverviewTab />}
                 {activeTab === "milestones" && <MilestonesTab />}
-                {activeTab === "onchain"    && <OnChainTab />}
+                {activeTab === "onchain" && <OnChainTab />}
                 {activeTab === "discussion" && <DiscussionTab />}
               </motion.div>
             </AnimatePresence>
@@ -1022,7 +1335,9 @@ export default function TaskDetailPage() {
                 className="rounded-2xl border border-gray-800 bg-gray-900 p-4 cursor-pointer hover:border-gray-700 transition-colors"
               >
                 <div className="flex items-start gap-3 mb-3">
-                  <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${r.avatarColor} flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white`}>
+                  <div
+                    className={`w-8 h-8 rounded-xl bg-gradient-to-br ${r.avatarColor} flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white`}
+                  >
                     {r.teamAvatar}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -1040,7 +1355,12 @@ export default function TaskDetailPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-wrap gap-1">
                     {r.skills.slice(0, 2).map(s => (
-                      <span key={s} className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700/50 text-[9px] font-mono text-gray-500">{s}</span>
+                      <span
+                        key={s}
+                        className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700/50 text-[9px] font-mono text-gray-500"
+                      >
+                        {s}
+                      </span>
                     ))}
                   </div>
                   <ChevronRight className="w-4 h-4 text-gray-600" />

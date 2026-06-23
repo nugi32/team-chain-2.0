@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import ConfirmModal from "./ConfirmModal";
+import SectionHeading from "./SectionHeading";
+import { useDangerSection } from "@/utils/lib/dangerSection";
+import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
 import { AnimatePresence } from "framer-motion";
 import { AlertTriangle, LogOut, Trash2 } from "lucide-react";
-import SectionHeading from "./SectionHeading";
-import ConfirmModal from "./ConfirmModal";
-
-import { useUsersContract } from "@/utils/lib/smartContractWrapper/user/User";
-import { useDangerSection } from "@/utils/lib/dangerSection";
 import { useAccount } from "wagmi";
 import { notification } from "~~/utils/scaffold-eth";
-import { useParams } from "next/navigation";
 
 export default function DangerSection() {
   const [modal, setModal] = useState<null | "deactivate" | "delete" | "logout">(null);
@@ -113,10 +112,14 @@ export default function DangerSection() {
             desc="You'll need to reconnect your wallet to access your account again."
             cta="Sign out"
             ctaClass="bg-gray-700 hover:bg-gray-600"
-            onConfirm={() => { localStorage.clear(); setModal(null); }}
+            onConfirm={() => {
+              localStorage.clear();
+              setModal(null);
+            }}
             onClose={() => setModal(null)}
           />
-        )}/*
+        )}
+        /*
         {modal === "deactivate" && (
           <ConfirmModal
             title="Deactivate your account?"
@@ -126,14 +129,18 @@ export default function DangerSection() {
             onConfirm={() => setModal(null)}
             onClose={() => setModal(null)}
           />
-        )}*/
+        )}
+        */
         {modal === "delete" && (
           <ConfirmModal
             title="Permanently delete account?"
             desc="This cannot be undone. Your profile, reputation score, and off-chain data will be erased. On-chain activity remains on the blockchain."
             cta="Delete forever"
             ctaClass="bg-red-600 hover:bg-red-500"
-            onConfirm={() => { setProcessDelete(true); setModal(null); }}
+            onConfirm={() => {
+              setProcessDelete(true);
+              setModal(null);
+            }}
             onClose={() => setModal(null)}
           />
         )}

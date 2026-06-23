@@ -1,21 +1,36 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import type { FormData } from "./types";
+import {
+  BackendTaskPayload,
+  type SmartContractTaskPayload,
+  useTaskCreation,
+} from "@/utils/lib/taskLib/TaskLifecycleLogic/taskCreation";
 import { motion } from "framer-motion";
 import {
-  Rocket, AlertTriangle, ArrowUpRight, Tag, Hash, Coins, Users, Clock, Target, Zap, Star, Shield,
+  AlertTriangle,
+  ArrowUpRight,
+  Clock,
+  Coins,
+  Hash,
+  Rocket,
+  Shield,
+  Star,
+  Tag,
+  Target,
+  Users,
+  Zap,
 } from "lucide-react";
-import type { FormData } from "./types";
-import { useTaskCreation, type SmartContractTaskPayload, BackendTaskPayload } from "@/utils/lib/taskLib/TaskLifecycleLogic/taskCreation";
 import { useAccount } from "wagmi";
 import { notification } from "~~/utils/scaffold-eth";
-import Link from "next/link";
 
 // Simple UUID v4 generator for browser
 function generateUUID(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === "x" ? r : (r & 0x3 | 0x8);
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -26,7 +41,7 @@ const BADGE_MAP: Record<string, string> = {
   "High Stake": "bg-red-500/10 text-red-400 border-red-500/20",
   "Fast Review": "bg-amber-500/10 text-amber-400 border-amber-500/20",
   "New Team": "bg-gray-500/10 text-gray-400 border-gray-500/20",
-  "Urgent": "bg-red-500/10 text-red-400 border-red-500/20",
+  Urgent: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 
 export default function Step4({
@@ -52,9 +67,8 @@ export default function Step4({
   const buildSmartContractPayload = (): SmartContractTaskPayload => {
     // Calculate hours from date: (date - now) / 3,600,000 ms/hour
     const deadlineMs = data.deadline ? new Date(data.deadline).getTime() - Date.now() : null;
-    const deadlineHours = deadlineMs !== null && deadlineMs > 3_600_000
-      ? BigInt(Math.ceil(deadlineMs / 3_600_000))
-      : BigInt(0);
+    const deadlineHours =
+      deadlineMs !== null && deadlineMs > 3_600_000 ? BigInt(Math.ceil(deadlineMs / 3_600_000)) : BigInt(0);
     const maxRevisions = BigInt(parseInt(data.maxRevisions) || 1);
 
     return {
@@ -130,14 +144,20 @@ export default function Step4({
         </div>
         <h3 className="text-base font-bold text-white mb-2">Task published on-chain</h3>
         <p className="text-xs text-gray-500 max-w-xs leading-relaxed mb-6">
-          Your task is live and visible to workers on the marketplace. You'll receive a notification when the first application arrives.
+          Your task is live and visible to workers on the marketplace. You'll receive a notification when the first
+          application arrives.
         </p>
         <div className="flex gap-2">
-          <Link href={`/dashboard/${localStorage.getItem("userId")}`} className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-800 text-xs text-gray-400 hover:text-white hover:border-gray-700 transition-colors">
+          <Link
+            href={`/dashboard/${localStorage.getItem("userId")}`}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-800 text-xs text-gray-400 hover:text-white hover:border-gray-700 transition-colors"
+          >
             View task <ArrowUpRight className="w-3 h-3" />
           </Link>
-          <button className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-colors"
-            onClick={() => window.location.reload()}>
+          <button
+            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-colors"
+            onClick={() => window.location.reload()}
+          >
             Create another
           </button>
         </div>
@@ -164,7 +184,7 @@ export default function Step4({
                 {localError || taskError}
               </li>
             )}
-            {warnings.map((w) => (
+            {warnings.map(w => (
               <li key={w} className="text-[11px] text-red-400/70 flex items-center gap-1.5">
                 <span className="w-1 h-1 rounded-full bg-red-500/60 flex-shrink-0" />
                 {w}
@@ -188,9 +208,7 @@ export default function Step4({
                   {(data.projectName || "TC").slice(0, 2).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-white leading-tight">
-                    {data.title || "Untitled task"}
-                  </p>
+                  <p className="text-xs font-semibold text-white leading-tight">{data.title || "Untitled task"}</p>
                   <p className="text-[10px] text-gray-500">{data.projectName || "Your project"}</p>
                 </div>
               </div>
@@ -208,9 +226,7 @@ export default function Step4({
                 ))}
               </div>
             </div>
-            <p className="text-[11px] text-gray-400 mb-3 leading-snug">
-              {data.objective || "No objective set."}
-            </p>
+            <p className="text-[11px] text-gray-400 mb-3 leading-snug">{data.objective || "No objective set."}</p>
             <div className="grid grid-cols-4 gap-2 mb-3">
               {[
                 {
@@ -229,7 +245,7 @@ export default function Step4({
                   label: "Min REP",
                   val: data.minReputation || "0",
                 },
-              ].map((m) => (
+              ].map(m => (
                 <div key={m.label} className="rounded-lg border border-gray-800 bg-gray-900/60 p-2 text-center">
                   <div className="text-gray-600 flex justify-center mb-1">{m.icon}</div>
                   <p className="text-[10px] font-semibold text-gray-300 leading-tight">{m.val}</p>
@@ -239,7 +255,10 @@ export default function Step4({
             </div>
             <div className="flex flex-wrap gap-1 mb-3">
               {data.skills.slice(0, 5).map((s: string) => (
-                <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-400 border border-gray-700">
+                <span
+                  key={s}
+                  className="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-400 border border-gray-700"
+                >
                   {s}
                 </span>
               ))}
@@ -252,8 +271,10 @@ export default function Step4({
                 {slots} slot{parseInt(slots) > 1 ? "s" : ""} • {data.category || "Uncategorized"}
               </span>
               <div className="flex gap-1.5">
-                <Link className="px-3 py-1.5 rounded-lg border border-gray-700 text-[10px] text-gray-400"
-                  href={`/dashboard/${localStorage.getItem("userId")}`}>
+                <Link
+                  className="px-3 py-1.5 rounded-lg border border-gray-700 text-[10px] text-gray-400"
+                  href={`/dashboard/${localStorage.getItem("userId")}`}
+                >
                   View Task
                 </Link>
                 <button className="px-3 py-1.5 rounded-lg bg-indigo-600 text-[10px] font-semibold text-white">
@@ -293,8 +314,11 @@ export default function Step4({
             label: "Milestones",
             val: data.milestones.length > 0 ? `${data.milestones.length} defined` : "None",
           },
-        ].map((r) => (
-          <div key={r.label} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-800 bg-gray-900/40">
+        ].map(r => (
+          <div
+            key={r.label}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-800 bg-gray-900/40"
+          >
             <span className="text-gray-600">{r.icon}</span>
             <span className="text-[11px] text-gray-500 flex-1">{r.label}</span>
             <span className="text-[11px] font-medium text-gray-300 capitalize">{r.val}</span>
@@ -308,8 +332,8 @@ export default function Step4({
         <div>
           <p className="text-xs font-medium text-amber-300 mb-0.5">On-chain publication</p>
           <p className="text-[11px] text-amber-400/70 leading-relaxed">
-            Publishing this task writes to the blockchain. Estimated gas: ~0.0005 ETH. Your wallet
-            will prompt for confirmation.
+            Publishing this task writes to the blockchain. Estimated gas: ~0.0005 ETH. Your wallet will prompt for
+            confirmation.
           </p>
         </div>
       </div>

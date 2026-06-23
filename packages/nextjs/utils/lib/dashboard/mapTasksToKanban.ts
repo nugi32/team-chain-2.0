@@ -1,16 +1,9 @@
 // utils/lib/dashboard/mapTasksToKanban.ts
-
+import { useGetTaskData } from "./useGetTaskData";
+import { weiToUsd } from "@/utils/globalLib/weiToUsd";
+import { KanbanTask, SubmitStatus, TabType, TaskRole, UserTask } from "@/utils/lib/dashboard";
 import { CompleteTaskOutput } from "@/utils/lib/tasksHelper/useGetCompleteTasks";
 import { TaskStatus } from "@/utils/lib/tasksHelper/useLoopTasks";
-import {
-  KanbanTask,
-  TabType,
-  TaskRole,
-  UserTask,
-  SubmitStatus,
-} from "@/utils/lib/dashboard";
-import { weiToUsd } from "@/utils/globalLib/weiToUsd";
-import { useGetTaskData } from "./useGetTaskData";
 
 // NOTE: There is no `Review` value in the on-chain TaskStatus enum.
 // The contract keeps a task at `InProgres` both while the member is working
@@ -36,8 +29,7 @@ const STATUS_PROGRESS: Partial<Record<TaskStatus, number>> = {
   [TaskStatus.Cancelled]: 0,
 };
 
-const shortAddr = (addr?: string) =>
-  addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "Unknown";
+const shortAddr = (addr?: string) => (addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "Unknown");
 
 type GetTaskDataHook = ReturnType<typeof useGetTaskData>;
 
@@ -50,15 +42,10 @@ type GetTaskDataHook = ReturnType<typeof useGetTaskData>;
  * do not trigger Review — Accepted means the contract has already moved
  * on (e.g. to Completed), and NoneStatus means nothing was submitted yet.
  */
-const deriveTab = (
-  contractStatus: TaskStatus,
-  submitStatus: SubmitStatus | undefined,
-): TabType => {
+const deriveTab = (contractStatus: TaskStatus, submitStatus: SubmitStatus | undefined): TabType => {
   const baseTab = STATUS_TO_TAB[contractStatus] ?? "Created";
 
-  const hasActiveSubmission =
-    submitStatus === SubmitStatus.Pending ||
-    submitStatus === SubmitStatus.RevisionNeeded;
+  const hasActiveSubmission = submitStatus === SubmitStatus.Pending || submitStatus === SubmitStatus.RevisionNeeded;
 
   if (baseTab === "InProgres" && hasActiveSubmission) {
     return "InProgres";
@@ -75,14 +62,10 @@ export const mapTaskToKanbanTask = async (
   const taskId = Number(task.smartContractId);
   console.debug(`[Kanban] Starting to map Task #${taskId} (${task.projectName})`);
 
-  const isCreator =
-    !!walletAddress &&
-    task.creator.toLowerCase() === walletAddress.toLowerCase();
+  const isCreator = !!walletAddress && task.creator.toLowerCase() === walletAddress.toLowerCase();
 
   const deadlineMs = task.deadlineAt * 1000;
-  const daysLeft = Math.ceil(
-    (deadlineMs - Date.now()) / (1000 * 60 * 60 * 24),
-  );
+  const daysLeft = Math.ceil((deadlineMs - Date.now()) / (1000 * 60 * 60 * 24));
 
   const rewardUSD = await weiToUsd(BigInt(task.reward));
 
@@ -167,9 +150,7 @@ export const mapTaskToKanbanTask = async (
 
     progress: STATUS_PROGRESS[task.status] ?? 0,
 
-    counterpartyName: isCreator
-      ? shortAddr(task.member)
-      : shortAddr(task.creator),
+    counterpartyName: isCreator ? shortAddr(task.member) : shortAddr(task.creator),
 
     tags: task.skills ?? [],
 
@@ -183,9 +164,7 @@ export const mapTaskToKanbanTask = async (
         }))
       : undefined,
 
-    joinRequestCount: joinRequestCount
-      ? Number(joinRequestCount)
-      : 0,
+    joinRequestCount: joinRequestCount ? Number(joinRequestCount) : 0,
 
     submitContent: submitContent
       ? {
@@ -218,21 +197,12 @@ export const mapTasksToKanbanTasks = async (
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
     try {
-      console.debug(
-        `[Kanban] Processing task ${i + 1}/${tasks.length}: Task #${Number(task.smartContractId)}`
-      );
+      console.debug(`[Kanban] Processing task ${i + 1}/${tasks.length}: Task #${Number(task.smartContractId)}`);
 
-      const kanbanTask = await mapTaskToKanbanTask(
-        task,
-        getTaskDataHook,
-        walletAddress,
-      );
+      const kanbanTask = await mapTaskToKanbanTask(task, getTaskDataHook, walletAddress);
       kanbanTasks.push(kanbanTask);
     } catch (err) {
-      console.error(
-        `[Kanban] Failed to map Task #${Number(task.smartContractId)}:`,
-        err
-      );
+      console.error(`[Kanban] Failed to map Task #${Number(task.smartContractId)}:`, err);
       // Continue processing other tasks
     }
   }

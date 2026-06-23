@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Wallet, Copy, Check, ExternalLink, Zap, X } from "lucide-react";
 import SectionHeading from "./SectionHeading";
+import { Check, Copy, ExternalLink, Wallet, X, Zap } from "lucide-react";
 
 export default function WalletSection() {
   const [copied, setCopied] = useState(false);
@@ -55,7 +55,8 @@ export default function WalletSection() {
         <div>
           <p className="text-xs font-medium text-amber-300 mb-1">On-chain profile update</p>
           <p className="text-[11px] text-amber-400/70 leading-relaxed">
-            Saving your profile commits data to the blockchain. A small gas fee (est. ~0.0003 ETH) will be charged. Your wallet will prompt for confirmation.
+            Saving your profile commits data to the blockchain. A small gas fee (est. ~0.0003 ETH) will be charged. Your
+            wallet will prompt for confirmation.
           </p>
         </div>
       </div>
@@ -66,7 +67,7 @@ export default function WalletSection() {
           { label: "Reputation", value: "847" },
           { label: "Tasks completed", value: "23" },
           { label: "Stake locked", value: "1.4 ETH" },
-        ].map((s) => (
+        ].map(s => (
           <div key={s.label} className="rounded-xl border border-gray-800 bg-gray-900/50 p-3 text-center">
             <p className="text-base font-bold text-white mb-0.5">{s.value}</p>
             <p className="text-[10px] text-gray-600">{s.label}</p>

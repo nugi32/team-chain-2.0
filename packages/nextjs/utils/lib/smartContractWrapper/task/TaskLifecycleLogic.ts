@@ -1,6 +1,6 @@
 import { useReadContract } from "wagmi";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 import deployedContracts from "~~/contracts/deployedContracts";
+import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 export interface TaskLifecycleParams {
   deadlineHours?: bigint;
@@ -46,12 +46,7 @@ export const useTaskLifecycleLogic = (params: TaskLifecycleParams = {}) => {
   // Detect the silent-failure case: query was enabled, finished loading,
   // but returned nothing and threw no error — usually means the contract
   // call reverted and wagmi swallowed it.
-  const isStuck =
-    enabled &&
-    !isTaskLoading &&
-    !isTaskFetching &&
-    creatorRequiredStake == null &&
-    !stakeError;
+  const isStuck = enabled && !isTaskLoading && !isTaskFetching && creatorRequiredStake == null && !stakeError;
 
   return {
     creatorRequiredStake: creatorRequiredStake as bigint | undefined,

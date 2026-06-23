@@ -1,8 +1,17 @@
 export default function TextInput({
-  value, onChange, placeholder, prefix, maxLength, type = "text",
+  value,
+  onChange,
+  placeholder,
+  prefix,
+  maxLength,
+  type = "text",
 }: {
-  value: string; onChange: (v: string) => void; placeholder?: string;
-  prefix?: string; maxLength?: number; type?: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  prefix?: string;
+  maxLength?: number;
+  type?: string;
 }) {
   return (
     <div className="flex items-center rounded-xl border border-gray-800 bg-gray-900 focus-within:border-indigo-500/50 transition-colors overflow-hidden">
@@ -10,13 +19,15 @@ export default function TextInput({
       <input
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         maxLength={maxLength}
         className="flex-1 bg-transparent px-3 py-2.5 text-xs text-gray-200 placeholder:text-gray-600 outline-none"
       />
       {maxLength && (
-        <span className="pr-3 text-[10px] text-gray-700">{value.length}/{maxLength}</span>
+        <span className="pr-3 text-[10px] text-gray-700">
+          {value.length}/{maxLength}
+        </span>
       )}
     </div>
   );

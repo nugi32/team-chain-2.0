@@ -26,8 +26,7 @@ export default function SuccessOverlay({ onClose, taskTitle }: SuccessOverlayPro
         </div>
         <h2 className="text-xl font-bold text-white mb-2">You're In!</h2>
         <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-          You've successfully joined{" "}
-          <span className="text-white font-medium">{taskTitle}</span>. Your stake of{" "}
+          You've successfully joined <span className="text-white font-medium">{taskTitle}</span>. Your stake of{" "}
           <span className="text-indigo-300 font-semibold">40 USDC</span> is now locked.
         </p>
         <div className="space-y-2.5">

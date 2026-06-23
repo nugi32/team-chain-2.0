@@ -28,10 +28,15 @@ export default function FeeTable({ fees }: { fees: FeeRow[] }) {
           </thead>
           <tbody>
             {fees.map((row, idx) => (
-              <tr key={row.action} className={`border-b border-gray-800/60 hover:bg-gray-800/30 transition-colors ${idx % 2 === 0 ? "" : "bg-gray-800/10"}`}>
+              <tr
+                key={row.action}
+                className={`border-b border-gray-800/60 hover:bg-gray-800/30 transition-colors ${idx % 2 === 0 ? "" : "bg-gray-800/10"}`}
+              >
                 <td className="px-5 py-3.5 text-gray-200 font-medium">{row.action}</td>
                 <td className="px-3 py-3.5">
-                  <span className="font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-2 py-1">{row.fee}</span>
+                  <span className="font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-2 py-1">
+                    {row.fee}
+                  </span>
                 </td>
                 <td className="px-3 py-3.5 text-gray-400">{row.paidBy}</td>
                 <td className="px-5 py-3.5 text-gray-500">{row.note}</td>

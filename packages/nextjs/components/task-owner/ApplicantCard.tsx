@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, XCircle, BadgeCheck, ChevronUp, ChevronDown, Star } from "lucide-react";
 import ApplicantBadge from "./ApplicantBadge";
 import type { Applicant } from "./types";
+import { AnimatePresence, motion } from "framer-motion";
+import { BadgeCheck, CheckCircle2, ChevronDown, ChevronUp, Star, XCircle } from "lucide-react";
 
 const COL: Record<string, { bg: string; border: string; text: string }> = {
   indigo: { bg: "bg-indigo-500/20", border: "border-indigo-500/30", text: "text-indigo-300" },
@@ -30,12 +30,14 @@ export default function ApplicantCard({ applicant, slotsLeft, onAccept, onReject
         applicant.status === "accepted"
           ? "border-emerald-500/30"
           : applicant.status === "rejected"
-          ? "border-gray-800 opacity-60"
-          : "border-gray-700"
+            ? "border-gray-800 opacity-60"
+            : "border-gray-700"
       }`}
     >
       <div className="p-4 flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center text-sm font-bold ${c.text} flex-shrink-0`}>
+        <div
+          className={`w-10 h-10 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center text-sm font-bold ${c.text} flex-shrink-0`}
+        >
           {applicant.avatar}
         </div>
 
@@ -97,14 +99,21 @@ export default function ApplicantCard({ applicant, slotsLeft, onAccept, onReject
           >
             <div className="px-4 pb-4 space-y-3 border-t border-gray-800 pt-4">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Application Pitch</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Application Pitch
+                </p>
                 <p className="text-xs text-gray-400 leading-relaxed">{applicant.pitch}</p>
               </div>
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Skills Listed</p>
                 <div className="flex flex-wrap gap-1.5">
                   {applicant.skills.map(s => (
-                    <span key={s} className="text-[11px] text-gray-300 border border-gray-700 bg-gray-800 rounded-lg px-2.5 py-0.5">{s}</span>
+                    <span
+                      key={s}
+                      className="text-[11px] text-gray-300 border border-gray-700 bg-gray-800 rounded-lg px-2.5 py-0.5"
+                    >
+                      {s}
+                    </span>
                   ))}
                 </div>
               </div>

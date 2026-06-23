@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
 import { getUserById } from "@/utils/lib/express/queries/users";
 import { Address } from "viem";
+import { useAccount } from "wagmi";
 
 /**
  * Hook that gets wallet address from either:
  * 1. Connected wallet (if user is connected)
  * 2. localStorage userId -> backend API (if not connected)
- * 
+ *
  * This allows reading contract data without wallet connection
  */
 export const useWalletAddress = () => {

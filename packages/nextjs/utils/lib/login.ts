@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 type UserResponse = {
   _id: string;
@@ -9,23 +8,14 @@ type UserResponse = {
   github?: string;
 };
 
-export async function handleLogin(
-  method: "wallet" | "github",
-  identifier: string
-): Promise<string> {
+export async function handleLogin(method: "wallet" | "github", identifier: string): Promise<string> {
   try {
-    const response = await axios.get<UserResponse | UserResponse[]>(
-      `${API_BASE_URL}/api/users`,
-      {
-        params:
-          method === "wallet"
-            ? { walletAddress: identifier }
-            : { github: identifier },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.get<UserResponse | UserResponse[]>(`${API_BASE_URL}/api/users`, {
+      params: method === "wallet" ? { walletAddress: identifier } : { github: identifier },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = response.data;
 
@@ -41,10 +31,7 @@ export async function handleLogin(
     console.error("Login failed:", error);
 
     if (axios.isAxiosError(error)) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Authentication failed";
+      const message = error.response?.data?.message || error.message || "Authentication failed";
 
       throw new Error(message);
     }

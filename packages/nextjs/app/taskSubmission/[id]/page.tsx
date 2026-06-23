@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { AnimatePresence } from "framer-motion";
-import {
-  ArrowLeft, Lock, TrendingUp, CheckCircle2, Clock,
-} from "lucide-react";
-import SubmissionForm from "@/components/submission/SubmissionForm";
 import Sidebar from "@/components/submission/Sidebar";
+import SubmissionForm from "@/components/submission/SubmissionForm";
 import SuccessOverlay from "@/components/submission/SuccessOverlay";
 import type { TaskData } from "@/components/submission/types";
+import { AnimatePresence } from "framer-motion";
+import { ArrowLeft, CheckCircle2, Clock, Lock, TrendingUp } from "lucide-react";
 
 /* ─── MOCK DATA ─────────────────────────────────────────────── */
 const TASK: TaskData = {
@@ -83,8 +81,7 @@ export default function TaskSubmissionPage() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">{TASK.title}</h1>
           <p className="text-sm text-gray-500">
-            {TASK.project} • Deadline{" "}
-            <span className="text-gray-300 font-medium">{TASK.deadline}</span>
+            {TASK.project} • Deadline <span className="text-gray-300 font-medium">{TASK.deadline}</span>
           </p>
         </div>
 
@@ -95,23 +92,17 @@ export default function TaskSubmissionPage() {
             { icon: TrendingUp, label: "Potential Reward", value: `${TASK.rewardAmount} USDC`, hi: true },
             { icon: CheckCircle2, label: "M1 Completed", value: "Approved ✓", hi: false },
             { icon: Clock, label: "Active Milestone", value: `M${TASK.currentMilestone}`, hi: false },
-          ].map((s) => (
+          ].map(s => (
             <div
               key={s.label}
               className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 ${
-                s.hi
-                  ? "border-indigo-500/30 bg-indigo-500/10"
-                  : "border-gray-800 bg-gray-900"
+                s.hi ? "border-indigo-500/30 bg-indigo-500/10" : "border-gray-800 bg-gray-900"
               }`}
             >
-              <s.icon
-                className={`w-4 h-4 flex-shrink-0 ${s.hi ? "text-indigo-400" : "text-gray-400"}`}
-              />
+              <s.icon className={`w-4 h-4 flex-shrink-0 ${s.hi ? "text-indigo-400" : "text-gray-400"}`} />
               <div>
                 <p className="text-[10px] text-gray-500 leading-none mb-0.5">{s.label}</p>
-                <p className={`text-sm font-semibold ${s.hi ? "text-indigo-300" : "text-white"}`}>
-                  {s.value}
-                </p>
+                <p className={`text-sm font-semibold ${s.hi ? "text-indigo-300" : "text-white"}`}>{s.value}</p>
               </div>
             </div>
           ))}
@@ -143,12 +134,7 @@ export default function TaskSubmissionPage() {
       </div>
 
       <AnimatePresence>
-        {success && (
-          <SuccessOverlay
-            milestone={`${TASK.currentMilestone}`}
-            onClose={() => setSuccess(false)}
-          />
-        )}
+        {success && <SuccessOverlay milestone={`${TASK.currentMilestone}`} onClose={() => setSuccess(false)} />}
       </AnimatePresence>
     </div>
   );

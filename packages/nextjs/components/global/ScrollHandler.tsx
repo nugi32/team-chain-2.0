@@ -1,7 +1,12 @@
 // components/ScrollHandler.tsx
 "use client";
-import { useSearchParams } from "next/navigation";
+
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+
+// components/ScrollHandler.tsx
+
+// components/ScrollHandler.tsx
 
 export default function ScrollHandler() {
   const searchParams = useSearchParams();

@@ -1,37 +1,16 @@
 import React, { useState } from "react";
-import {
-  ChevronDown,
-  Filter,
-} from "lucide-react";
+import { ALL_TABS } from "@/utils/lib/dashboard";
+import type { TabSelectorProps, TabType } from "@/utils/lib/dashboard";
+import { ChevronDown, Filter } from "lucide-react";
 
-import {
-  ALL_TABS,
-} from "@/utils/lib/dashboard";
+export default function TabSelector({ activeTab, onTabChange, tasks }: TabSelectorProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
-import type {
-  TabType,
-  TabSelectorProps,
-} from "@/utils/lib/dashboard";
-
-export default function TabSelector({
-  activeTab,
-  onTabChange,
-  tasks,
-}: TabSelectorProps) {
-  const [isOpen, setIsOpen] =
-    useState(false);
-
-  const getTabCount = (
-    tab: TabType,
-  ) => {
-    return tasks.filter(
-      (t) => t.tab === tab,
-    ).length;
+  const getTabCount = (tab: TabType) => {
+    return tasks.filter(t => t.tab === tab).length;
   };
 
-  const getTabColor = (
-    tab: TabType,
-  ) => {
+  const getTabColor = (tab: TabType) => {
     switch (tab) {
       case "Created":
         return "bg-slate-500/20 text-slate-400";
@@ -62,31 +41,21 @@ export default function TabSelector({
   return (
     <div className="flex items-center gap-3">
       <div className="hidden sm:flex gap-1 p-1 rounded-2xl bg-gray-900 border border-gray-800 flex-wrap">
-        {ALL_TABS.map((tab) => {
-          const count =
-            getTabCount(tab);
+        {ALL_TABS.map(tab => {
+          const count = getTabCount(tab);
 
           return (
             <button
               key={tab}
-              onClick={() =>
-                onTabChange(tab)
-              }
+              onClick={() => onTabChange(tab)}
               className={[
                 "relative rounded-xl px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap",
-                activeTab === tab
-                  ? "bg-gray-800 text-white shadow"
-                  : "text-gray-500 hover:text-gray-300",
+                activeTab === tab ? "bg-gray-800 text-white shadow" : "text-gray-500 hover:text-gray-300",
               ].join(" ")}
             >
               {tab}
 
-              <span
-                className={[
-                  "ml-1 text-[10px] rounded-full px-1.5 py-0.5",
-                  getTabColor(tab),
-                ].join(" ")}
-              >
+              <span className={["ml-1 text-[10px] rounded-full px-1.5 py-0.5", getTabColor(tab)].join(" ")}>
                 {count}
               </span>
             </button>
@@ -96,28 +65,18 @@ export default function TabSelector({
 
       <div className="sm:hidden relative">
         <button
-          onClick={() =>
-            setIsOpen(!isOpen)
-          }
+          onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 text-xs font-medium text-gray-300 hover:text-white transition-colors"
         >
           {activeTab}
 
-          <ChevronDown
-            className={[
-              "w-3 h-3 transition-transform",
-              isOpen
-                ? "rotate-180"
-                : "",
-            ].join(" ")}
-          />
+          <ChevronDown className={["w-3 h-3 transition-transform", isOpen ? "rotate-180" : ""].join(" ")} />
         </button>
 
         {isOpen && (
           <div className="absolute top-full mt-1 right-0 bg-gray-900 border border-gray-800 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
-            {ALL_TABS.map((tab) => {
-              const count =
-                getTabCount(tab);
+            {ALL_TABS.map(tab => {
+              const count = getTabCount(tab);
 
               return (
                 <button
@@ -136,12 +95,7 @@ export default function TabSelector({
                   <div className="flex items-center justify-between gap-2">
                     <span>{tab}</span>
 
-                    <span
-                      className={[
-                        "text-[10px] rounded-full px-1.5 py-0.5",
-                        getTabColor(tab),
-                      ].join(" ")}
-                    >
+                    <span className={["text-[10px] rounded-full px-1.5 py-0.5", getTabColor(tab)].join(" ")}>
                       {count}
                     </span>
                   </div>

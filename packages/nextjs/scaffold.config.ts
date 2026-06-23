@@ -30,7 +30,8 @@ const scaffoldConfig = {
   // The key is the chain ID, and the value is the HTTP RPC URL
   rpcOverrides: {
     // Use Alchemy as the primary RPC for better reliability and rate limits
-    [chains.sepolia.id]: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || "cR4WnXePioePZ5fFrnSiR"}`,
+    [chains.sepolia.id]:
+      `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || "cR4WnXePioePZ5fFrnSiR"}`,
   },
 
   // This is ours WalletConnect's default project ID.

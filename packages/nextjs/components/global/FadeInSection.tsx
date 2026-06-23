@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef, ReactNode } from 'react';
-import { motion, useAnimation, Variants } from 'framer-motion';
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { Variants, motion, useAnimation } from "framer-motion";
 
 interface FadeInSectionProps {
   children: ReactNode;
@@ -21,11 +21,11 @@ export default function FadeInSection({ children }: FadeInSectionProps) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
-          controls.start('visible');
+          controls.start("visible");
           observer.unobserve(element);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     observer.observe(element);
@@ -40,7 +40,7 @@ export default function FadeInSection({ children }: FadeInSectionProps) {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
+      transition: { duration: 0.6, ease: "easeOut" },
     },
   };
 

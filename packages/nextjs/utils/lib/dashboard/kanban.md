@@ -1,29 +1,29 @@
 import {
-  TaskStatus,
-  SubmitStatus,
-  TabType,
-  MergedTask,
+TaskStatus,
+SubmitStatus,
+TabType,
+MergedTask,
 } from "./types";
 
 export function resolveTab(
-  task: MergedTask,
+task: MergedTask,
 ): TabType {
-  const status = Number(task.onchain?.status ?? 0);
+const status = Number(task.onchain?.status ?? 0);
 
-  const submitStatus = Number(
-    task.submit?.status ?? 0,
-  );
+const submitStatus = Number(
+task.submit?.status ?? 0,
+);
 
-  if (
-    submitStatus === SubmitStatus.Pending ||
-    submitStatus === SubmitStatus.RevisionNeeded
-  ) {
-    return "Review";
-  }
+if (
+submitStatus === SubmitStatus.Pending ||
+submitStatus === SubmitStatus.RevisionNeeded
+) {
+return "Review";
+}
 
-  switch (status) {
-    case TaskStatus.Created:
-      return "Created";
+switch (status) {
+case TaskStatus.Created:
+return "Created";
 
     case TaskStatus.Active:
       return "Active";
@@ -42,5 +42,6 @@ export function resolveTab(
 
     default:
       return "Created";
-  }
+
+}
 }

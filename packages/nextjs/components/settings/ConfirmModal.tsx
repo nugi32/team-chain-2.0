@@ -11,9 +11,7 @@ interface ConfirmModalProps {
   onClose: () => void;
 }
 
-export default function ConfirmModal({
-  title, desc, cta, ctaClass, onConfirm, onClose,
-}: ConfirmModalProps) {
+export default function ConfirmModal({ title, desc, cta, ctaClass, onConfirm, onClose }: ConfirmModalProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -26,7 +24,7 @@ export default function ConfirmModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
         className="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-2xl"
       >
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-600 hover:text-gray-400">
@@ -43,7 +41,9 @@ export default function ConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            className={["flex-1 py-2 rounded-xl text-xs font-semibold text-white transition-colors", ctaClass].join(" ")}
+            className={["flex-1 py-2 rounded-xl text-xs font-semibold text-white transition-colors", ctaClass].join(
+              " ",
+            )}
           >
             {cta}
           </button>

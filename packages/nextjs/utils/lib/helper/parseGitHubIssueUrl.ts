@@ -7,9 +7,7 @@ export interface GitHubIssueInfo {
 /**
  * Validasi format URL GitHub Issue
  */
-export function parseGitHubIssueUrl(
-  url: string
-): GitHubIssueInfo | null {
+export function parseGitHubIssueUrl(url: string): GitHubIssueInfo | null {
   try {
     const parsed = new URL(url);
 
@@ -17,9 +15,7 @@ export function parseGitHubIssueUrl(
       return null;
     }
 
-    const match = parsed.pathname.match(
-      /^\/([^/]+)\/([^/]+)\/issues\/(\d+)\/?$/
-    );
+    const match = parsed.pathname.match(/^\/([^/]+)\/([^/]+)\/issues\/(\d+)\/?$/);
 
     if (!match) {
       return null;

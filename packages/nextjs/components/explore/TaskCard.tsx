@@ -1,16 +1,12 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import {
-  ChevronRight, Lock, DollarSign, Calendar, Star,
-  Trophy, CircleDot, Tag, Zap, User,
-} from "lucide-react";
-
-import { CompleteTaskOutput, TaskStatus } from "./types";
-import { useDashboardUserData } from "@/utils/lib/dashboard/useDashboardUserData";
 import SkillTag from "./SkillTag";
 import StatPill from "./StatPill";
+import { CompleteTaskOutput, TaskStatus } from "./types";
+import { useDashboardUserData } from "@/utils/lib/dashboard/useDashboardUserData";
+import { motion } from "framer-motion";
+import { Calendar, ChevronRight, CircleDot, DollarSign, Lock, Star, Tag, Trophy, User, Zap } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -83,18 +79,14 @@ export default function TaskCard({
   featured?: boolean;
 }) {
   // Prefer on-chain creator address; fall back to Express owner
-  const creatorAddr =
-    task.creator && task.creator !== ZERO_ADDRESS
-      ? task.creator
-      : task.owner;
+  const creatorAddr = task.creator && task.creator !== ZERO_ADDRESS ? task.creator : task.owner;
 
   // Always called unconditionally (Rules of Hooks)
   const { user: creator } = useDashboardUserData(creatorAddr);
 
   const days = daysUntil(task.deadlineAt);
   const isUrgent = days !== 9999 && days <= 3;
-  const statusStyle =
-    STATUS_STYLE[task.status] ?? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20";
+  const statusStyle = STATUS_STYLE[task.status] ?? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20";
 
   // Safe skills array — contract may not have this field
   const skills = task.skills ?? [];
@@ -115,17 +107,17 @@ export default function TaskCard({
       onClick={() => onSelect(task)}
       className={`group relative cursor-pointer rounded-2xl border bg-gray-900
                 transition-colors duration-200 overflow-hidden
-                ${featured
-          ? "border-indigo-500/40 hover:border-indigo-400/60 shadow-lg shadow-indigo-950/30"
-          : "border-gray-800 hover:border-gray-700"
-        }`}
+                ${
+                  featured
+                    ? "border-indigo-500/40 hover:border-indigo-400/60 shadow-lg shadow-indigo-950/30"
+                    : "border-gray-800 hover:border-gray-700"
+                }`}
     >
       {featured && (
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent" />
       )}
 
       <div className="p-4 flex flex-col gap-3">
-
         {/* ── ROW 1: Creator avatar + project title ─────────── */}
         <div className="flex items-start gap-3">
           <div className="relative flex-shrink-0">
@@ -138,9 +130,7 @@ export default function TaskCard({
             ) : (
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
                 {creator?.name ? (
-                  <span className="text-[11px] font-bold text-white">
-                    {creator.name.slice(0, 2).toUpperCase()}
-                  </span>
+                  <span className="text-[11px] font-bold text-white">{creator.name.slice(0, 2).toUpperCase()}</span>
                 ) : (
                   <User className="w-4 h-4 text-white/70" />
                 )}
@@ -149,7 +139,9 @@ export default function TaskCard({
 
             {/* Tier badge corner */}
             {creator?.tier && (
-              <span className={`absolute -bottom-1 -right-1 px-1 py-px rounded border text-[8px] font-bold uppercase leading-tight ${TIER_BADGE[creator.tier]}`}>
+              <span
+                className={`absolute -bottom-1 -right-1 px-1 py-px rounded border text-[8px] font-bold uppercase leading-tight ${TIER_BADGE[creator.tier]}`}
+              >
                 {creator.tier[0]}
               </span>
             )}
@@ -168,12 +160,16 @@ export default function TaskCard({
             </div>
 
             <p className="text-[11px] text-gray-500 mt-0.5 truncate">
-              {creator?.name
-                ? <span className="text-gray-300">{creator.name}</span>
-                : <span className="font-mono">{shortAddr(creatorAddr)}</span>
-              }
+              {creator?.name ? (
+                <span className="text-gray-300">{creator.name}</span>
+              ) : (
+                <span className="font-mono">{shortAddr(creatorAddr)}</span>
+              )}
               {task.objective && (
-                <> · <span>{task.objective}</span></>
+                <>
+                  {" "}
+                  · <span>{task.objective}</span>
+                </>
               )}
             </p>
           </div>
@@ -231,20 +227,19 @@ export default function TaskCard({
         {/* ── Skills + CTA ──────────────────────────────────── */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-wrap gap-1 flex-1 min-w-0">
-            {skills.slice(0, 3).map(s => <SkillTag key={s} skill={s} />)}
-            {skills.length > 3 && (
-              <span className="text-[10px] text-gray-600 self-center">
-                +{skills.length - 3}
-              </span>
-            )}
-            {skills.length === 0 && (
-              <span className="text-[10px] text-gray-700 italic">No skills listed</span>
-            )}
+            {skills.slice(0, 3).map(s => (
+              <SkillTag key={s} skill={s} />
+            ))}
+            {skills.length > 3 && <span className="text-[10px] text-gray-600 self-center">+{skills.length - 3}</span>}
+            {skills.length === 0 && <span className="text-[10px] text-gray-700 italic">No skills listed</span>}
           </div>
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
-            onClick={e => { e.stopPropagation(); onSelect(task); }}
+            onClick={e => {
+              e.stopPropagation();
+              onSelect(task);
+            }}
             className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors flex items-center gap-1 flex-shrink-0"
           >
             View <ChevronRight className="w-3 h-3" />
@@ -258,34 +253,24 @@ export default function TaskCard({
               <div className="flex items-center gap-1 text-[10px] text-gray-600">
                 <Trophy className="w-3 h-3 text-amber-500/60" />
                 <span>
-                  Rep{" "}
-                  <span className="text-gray-400 font-medium">
-                    {Number(creator.reputation ?? 0).toString()}
-                  </span>
+                  Rep <span className="text-gray-400 font-medium">{Number(creator.reputation ?? 0).toString()}</span>
                 </span>
               </div>
               <div className="flex items-center gap-1 text-[10px] text-gray-600">
                 <CircleDot className="w-3 h-3 text-emerald-500/60" />
                 <span>
-                  <span className="text-gray-400 font-medium">
-                    {creator.successRate ?? 0}%
-                  </span>
-                  {" "}success
+                  <span className="text-gray-400 font-medium">{creator.successRate ?? 0}%</span> success
                 </span>
               </div>
               {Number(creator.totalTasksCompleted ?? 0) > 0 && (
                 <span className="text-[10px] text-gray-600">
-                  <span className="text-gray-400 font-medium">
-                    {Number(creator.totalTasksCompleted).toString()}
-                  </span>
-                  {" "}done
+                  <span className="text-gray-400 font-medium">{Number(creator.totalTasksCompleted).toString()}</span>{" "}
+                  done
                 </span>
               )}
             </>
           ) : (
-            <span className="text-[10px] text-gray-600 font-mono">
-              {shortAddr(creatorAddr) || "Unknown creator"}
-            </span>
+            <span className="text-[10px] text-gray-600 font-mono">{shortAddr(creatorAddr) || "Unknown creator"}</span>
           )}
 
           {roles.length > 0 && (
@@ -296,7 +281,6 @@ export default function TaskCard({
             </div>
           )}
         </div>
-
       </div>
     </motion.div>
   );

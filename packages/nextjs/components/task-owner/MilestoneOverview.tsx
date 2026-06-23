@@ -1,6 +1,6 @@
+import type { Submission } from "./types";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import type { Submission } from "./types";
 
 interface Milestone {
   id: number;
@@ -34,7 +34,11 @@ export default function MilestoneOverview({ milestones, submissions }: Milestone
                       </div>
                     ) : isActive ? (
                       <div className="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/40 flex items-center justify-center">
-                        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} className="w-2 h-2 rounded-full bg-indigo-400" />
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="w-2 h-2 rounded-full bg-indigo-400"
+                        />
                       </div>
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center">
@@ -44,14 +48,20 @@ export default function MilestoneOverview({ milestones, submissions }: Milestone
                   </div>
                   <div className="flex-1 pt-1.5 border-b border-gray-800/50 pb-4 last:border-0 last:pb-0">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <p className={`text-sm font-medium ${isDone ? "text-gray-500" : isActive ? "text-white" : "text-gray-500"}`}>
+                      <p
+                        className={`text-sm font-medium ${isDone ? "text-gray-500" : isActive ? "text-white" : "text-gray-500"}`}
+                      >
                         M{i + 1}: {m.label}
                       </p>
-                      <span className={`text-[10px] font-semibold border rounded-full px-2 py-0.5 ${
-                        isDone ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" :
-                        isActive ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/5" :
-                        "text-gray-600 border-gray-700 bg-gray-800"
-                      }`}>
+                      <span
+                        className={`text-[10px] font-semibold border rounded-full px-2 py-0.5 ${
+                          isDone
+                            ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5"
+                            : isActive
+                              ? "text-indigo-400 border-indigo-500/20 bg-indigo-500/5"
+                              : "text-gray-600 border-gray-700 bg-gray-800"
+                        }`}
+                      >
                         {isDone ? "Completed" : isActive ? "Active" : "Locked"}
                       </span>
                     </div>
@@ -80,7 +90,7 @@ export default function MilestoneOverview({ milestones, submissions }: Milestone
               <div className="flex-1">
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-gray-500">M{i + 1}</span>
-                  <span className="text-gray-400">{((120 * m.pct) / 100)} USDC</span>
+                  <span className="text-gray-400">{(120 * m.pct) / 100} USDC</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-gray-800 overflow-hidden">
                   <div
@@ -89,7 +99,9 @@ export default function MilestoneOverview({ milestones, submissions }: Milestone
                   />
                 </div>
               </div>
-              <span className={`text-[10px] font-semibold w-16 text-right ${m.status === "done" ? "text-emerald-400" : m.status === "active" ? "text-indigo-400" : "text-gray-600"}`}>
+              <span
+                className={`text-[10px] font-semibold w-16 text-right ${m.status === "done" ? "text-emerald-400" : m.status === "active" ? "text-indigo-400" : "text-gray-600"}`}
+              >
                 {m.pct}%
               </span>
             </div>

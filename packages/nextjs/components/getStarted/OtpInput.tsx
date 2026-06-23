@@ -10,10 +10,7 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
 
   const focus = (i: number) => refs.current[i]?.focus();
 
-  const handleKey = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace") {
       e.preventDefault();
       if (value[index]) {
@@ -29,15 +26,11 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const raw = e.target.value.replace(/\D/g, "");
     if (!raw) return;
     const digits = raw.slice(0, 6 - index);
-    const next =
-      value.slice(0, index) + digits + value.slice(index + digits.length);
+    const next = value.slice(0, index) + digits + value.slice(index + digits.length);
     onChange(next.slice(0, 6));
     const nextFocus = Math.min(index + digits.length, 5);
     setTimeout(() => focus(nextFocus), 0);
@@ -55,24 +48,22 @@ export default function OtpInput({ value, onChange }: OtpInputProps) {
       {Array.from({ length: 6 }).map((_, i) => (
         <input
           key={i}
-          ref={(el) => {
+          ref={el => {
             refs.current[i] = el;
           }}
           type="text"
           inputMode="numeric"
           maxLength={1}
           value={value[i] || ""}
-          onChange={(e) => handleChange(e, i)}
-          onKeyDown={(e) => handleKey(e, i)}
+          onChange={e => handleChange(e, i)}
+          onKeyDown={e => handleKey(e, i)}
           onPaste={handlePaste}
-          onFocus={(e) => e.target.select()}
+          onFocus={e => e.target.select()}
           className={[
             "h-12 w-full rounded-xl border text-center text-lg font-mono font-semibold",
             "bg-gray-950 outline-none transition-all duration-150",
             "focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20",
-            value[i]
-              ? "border-indigo-500 text-white"
-              : "border-gray-700 text-gray-300",
+            value[i] ? "border-indigo-500 text-white" : "border-gray-700 text-gray-300",
           ].join(" ")}
         />
       ))}

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronDown } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { COUNTRIES } from "@/components/getStarted/Countries";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, Search } from "lucide-react";
 
 interface Country {
   flag: string;
@@ -17,18 +17,13 @@ interface CountrySelectorProps {
   onSelect: (c: Country) => void;
 }
 
-export default function CountrySelector({
-  selected,
-  onSelect,
-}: CountrySelectorProps) {
+export default function CountrySelector({ selected, onSelect }: CountrySelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
 
   const filtered = COUNTRIES.filter(
-    (c: Country) =>
-      c.name.toLowerCase().includes(query.toLowerCase()) ||
-      c.code.includes(query)
+    (c: Country) => c.name.toLowerCase().includes(query.toLowerCase()) || c.code.includes(query),
   );
 
   useEffect(() => {
@@ -54,15 +49,9 @@ export default function CountrySelector({
       >
         <span>{selected?.flag ?? "🌍"}</span>
 
-        <span className="font-mono text-gray-300">
-          {selected?.code ?? "+--"}
-        </span>
+        <span className="font-mono text-gray-300">{selected?.code ?? "+--"}</span>
 
-        <ChevronDown
-          className={`w-3.5 h-3.5 text-gray-500 transition-transform ${
-            open ? "rotate-180" : ""
-          }`}
-        />
+        <ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       <AnimatePresence>
@@ -83,7 +72,7 @@ export default function CountrySelector({
                   type="text"
                   placeholder="Search country or code…"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={e => setQuery(e.target.value)}
                   className="w-full rounded-xl bg-gray-950 border border-gray-800 pl-9 pr-3 py-2 text-sm outline-none focus:border-indigo-500 text-white placeholder-gray-600"
                 />
               </div>
@@ -91,9 +80,7 @@ export default function CountrySelector({
 
             <div className="max-h-56 overflow-y-auto">
               {filtered.length === 0 ? (
-                <p className="py-6 text-center text-sm text-gray-500">
-                  No results for "{query}"
-                </p>
+                <p className="py-6 text-center text-sm text-gray-500">No results for "{query}"</p>
               ) : (
                 filtered.map((c: Country) => (
                   <button
@@ -107,22 +94,16 @@ export default function CountrySelector({
                     className={[
                       "w-full flex items-center justify-between px-4 py-2.5 text-sm text-left",
                       "hover:bg-gray-800 transition-colors",
-                      selected?.iso === c.iso
-                        ? "bg-indigo-500/10"
-                        : "",
+                      selected?.iso === c.iso ? "bg-indigo-500/10" : "",
                     ].join(" ")}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-base">{c.flag}</span>
 
-                      <span className="text-gray-200">
-                        {c.name}
-                      </span>
+                      <span className="text-gray-200">{c.name}</span>
                     </div>
 
-                    <span className="font-mono text-gray-500 text-xs">
-                      {c.code}
-                    </span>
+                    <span className="font-mono text-gray-500 text-xs">{c.code}</span>
                   </button>
                 ))
               )}

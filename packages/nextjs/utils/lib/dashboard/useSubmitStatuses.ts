@@ -1,5 +1,4 @@
 // utils/lib/dashboard/useSubmitStatuses.ts
-
 import { useEffect, useRef, useState } from "react";
 import { useTaskData } from "@/utils/lib/smartContractWrapper/user/taskData";
 
@@ -96,13 +95,12 @@ export function useSubmitStatuses(taskIds: number[]): UseSubmitStatusesResult {
 
     const taskId = taskIds[cursor];
     const raw = data.submitStatus;
-    const value =
-      raw === undefined || raw === null ? 0 : Number(raw as unknown as number);
+    const value = raw === undefined || raw === null ? 0 : Number(raw as unknown as number);
 
     resultRef.current = { ...resultRef.current, [taskId]: value };
     setSubmitStatusById(resultRef.current);
 
-    setCursor((c) => c + 1);
+    setCursor(c => c + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading.submitStatus, data.submitStatus, cursor, idsKey, taskIds.length]);
 

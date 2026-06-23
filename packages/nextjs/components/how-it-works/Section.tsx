@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import React from "react";
+import { motion } from "framer-motion";
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -19,7 +19,15 @@ export function SectionSub({ children }: { children: React.ReactNode }) {
   return <p className="text-sm text-gray-400 leading-relaxed max-w-xl mb-8">{children}</p>;
 }
 
-export default function Section({ id, children, className = "" }: { id?: string; children: React.ReactNode; className?: string }) {
+export default function Section({
+  id,
+  children,
+  className = "",
+}: {
+  id?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <motion.section
       id={id}
