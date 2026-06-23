@@ -16,7 +16,8 @@ app.use(cors({
   origin: [
     "http://localhost:3000",
     "https://TeamChain.netlify.app",
-    "https://TeamChain.vercel.app"
+    "https://TeamChain.vercel.app",
+    "https://team-chain-v2.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true

@@ -7,12 +7,19 @@ const fetchWithTimeout = async (url, options = {}, timeout = 15000) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   try {
+    const forwardedHeaders = {
+      ...(options.headers || {}),
+      Authorization: options.headers?.Authorization ?? `${process.env.JWT_SECRET}`,
+    };
+
+    if (options.body && !forwardedHeaders["Content-Type"] && !forwardedHeaders["content-type"]) {
+      forwardedHeaders["Content-Type"] = "application/json";
+    }
+
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
-      headers: {
-        Authorization: `${process.env.JWT_SECRET}`,
-      },
+      headers: forwardedHeaders,
     });
     clearTimeout(timeoutId);
     return response;
