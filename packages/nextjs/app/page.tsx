@@ -47,6 +47,18 @@ const C = {
   mutedHi: "#94A3B8",
 } as const;
 
+// ── Mobile breakpoint hook ─────────────────────────────────────────────────
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < breakpoint);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [breakpoint]);
+  return isMobile;
+}
+
 // ── Chain SVG icon ─────────────────────────────────────────────────────────
 function ChainIcon({ size = 20, color = C.cyan }: { size?: number; color?: string }) {
   return (
@@ -349,13 +361,15 @@ function ProtocolPreview() {
 
 // ── Hero ───────────────────────────────────────────────────────────────────
 function HeroSection() {
+  const isMobile = useIsMobile();
+
   return (
     <section
       style={{
-        minHeight: "92vh",
+        minHeight: isMobile ? "auto" : "92vh",
         display: "flex",
         alignItems: "center",
-        padding: "80px 24px 60px",
+        padding: isMobile ? "72px 20px 48px" : "80px 24px 60px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -379,12 +393,13 @@ function HeroSection() {
           margin: "0 auto",
           width: "100%",
           display: "grid",
-          gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)",
-          gap: 64,
+          // Single column on mobile, two columns on desktop
+          gridTemplateColumns: isMobile ? "1fr" : "minmax(0,1fr) minmax(0,1fr)",
+          gap: isMobile ? 40 : 64,
           alignItems: "center",
         }}
       >
-        {/* Left */}
+        {/* Left: text content */}
         <div>
           <div style={{ marginBottom: 22, display: "flex", alignItems: "center", gap: 10 }}>
             <GlowDot color={C.amber} />
@@ -394,7 +409,7 @@ function HeroSection() {
           <h1
             style={{
               fontFamily: "Inter, system-ui, sans-serif",
-              fontSize: "clamp(34px, 4.2vw, 56px)",
+              fontSize: "clamp(30px, 8vw, 56px)",
               fontWeight: 800,
               color: C.text,
               lineHeight: 1.12,
@@ -418,7 +433,7 @@ function HeroSection() {
           <p
             style={{
               fontFamily: "Inter, system-ui, sans-serif",
-              fontSize: 17,
+              fontSize: isMobile ? 15 : 17,
               color: C.mutedHi,
               lineHeight: 1.72,
               margin: "0 0 36px",
@@ -430,7 +445,7 @@ function HeroSection() {
           </p>
 
           {/* Stats row */}
-          <div style={{ display: "flex", gap: 28, marginBottom: 40, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: isMobile ? 20 : 28, marginBottom: 40, flexWrap: "wrap" }}>
             {[
               { val: "On-chain", label: "Stake & Earn" },
               { val: "GitHub", label: "Native Identity" },
@@ -459,7 +474,7 @@ function HeroSection() {
                 fontWeight: 600,
                 color: "#fff",
                 textDecoration: "none",
-                padding: "12px 28px",
+                padding: isMobile ? "12px 22px" : "12px 28px",
                 borderRadius: 9,
                 background: `linear-gradient(135deg, ${C.purple}, ${C.cyan})`,
                 display: "inline-block",
@@ -484,7 +499,7 @@ function HeroSection() {
                 fontWeight: 500,
                 color: C.mutedHi,
                 textDecoration: "none",
-                padding: "12px 28px",
+                padding: isMobile ? "12px 22px" : "12px 28px",
                 borderRadius: 9,
                 border: `1px solid ${C.border}`,
                 background: "transparent",
@@ -505,10 +520,12 @@ function HeroSection() {
           </div>
         </div>
 
-        {/* Right: protocol preview */}
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <ProtocolPreview />
-        </div>
+        {/* Right: protocol preview — hidden on mobile */}
+        {!isMobile && (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <ProtocolPreview />
+          </div>
+        )}
       </div>
     </section>
   );
@@ -1182,6 +1199,8 @@ function GetStartedCTA() {
 
 // ── Developer Note ─────────────────────────────────────────────────────────
 function DeveloperNote() {
+  const isMobile = useIsMobile();
+
   return (
     <section style={{ padding: "48px 24px 64px", maxWidth: 1200, margin: "0 auto" }}>
       <div
@@ -1189,10 +1208,11 @@ function DeveloperNote() {
           background: `${C.amberDim}25`,
           border: `1px solid ${C.amber}40`,
           borderRadius: 14,
-          padding: "28px 32px",
+          padding: isMobile ? "24px 20px" : "28px 32px",
           display: "grid",
-          gridTemplateColumns: "1fr auto",
-          gap: 28,
+          // Stack vertically on mobile, side-by-side on desktop
+          gridTemplateColumns: isMobile ? "1fr" : "1fr auto",
+          gap: isMobile ? 20 : 28,
           alignItems: "start",
         }}
       >
@@ -1268,22 +1288,25 @@ function DeveloperNote() {
           </p>
         </div>
 
-        {/* GitHub card */}
+        {/* GitHub card — full width row on mobile, auto-width column on desktop */}
         <a
           href="https://github.com/nugi32"
           target="_blank"
           rel="noopener noreferrer"
           style={{
             display: "flex",
-            flexDirection: "column" as const,
+            flexDirection: isMobile ? "row" : "column" as const,
             alignItems: "center",
-            gap: 8,
-            padding: "18px 22px",
+            justifyContent: isMobile ? "flex-start" : "center",
+            gap: isMobile ? 12 : 8,
+            padding: isMobile ? "14px 16px" : "18px 22px",
             background: `${C.amber}0F`,
             border: `1px solid ${C.amber}35`,
             borderRadius: 11,
             textDecoration: "none",
-            minWidth: 130,
+            // No minWidth on mobile so it fills the column naturally
+            minWidth: isMobile ? "unset" : 130,
+            width: isMobile ? "fit-content" : "auto",
             transition: "border-color 0.2s, background 0.2s",
           }}
           onMouseEnter={e => {
@@ -1295,11 +1318,13 @@ function DeveloperNote() {
             (e.currentTarget as HTMLAnchorElement).style.background = `${C.amber}0F`;
           }}
         >
-          <FaGithub size={26} color={C.amber} />
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: C.amber }}>
-            @nugi32
-          </span>
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: `${C.amber}88` }}>View on GitHub</span>
+          <FaGithub size={isMobile ? 20 : 26} color={C.amber} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: C.amber }}>
+              @nugi32
+            </span>
+            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: `${C.amber}88` }}>View on GitHub</span>
+          </div>
         </a>
       </div>
     </section>
